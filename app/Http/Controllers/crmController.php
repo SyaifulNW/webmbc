@@ -63,10 +63,10 @@ class crmController extends Controller
      */
     public function show($id)
     {
-        // Logic to display a specific database entry
-        $crm = Crm::findOrFail($id);
+
+        $crm = Crm::find($id);
         return view('admin.database.show', compact('crm'));
-        // You can also pass the $crm variable to the view to display its details
+      
     }
 
     /**
