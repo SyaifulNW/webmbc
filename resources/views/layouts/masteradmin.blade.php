@@ -60,7 +60,7 @@
         <!-- Sidebar - Brand -->  
         <a
           class="sidebar-brand d-flex align-items-center justify-content-center"
-          href="index.html"
+          href="{{route('home')}}"
         >
           <div class="sidebar-brand-icon">
             <!-- Logo -->
@@ -85,19 +85,19 @@
           >
         </li>
         <li class="nav-item active">
-          <a class="nav-link" href="{{route('admin.database')}}">
+          <a class="nav-link" href="{{route('admin.database.database')}}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>DATABASE CRM</span></a
           >
         </li>
         <li class="nav-item active">
-          <a class="nav-link" href="index.html">
+          <a class="nav-link" href="#">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>DAILY ACTIVITY</span></a
           >
         </li>
         <li class="nav-item active">
-          <a class="nav-link" href="index.html">
+          <a class="nav-link" href="#">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>DATA  ALUMNI</span></a
           >
@@ -137,9 +137,6 @@
             >
               <i class="fa fa-bars"></i>
             </button>
-
-
-
             <!-- Topbar Search -->
       
 
@@ -359,30 +356,7 @@
 
         });
     </script>
-    <script type="text/javascript">
-        function confirmation(ev) {
-            ev.preventDefault();
-            var urlToRedirect = ev.currentTarget.getAttribute('href')
-            console.log
-
-
-            swal({
-
-                    title: 'Apakah anda yakin?',
-                    text: "Data yang dihapus tidak bisa dikembalikan!",
-                    icon: 'warning',
-                    buttons: true,
-                    dangerMode: true,
-
-                })
-
-                .then((willCancel) => {
-                    if (willCancel) {
-                        window.location.href = urlToRedirect;
-                    }
-                });
-        }
-    </script>
+   
 
 </script>
   </body>
