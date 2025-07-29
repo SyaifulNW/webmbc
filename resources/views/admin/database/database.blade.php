@@ -51,7 +51,51 @@
                             <td>{{ $crm->fu1 }}</td>
                             <td>{{ $crm->fu2 }}</td>
                             <td>{{ $crm->fu3 }}</td>
-                            <td>{{ $crm->status }}</td>
+                            <td style="color: white;">
+                                <span 
+                                    class="badge 
+                                        @if($crm->status == 'cold') bg-secondary
+                                        @elseif($crm->status == 'warm') bg-warning
+                                        @elseif($crm->status == 'hot') bg-success
+                                        @elseif($crm->status == 'no') bg-danger
+                                        @else bg-light
+                                        @endif
+                                        status-badge"
+                                    data-id="{{ $crm->id }}"
+                                    style="cursor:pointer;"
+                                    onclick="changeStatus({{ $crm->id }}, '{{ $crm->status }}', this)"
+                                >
+                                    {{ ucfirst($crm->status) }}
+                                </span>
+                            </td>
+                            <script>
+                            function changeStatus(id, currentStatus, el) {
+                                // Define the order of statuses
+                                const statuses = ['cold', 'warm', 'hot', 'no'];
+                                let idx = statuses.indexOf(currentStatus);
+                                let nextStatus = statuses[(idx + 1) % statuses.length];
+
+                                // AJAX request to update status in backend
+                                $.ajax({
+                                    url: '/admin/database/change-status/' + id,
+                                    type: 'POST',
+                                    data: {
+                                        status: nextStatus,
+                                        _token: '{{ csrf_token() }}'
+                                    },
+                                    success: function(response) {
+                                        // Update badge color and text
+                                        el.textContent = nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1);
+                                        el.classList.remove('bg-secondary', 'bg-warning', 'bg-success', 'bg-danger', 'bg-light');
+                                        if(nextStatus === 'cold') el.classList.add('bg-secondary');
+                                        else if(nextStatus === 'warm') el.classList.add('bg-warning');
+                                        else if(nextStatus === 'hot') el.classList.add('bg-success');
+                                        else if(nextStatus === 'no') el.classList.add('bg-danger');
+                                        else el.classList.add('bg-light');
+                                    }
+                                });
+                            }
+                            </script>
                             
                             <td class="d-flex justify-content-center border-0">
                                 <a class="btn btn-info" href="{{ route('admin.database.show', $crm->id) }}"><i class="fa-solid fa-eye"></i></a>
