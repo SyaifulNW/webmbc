@@ -36,10 +36,6 @@
                     <input type="text" class="form-control" id="no_wa" name="no_wa" value="{{ $crm->no_wa }}" required>
                 </div>
                 <div class="mb-3">
-                    <label for="alamat" class="form-label">Total Omset</label>
-                    <input type="text" class="form-control" id="total_omset" name="total_omset" value="{{ $crm->total_omset }}" >
-                </div>
-                <div class="mb-3">
                     <label for="alamat" class="form-label">Kendala</label>
                     <input type="text" class="form-control" id="kendala" name="kendala" value="{{ $crm->kendala }}" >
                 </div>
@@ -61,6 +57,7 @@
                         <option value="cold" {{ $crm->status == 'cold' ? 'selected' : '' }}>Cold</option>
                         <option value="warm" {{ $crm->status == 'warm' ? 'selected' : '' }}>Warm</option>
                         <option value="hot" {{ $crm->status == 'hot' ? 'selected' : '' }}>Hot</option>
+                        <option value="hot" {{ $crm->status == 'No' ? 'selected' : '' }}>No</option>
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Update</button>

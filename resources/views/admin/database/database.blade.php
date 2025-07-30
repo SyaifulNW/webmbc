@@ -19,77 +19,75 @@
         </div>
         <div class="card-body">
             <div style="overflow-x: auto; overflow-y: auto; width: 100%; max-height: 500px;">
-            <table id="myTable" class="table table-bordered table-striped nowrap" style="width: max-content;">
-                <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama Peserta</th>
-                    <th>Sumber Leads</th>
-                    <th>Kota</th>
-                    <th>Nama Bisnis</th>
-                    <th>No.WA</th>
-                    <th>Total Omset</th>
-                    <th>Kendala</th>
-                    <th>FU 1</th>
-                    <th>FU 2</th>
-                    <th>FU 3</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($crms as $crm)
-                <tr
-                    @php
-                    $rowClass = '';
-                    if($crm->status == 'cold') $rowClass = 'table-secondary';
-                    elseif($crm->status == 'warm') $rowClass = 'table-warning';
-                    elseif($crm->status == 'hot') $rowClass = 'table-success';
-                    elseif($crm->status == 'no') $rowClass = 'table-danger';
-                    @endphp
-                >
-                    <td class="{{ $rowClass }}">{{ $loop->iteration }}</td>
-                    <td class="{{ $rowClass }}">{{ $crm->nama }}</td>
-                    <td class="{{ $rowClass }}">{{ $crm->leads }}</td>
-                    <td class="{{ $rowClass }}">{{ $crm->kota }}</td>
-                    <td class="{{ $rowClass }}">{{ $crm->nama_bisnis }}</td>
-                    <td class="{{ $rowClass }}">{{ $crm->no_wa }}</td>
-                    <td class="{{ $rowClass }}">{{ $crm->total_omset }}</td>
-                    <td class="{{ $rowClass }}">{{ $crm->kendala }}</td>
-                    <td class="{{ $rowClass }}">{{ $crm->fu1 }}</td>
-                    <td class="{{ $rowClass }}">{{ $crm->fu2 }}</td>
-                    <td class="{{ $rowClass }}">{{ $crm->fu3 }}</td>
-                    <td style="color: white;">
-                    <span
-                        class="badge status-badge
-            @if($crm->status == 'cold') bg-secondary
-            @elseif($crm->status == 'warm') bg-warning
-            @elseif($crm->status == 'hot') bg-success
-            @elseif($crm->status == 'no') bg-danger
+                <table id="myTable" class="table table-bordered table-striped nowrap" style="width: max-content;">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Peserta</th>
+                            <th>Sumber Leads</th>
+                            <th>Provinsi</th>
+                            <th>Kota</th>
+                            <th>Nama Bisnis</th>
+                            <th>Jenis Bisnis</th>
+                            <th>No.WA</th>
+                            <th>Situasi Bisnis</th>
+                            <th>Kendala</th>
+                            <th>Ikut Kelas / Tidak</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($data as $data)
+                        <tr
+                            @php
+                            $rowClass='' ;
+                            if($data->status == 'cold') $rowClass = 'table-secondary';
+                            elseif($data->status == 'warm') $rowClass = 'table-warning';
+                            elseif($data->status == 'hot') $rowClass = 'table-success';
+                            elseif($data->status == 'no') $rowClass = 'table-danger';
+                            @endphp
+                            >
+                            <td class="{{ $rowClass }}">{{ $loop->iteration }}</td>
+                            <td class="{{ $rowClass }}">{{ $data->nama }}</td>
+                            <td class="{{ $rowClass }}">{{ $data->leads }}</td>
+                            <td class="{{ $rowClass }}">{{ $data->kota }}</td>
+                            <td class="{{ $rowClass }}">{{ $data->nama_bisnis }}</td>
+                            <td class="{{ $rowClass }}">{{ $data->no_wa }}</td>
+                            <td class="{{ $rowClass }}">{{ $data->kendala }}</td>
+                            <td class="{{ $rowClass }}">{{ $data->fu1 }}</td>
+                            <td class="{{ $rowClass }}">{{ $data->fu2 }}</td>
+                            <td class="{{ $rowClass }}">{{ $data->fu3 }}</td>
+                            <td style="color: white;">
+                                <span
+                                    class="badge status-badge
+            @if($data->status == 'cold') bg-secondary
+            @elseif($data->status == 'warm') bg-warning
+            @elseif($data->status == 'hot') bg-success
+            @elseif($data->status == 'no') bg-danger
             @else bg-light
             @endif"
-                        data-id="{{ $crm->id }}"
-                        data-status="{{ $crm->status }}"
-                        style="cursor: pointer;"
-                        onclick="changeStatus(this)">
-                        {{ ucfirst($crm->status) }}
-                    </span>
-                    </td>
-                    <td class="d-flex justify-content-center border-0">
-                    <a class="btn btn-info" href="{{ route('admin.database.show', $crm->id) }}"><i class="fa-solid fa-eye"></i></a>
-                    &nbsp;
-                    <a class="btn btn-primary" href="{{ route('admin.database.edit', $crm->id) }}"><i class="fa-solid fa-pen-to-square"></i></a>
-                    &nbsp;
-                    <a class="btn btn-danger" href="{{ route('delete-database', $crm->id) }}" onclick="event.preventDefault(); if(confirm('Apakah anda yakin menghapus data ini?')) { document.getElementById('delete-form-{{ $crm->id }}').submit(); }"><i class="fa-solid fa-trash"></i></a>
-                    <form id="delete-form-{{ $crm->id }}" action="{{ route('delete-database', $crm->id) }}" method="POST" style="display: none;">
-                        @csrf
-                        @method('DELETE')
-                    </form>
-                    </td>
-                </tr>
-                @endforeach
-                </tbody>
-            </table>
+                                    data-id="{{ $data->id }}"
+                                    data-status="{{ $data->status }}"
+                                    style="cursor: pointer;"
+                                    onclick="changeStatus(this)">
+                                    {{ ucfirst($data->status) }}
+                                </span>
+                            </td>
+                            <td class="d-flex justify-content-center border-0">
+                                <a class="btn btn-info" href="{{ route('admin.database.show', $data->id) }}"><i class="fa-solid fa-eye"></i></a>
+                                &nbsp;
+                                <a class="btn btn-primary" href="{{ route('admin.database.edit', $data->id) }}"><i class="fa-solid fa-pen-to-square"></i></a>
+                                &nbsp;
+                                <a class="btn btn-danger" href="{{ route('delete-database', $data->id) }}" onclick="event.preventDefault(); if(confirm('Apakah anda yakin menghapus data ini?')) { document.getElementById('delete-form-{{ $data->id }}').submit(); }"><i class="fa-solid fa-trash"></i></a>
+                                <form id="delete-form-{{ $data->id }}" action="{{ route('delete-database', $data->id) }}" method="POST" style="display: none;">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -136,114 +134,132 @@
                 {{csrf_field()}}
                 <div class="modal-body">
                     <div class="card-body">
-
+                        <!-- Nama Peserta -->
                         <div class="form-group">
                             <label for="nama_peserta">Nama Peserta</label>
                             <input type="text" class="form-control" id="nama" name="nama" required>
                         </div>
+                        <!--Sumber Leads -->
                         <div class="form-group">
-                            <label for="sumber_leads">Sumber Leads</label>
-                            <input type="text" class="form-control" id="leads" name="leads" required>
+                            <select name="leads" id="leads" onchange="toggleCustomLead(this)">
+                                <option value="Iklan">Iklan</option>
+                                <option value="Instagram">Instagram</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="Tiktok">Tiktok</option>
+                                <option value="Lain-Lain">Lain-Lain</option>
+                            </select>
+
+                            <input type="text" name="leads_custom" id="leads_custom" style="display:none;" placeholder="Isi sumber lainnya">
+                            <script>
+                                function toggleCustomLead(select) {
+                                    const input = document.getElementById('leads_custom');
+                                    if (select.value === 'Lain-Lain') {
+                                        input.style.display = 'block';
+                                    } else {
+                                        input.style.display = 'none';
+                                        input.value = ''; // reset jika bukan "Lain-Lain"
+                                    }
+                                }
+                            </script>
+
                         </div>
+                        <!-- Provinsi -->
                         <div class="form-group">
-                            <label for="kota">Kota</label>
-                            <input type="text" class="form-control" id="kota" name="kota" required>
+                            <label for="provinsi">Provinsi</label>
+                            <select name="provinsi_id" id="provinsi" class="form-control" required></select>
+                            <input type="hidden" name="provinsi_nama" id="provinsi_nama">
                         </div>
+
+                        <div class="form-group">
+                            <label for="kota">Kota/Kabupaten</label>
+                            <select name="kota_id" id="kota" class="form-control" required></select>
+                            <input type="hidden" name="kota_nama" id="kota_nama">
+                        </div>
+                        <!-- Script API Wilayah Indonesia -->
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+                                const provinsiSelect = document.getElementById('provinsi');
+                                const kotaSelect = document.getElementById('kota');
+                                const provinsiNama = document.getElementById('provinsi_nama');
+                                const kotaNama = document.getElementById('kota_nama');
+
+                                // Ambil daftar provinsi
+                                fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        data.forEach(prov => {
+                                            provinsiSelect.innerHTML += `<option value="${prov.id}" data-nama="${prov.name}">${prov.name}</option>`;
+                                        });
+                                    });
+
+                                // Saat provinsi dipilih
+                                provinsiSelect.addEventListener('change', function() {
+                                    const provId = this.value;
+                                    const provText = this.options[this.selectedIndex].getAttribute('data-nama');
+                                    provinsiNama.value = provText;
+
+                                    // Reset kota
+                                    kotaSelect.innerHTML = '<option value="">Loading...</option>';
+
+                                    // Ambil kota berdasarkan provinsi
+                                    fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provId}.json`)
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            kotaSelect.innerHTML = '<option value="">-- Pilih Kota/Kabupaten --</option>';
+                                            data.forEach(kota => {
+                                                kotaSelect.innerHTML += `<option value="${kota.id}" data-nama="${kota.name}">${kota.name}</option>`;
+                                            });
+                                        });
+                                });
+
+                                // Simpan nama kota saat dipilih
+                                kotaSelect.addEventListener('change', function() {
+                                    const kotaText = this.options[this.selectedIndex].getAttribute('data-nama');
+                                    kotaNama.value = kotaText;
+                                });
+                            });
+                        </script>
+                        <!-- Jenis Bisnis -->
+                        <div class="form-group">
+                            <select name="kategori_bisnis_id" class="form-control">
+                                @foreach($kategori_bisnis as $item)
+                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Nama Bisnis -->
                         <div class="form-group">
                             <label for="nama_bisnis">Nama Bisnis</label>
                             <input type="text" class="form-control" id="nama_bisnis" name="nama_bisnis" required>
                         </div>
+                        <!-- No. WA -->
                         <div class="form-group">
                             <label for="no_wa">No. WA</label>
                             <input type="text" class="form-control" id="no_wa" name="no_wa" required>
                         </div>
-                        <div class="form-group">
-                            <label for="total_omset">Total Omset</label>
-                            <input type="text" class="form-control" id="total_omset" name="total_omset" required>
+                        <!-- Situasi bisnis -->
+                        <div class="form-group ">
+                            <label for="situasi_bisnis">Situasi Bisnis</label>
+                            <input type="text" class="form-control" id="situasi_bisnis" name="situasi_bisnis" required>
                         </div>
-                        <div class="form-group">
-                            <label for="kendala">Kendala</label>
-                            <textarea class="form-control" id="kendala" name="kendala"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="fu1">Follow Up 1</label>
-                            <input type="text" class="form-control" id="fu1" name="fu1">
-                        </div>
-                        <div class="form-group">
-                            <label for="fu2">Follow Up 2</label>
-                            <input type="text" class="form-control" id="fu2" name="fu2">
-                        </div>
-                        <div class="form-group">
-                            <label for="fu3">Follow Up 3</label>
-                            <input type="text" class="form-control" id="fu3" name="fu3">
-                        </div>
-                    </div>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
+                        <!-- Kendala -->
+                        <div class="form-group ">
+                            <label for="kendala">Kendala</label>
+                            <textarea class="form-control" id="kendala" name="kendala" required></textarea>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
             </form>
         </div>
     </div>
 </div>
-<script>
-    function changeStatus(el) {
-        const statuses = ['cold', 'warm', 'hot', 'no'];
-        let currentStatus = el.getAttribute('data-status');
-        let idx = statuses.indexOf(currentStatus);
-        let nextStatus = statuses[(idx + 1) % statuses.length];
-        let id = el.getAttribute('data-id');
 
-        $.ajax({
-            url: '/admin/database/change-status/' + id,
-            type: 'POST',
-            data: {
-                status: nextStatus,
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                // Ubah teks badge
-                el.textContent = nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1);
-                el.setAttribute('data-status', nextStatus);
-
-                // Ubah warna badge
-                el.classList.remove('bg-secondary', 'bg-warning', 'bg-success', 'bg-danger', 'bg-light');
-                if(nextStatus === 'cold') el.classList.add('bg-secondary');
-                else if(nextStatus === 'warm') el.classList.add('bg-warning');
-                else if(nextStatus === 'hot') el.classList.add('bg-success');
-                else if(nextStatus === 'no') el.classList.add('bg-danger');
-
-                // Warnai seluruh baris (No sampai FU3)
-                let row = el.closest('tr');
-                let tds = row.querySelectorAll('td');
-                tds.forEach((td, i) => {
-                    if(i <= 10) {
-                        td.classList.remove('table-secondary', 'table-warning', 'table-success', 'table-danger', 'table-light');
-                        if(nextStatus === 'cold') td.classList.add('table-secondary');
-                        else if(nextStatus === 'warm') td.classList.add('table-warning');
-                        else if(nextStatus === 'hot') td.classList.add('table-success');
-                        else if(nextStatus === 'no') td.classList.add('table-danger');
-                    }
-                });
-            }
-        });
-    }
-
-    // Highlight baris saat load pertama
-    $(document).ready(function() {
-        $('.status-badge').each(function() {
-            let status = $(this).data('status');
-            let row = $(this).closest('tr');
-            row.find('td').slice(0, 11).removeClass('table-secondary table-warning table-success table-danger table-light');
-            if(status === 'cold') row.find('td').slice(0, 11).addClass('table-secondary');
-            else if(status === 'warm') row.find('td').slice(0, 11).addClass('table-warning');
-            else if(status === 'hot') row.find('td').slice(0, 11).addClass('table-success');
-            else if(status === 'no') row.find('td').slice(0, 11).addClass('table-danger');
-        });
-    });
-</script>
 
 <!-- End Modal Create -->
 
@@ -280,10 +296,6 @@
                         <div class="form-group  ">
                             <label for="update_no_wa">No. WA</label>
                             <input type="text" class="form-control" id="update_no_wa" name="no_wa" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="update_total_omset">Total Omset</label>
-                            <input type="text" class="form-control" id="update_total_omset" name="total_omset" required>
                         </div>
                         <div class="form-group">
                             <label for="update_kendala">Kendala</label>

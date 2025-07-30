@@ -78,7 +78,7 @@
         </div>
         
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <span>Tidak Dihubungi (No)</span>
+            <span>Tidak Bisa Ikut (No)</span>
             <span class="badge bg-danger text-white rounded-pill px-3 py-2">2</span>
         </div>
 

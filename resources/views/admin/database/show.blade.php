@@ -35,10 +35,6 @@
                     <td>{{ $crm->no_wa }}</td>
                 </tr>
                 <tr>
-                    <th>Total Omset</th>
-                    <td>{{ $crm->total_omset }}</td>
-                </tr>
-                <tr>
                     <th>Kendala</th>
                     <td>{{ $crm->kendala }}</td>
                 </tr>
