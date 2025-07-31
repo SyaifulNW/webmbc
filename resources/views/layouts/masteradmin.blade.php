@@ -101,10 +101,11 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Daftar Kelas MBC:</h6>
-                        <a class="collapse-item" href="{{route('admin.database.database')}}">Sistemasi Bisnis</a>
-                        <a class="collapse-item" href="{{route('admin.database.database')}}">Great Manager</a>
-                        <a class="collapse-item" href="{{route('admin.database.database')}}">Leadership</a>
-                        <a class="collapse-item" href="{{route('admin.database.database')}}">Scale Up</a>
+                        @foreach ($kelas as $item)
+                            <a class="collapse-item" href="#">
+                                {{ $item->nama_kelas }}
+                            </a>
+                        @endforeach
                     </div>
                 </div>
             </li>

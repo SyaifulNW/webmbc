@@ -33,7 +33,7 @@
                             <th>Situasi Bisnis</th>
                             <th>Kendala</th>
                             <th>Ikut Kelas / Tidak</th>
-                     
+                            <th>Kelas</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -52,19 +52,46 @@
                             <td>{{ $item->kendala }}</td>
                             <td>{{ $item->ikut_kelas == 1 ? 'Ya' : 'Tidak' }}</td>
                             <td>
+                                @if($item->kelas_id)
+                                    {{ $item->kelas->nama_kelas }}
+                                @else
+                                    -
+                                @endif
+                            <td>
                                 <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm">
                                     <i class="fa-solid fa-eye" style="color: #ffffff;"></i>
                                 </a>
                                 <a href="{{ route('admin.database.edit', $item->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                                 </a>
-                                <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">
+                                    <button type="button" class="btn btn-danger btn-sm btn-delete">
                                         <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                     </button>
                                 </form>
+                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                <script>
+                                    $(document).on('click', '.btn-delete', function(e) {
+                                        e.preventDefault();
+                                        var form = $(this).closest('form');
+                                        Swal.fire({
+                                            title: 'Yakin hapus data?',
+                                            text: "Data yang dihapus tidak bisa dikembalikan!",
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#d33',
+                                            cancelButtonColor: '#3085d6',
+                                            confirmButtonText: 'Ya, hapus!',
+                                            cancelButtonText: 'Batal'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                form.submit();
+                                            }
+                                        });
+                                    });
+                                </script>
                             </td>
 
                         </tr>
@@ -80,6 +107,26 @@
 <!-- Modal Create -->
 
 
+<script>
+    $('#createForm').on('submit', function(e) {
+    e.preventDefault();
+
+    $.ajax({
+        url: $(this).attr('action'),
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(res) {
+            alert('Berhasil disimpan!');
+            $('#createPesertaModal').modal('hide');
+            location.reload(); // atau refresh tabel data
+        },
+        error: function(err) {
+            alert('Gagal menyimpan.');
+        }
+    });
+});
+
+</script>
 
 <script>
     function create() {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Kelas; // Ensure you import the Kelas model
 
 class HomeController extends Controller
 {
@@ -23,6 +24,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        // Fetch all classes for the sidebar
+        $kelas = Kelas::all();
+        return view('home', compact('kelas'));
     }
 }

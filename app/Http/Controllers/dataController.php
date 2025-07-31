@@ -84,7 +84,11 @@ class dataController extends Controller
      */
     public function show($id)
     {
-        //
+        // Fetch the data by ID
+        $data = data::findOrFail($id);
+        $kelas = Kelas::all(); // Fetch all classes for the sidebar
+        // Return a view to show the data
+        return view('admin.database.show', compact('data', 'kelas'));
     }
 
     /**
@@ -95,7 +99,12 @@ class dataController extends Controller
      */
     public function edit($id)
     {
-        //
+        // Fetch the data by ID
+        $data = data::findOrFail($id);
+        $jenisBisnis = jenisbisnis::all(); // Fetch all jenis bisnis
+        $kelas = Kelas::all(); // Fetch all classes for the sidebar
+        // Return a view to edit the data
+        return view('admin.database.edit', compact('data', 'jenisBisnis', 'kelas'));
     }
 
     /**
@@ -107,7 +116,51 @@ class dataController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // Validate the request data
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'leads' => 'required|in:hot,warm,cold', // Assuming leads is an enum field
+            'leads_custom' => 'nullable|string|max:255',
+            'provinsi_id' => 'required|integer',
+            'provinsi_nama' => 'required|string|max:255',
+            'kota_id' => 'required|integer',
+            'kota_nama' => 'required|string|max:255',
+            'jenisbisnis' => 'required|string|max:255',
+            'nama_bisnis' => 'required|string|max:255',
+            'no_wa' => 'required|string|max:15',
+            'situasi_bisnis' => 'nullable|string|max:255',
+            'kendala' => 'nullable|string|max:255',
+            'ikut_kelas' => 'boolean',
+            'kelas_id' => 'nullable|integer'
+        ]);
+
+        // Fetch the data by ID
+        $data = data::findOrFail($id);
+        // Update the data
+        $data->nama = $request->input('nama');
+        $data->leads = $request->input('leads');
+        $data->leads_custom = $request->input('leads_custom') ?? ''; // Set to empty string if null
+        $data->provinsi_id = $request->input('provinsi_id');
+        $data->provinsi_nama = $request->input('provinsi_nama');
+        $data->kota_id = $request->input('kota_id');
+        $data->kota_nama = $request->input('kota_nama');
+        $data->jenisbisnis = $request->input('jenisbisnis');
+        $data->nama_bisnis = $request->input('nama_bisnis');
+        $data->no_wa = $request->input('no_wa');
+        $data->situasi_bisnis = $request->input('situasi_bisnis');
+        $data->kendala = $request->input('kendala');
+        // Ya atau tidak
+        $data->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0; // Convert to boolean
+        if ($request->has('kelas_id'))
+        {
+            $data->kelas_id = $request->input('kelas_id');
+        } else {
+            $data->kelas_id = null; // Set to null if not provided
+        }
+        $data->save();
+        // Redirect to the index page with a success message
+        return redirect()->route('admin.database.database')->with('success', 'Data has been updated successfully.');
+
     }
 
     /**
@@ -118,6 +171,11 @@ class dataController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // Fetch the data by ID
+        $data = data::findOrFail($id);
+        // Delete the data
+        $data->delete();
+        // Redirect to the index page with a success message
+        return redirect()->route('admin.database.database')->with('success', 'Data has been deleted successfully.');
     }
 }
