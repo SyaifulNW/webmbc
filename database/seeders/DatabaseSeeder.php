@@ -20,5 +20,17 @@ class DatabaseSeeder extends Seeder
             // Example: UserSeeder::class,
             // Example: ProductSeeder::class,
         ]);
+
+        // Seed jenis bisnis
+        $this->call([
+            JenisBisnisSeeder::class,
+        ]);
     }
+
+    /**
+     * Get the seeders that should be run.
+     *
+     * @return array
+     */
+
 }

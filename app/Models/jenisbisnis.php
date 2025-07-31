@@ -10,7 +10,7 @@ class jenisbisnis extends Model
     use HasFactory;
     protected $table = 'jenisbisnis';
     protected $fillable = [
-        'nama', // Nama jenis bisnis
+        'jenisbisnis', // Nama jenis bisnis
     ];
     public function data()
     {

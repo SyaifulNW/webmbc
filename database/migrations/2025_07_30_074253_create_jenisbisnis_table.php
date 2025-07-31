@@ -15,7 +15,7 @@ class CreateJenisbisnisTable extends Migration
     {
         Schema::create('jenisbisnis', function (Blueprint $table) {
             $table->id();
-            $table->string('nama'); // Nama jenis bisnis
+            $table->string('jenisbisnis'); // Nama jenis bisnis
             $table->timestamps();
         });
     }
