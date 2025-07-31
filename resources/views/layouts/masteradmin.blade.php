@@ -84,11 +84,22 @@
             <span>DASHBOARD</span></a
           >
         </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="{{route('admin.database.database')}}">
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePeserta"
+            aria-expanded="false" aria-controls="collapsePeserta">
             <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>DATA CALON PESERTA</span></a
-          >
+            <span><strong>DATA PESERTA</strong></span>
+          </a>
+          <div id="collapsePeserta" class="collapse" aria-labelledby="headingPeserta" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <a class="collapse-item" href="{{ route('admin.database.database') }}">
+                Data Calon Peserta Baru
+              </a>
+              <a class="collapse-item" href="#">
+                Data Peserta Alumni
+              </a>
+            </div>
+          </div>
         </li>
 
           <li class="nav-item">
@@ -116,12 +127,7 @@
             <span>DAILY ACTIVITY</span></a
           >
         </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="#">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>DATA  ALUMNI</span></a
-          >
-        </li>
+  
 
         <!-- Divider -->
 

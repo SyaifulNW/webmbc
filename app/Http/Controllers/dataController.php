@@ -21,10 +21,9 @@ class dataController extends Controller
     {
         // Fetch all data from the 'data' table
         $data = data::all(); // Use pagination for better performance
-        $jenisBisnis = jenisbisnis::all(); // Fetch all jenis bisnis
         $kelas = Kelas::all(); // Fetch all classes
         // Return a view with the data
-        return view('admin.database.database', compact('data', 'kelas', 'jenisBisnis'));
+        return view('admin.database.database', compact('data', 'kelas'));
     }
 
     /**
@@ -101,10 +100,10 @@ class dataController extends Controller
     {
         // Fetch the data by ID
         $data = data::findOrFail($id);
-        $jenisBisnis = jenisbisnis::all(); // Fetch all jenis bisnis
+
         $kelas = Kelas::all(); // Fetch all classes for the sidebar
         // Return a view to edit the data
-        return view('admin.database.edit', compact('data', 'jenisBisnis', 'kelas'));
+        return view('admin.database.edit', compact('data', 'kelas'));
     }
 
     /**

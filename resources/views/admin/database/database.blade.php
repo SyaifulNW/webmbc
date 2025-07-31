@@ -237,8 +237,26 @@
                         <input type="text" class="form-control" id="nama_bisnis" name="nama_bisnis" required>
                     </div>
                     <div class="form-group">
-                        <label for="jenis_bisnis">Jenis Bisnis</label>
-                        <input type="text" class="form-control" id="jenisbisnis" name="jenisbisnis" required>
+                        <label for="jenisbisnis">Jenis Bisnis</label>
+                        <select name="jenisbisnis" id="jenisbisnis" class="form-control">
+                            <option value="Bisnis Properti">Bisnis Properti</option>
+                            <option value="Bisnis Manufaktur">Bisnis Manufaktur</option>
+                            <option value="Bisnis F&B (Food & Beverage)">Bisnis F&B (Food & Beverage)</option>
+                            <option value="Bisnis Jasa">Bisnis Jasa</option>
+                            <option value="Bisnis Digital">Bisnis Digital</option>
+                            <option value="Bisnis Online">Bisnis Online</option>
+                            <option value="Bisnis Franchise">Bisnis Franchise</option>
+                            <option value="Bisnis Edukasi & Pelatihan">Bisnis Edukasi & Pelatihan</option>
+                            <option value="Bisnis Kreatif">Bisnis Kreatif</option>
+                            <option value="Bisnis Agribisnis">Bisnis Agribisnis</option>
+                            <option value="Bisnis Kesehatan & Kecantikan">Bisnis Kesehatan & Kecantikan</option>
+                            <option value="Bisnis Keuangan">Bisnis Keuangan</option>
+                            <option value="Bisnis Transportasi & Logistik">Bisnis Transportasi & Logistik</option>
+                            <option value="Bisnis Pariwisata & Hospitality">Bisnis Pariwisata & Hospitality</option>
+                            <option value="Bisnis Sosial (Social Enterprise)">Bisnis Sosial (Social Enterprise)</option>
+                
+                        </select>
+                    </div>
                     </div>
                     <div class="form-group">
                         <label for="no_wa">No. WA</label>
@@ -271,10 +289,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="created_at">Tanggal Daftar</label>
-                        <input type="date" class="form-control" id="created_at" name="created_at" required>
-                    </div>
+              
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
