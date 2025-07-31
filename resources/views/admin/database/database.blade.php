@@ -257,37 +257,50 @@
                 
                         </select>
                     </div>
-                    </div>
+                
                     <div class="form-group">
                         <label for="no_wa">No. WA</label>
                         <input type="text" class="form-control" id="no_wa" name="no_wa" required>
                     </div>
                     <div class="form-group">
                         <label for="situasi_bisnis">Situasi Bisnis</label>
-                        <textarea class="form-control" id="situasi_bisnis" name="situasi_bisnis" rows="3" required></textarea>
+                        <textarea class="form-control" id="situasi_bisnis" name="situasi_bisnis" rows="3"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="kendala">Kendala</label>
-                        <textarea class="form-control" id="kendala" name="kendala" rows="3" required></textarea>
+                        <textarea class="form-control" id="kendala" name="kendala" rows="3"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="ikut_kelas">Apakah Prospek Ikut Kelas / Tidak</label>
-                        <select class="form-control" id="ikut_kelas" name="ikut_kelas" required>
-                            <option value="Ya">Ya</option>
-                            <option value="Tidak">Tidak</option>
+                        <select class="form-control" id="ikut_kelas" name="ikut_kelas">
+                            <option value="1">Ya</option>
+                            <option value="0">Tidak</option>
                         </select>
                     </div>
 
                     <!-- Kelas -->
-                    <div class="form-group">
+                    <div class="form-group" id="kelas_form_group" style="display: none;">
                         <label for="kelas">Kelas</label>
-                        <select class="form-control" id="kelas" name="kelas_id" required>
+                        <select class="form-control" id="kelas" name="kelas_id">
                             <option value="">Pilih Kelas</option>
                             @foreach($kelas as $k)
                             <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
                             @endforeach
                         </select>
                     </div>
+
+                    <script>
+                        $(document).ready(function() {
+                            $('#ikut_kelas').on('change', function() {
+                                if ($(this).val() == '1') {
+                                    $('#kelas_form_group').show();
+                                } else {
+                                    $('#kelas_form_group').hide();
+                                    $('#kelas').val('');
+                                }
+                            });
+                        });
+                    </script>
 
               
                 </div>
