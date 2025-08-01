@@ -16,10 +16,18 @@
                     <label for="nama" class="form-label">Nama</label>
                     <input type="text" class="form-control" id="nama" name="nama" value="{{ $data->nama }}" required>
                 </div>
-                <div class="mb-3">
-                    <label for="leads" class="form-label">Leads</label>
-                    <input type="text" class="form-control" id="leads" name="leads" value="{{ $data->leads }}" required>
-                </div>
+              <div class="form-group">
+                        <label for="leads">Sumber Leads</label>
+                        <select name="leads" id="leads" class="form-control">
+                            <option value="Iklan">Iklan</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="Tiktok">Tiktok</option>
+                            <option value="Lain-Lain">Lain-Lain</option>
+                        </select>
+
+                        <input type="text" name="leads_custom" class="form-control mt-2" placeholder="Isi jika Lain-Lain">
+                    </div>
                <div class="form-group">
                         <label for="provinsi">Provinsi</label>
                         <select id="provinsi" class="form-control" name="provinsi_id" required>

@@ -116,29 +116,16 @@ class dataController extends Controller
     public function update(Request $request, $id)
     {
         // Validate the request data
-        $request->validate([
-            'nama' => 'required|string|max:255',
-            'leads' => 'required|in:hot,warm,cold', // Assuming leads is an enum field
-            'leads_custom' => 'nullable|string|max:255',
-            'provinsi_id' => 'required|integer',
-            'provinsi_nama' => 'required|string|max:255',
-            'kota_id' => 'required|integer',
-            'kota_nama' => 'required|string|max:255',
-            'jenisbisnis' => 'required|string|max:255',
-            'nama_bisnis' => 'required|string|max:255',
-            'no_wa' => 'required|string|max:15',
-            'situasi_bisnis' => 'nullable|string|max:255',
-            'kendala' => 'nullable|string|max:255',
-            'ikut_kelas' => 'boolean',
-            'kelas_id' => 'nullable|integer'
-        ]);
-
-        // Fetch the data by ID
         $data = data::findOrFail($id);
-        // Update the data
         $data->nama = $request->input('nama');
-        $data->leads = $request->input('leads');
-        $data->leads_custom = $request->input('leads_custom') ?? ''; // Set to empty string if null
+        // Enum field
+        $data->leads = $request->input('leads'); // Assuming 'leads' is an enum field
+        // Custom field
+        if ($request->input('leads_custom') === null) {
+            $data->leads_custom = ''; // Set to empty string if null
+        } else {
+            $data->leads_custom = $request->input('leads_custom');
+        }
         $data->provinsi_id = $request->input('provinsi_id');
         $data->provinsi_nama = $request->input('provinsi_nama');
         $data->kota_id = $request->input('kota_id');
@@ -150,17 +137,12 @@ class dataController extends Controller
         $data->kendala = $request->input('kendala');
         // Ya atau tidak
         $data->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0; // Convert to boolean
-        if ($request->has('kelas_id'))
-        {
-            $data->kelas_id = $request->input('kelas_id');
-        } else {
-            $data->kelas_id = null; // Set to null if not provided
-        }
+        $data->kelas_id = $request->input('kelas_id');
         $data->save();
         // Redirect to the index page with a success message
         return redirect()->route('admin.database.database')->with('success', 'Data has been updated successfully.');
-
     }
+    
 
     /**
      * Remove the specified resource from storage.

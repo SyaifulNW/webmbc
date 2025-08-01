@@ -196,7 +196,6 @@
                         <input type="hidden" name="kota_nama" id="kota_nama">
                     </div>
 
-
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script>
                         // Ambil provinsi saat halaman dibuka
@@ -230,7 +229,6 @@
                             document.getElementById('kota_nama').value = nama;
                         });
                     </script>
-
 
                     <div class="form-group">
                         <label for="nama_bisnis">Nama Bisnis</label>
