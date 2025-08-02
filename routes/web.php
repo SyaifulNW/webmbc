@@ -42,6 +42,19 @@ Route::get('/ongkir/kota', [OngkirController::class, 'getKota'])->name('ongkir.k
 Route::get('/wilayah/provinsi', [WilayahController::class, 'getProvinces']);
 Route::get('/wilayah/kota/{id}', [WilayahController::class, 'getCities']);
 
+// Alumni Routes
+Route::post('/data/pindah-ke-alumni/{id}', [DataController::class, 'pindahKeAlumni'])->name('data.pindahKeAlumni');
+
+Route::get('/admin/alumni/alumni', [App\Http\Controllers\alumniController::class, 'index'])->name('admin.alumni.alumni');
+Route::get('/admin/alumni/create', [App\Http\Controllers\alumniController::class, 'create'])->name('admin.alumni.create');
+Route::post('/admin/alumni/store', [App\Http\Controllers\alumniController::class, 'store'])->name('admin.alumni.store');
+Route::get('/admin/alumni/{id}/edit', [App\Http\Controllers\alumniController::class, 'edit'])->name('admin.alumni.edit');
+Route::put('/admin/alumni/{id}', [App\Http\Controllers\alumniController::class, 'update'])->name('admin.alumni.update');
+Route::delete('/admin/alumni/{id}', [App\Http\Controllers\alumniController::class, 'destroy'])->name('delete-alumni');
+Route::get('/admin/alumni/{id}', [App\Http\Controllers\alumniController::class, 'show'])->name('admin.alumni.show');    
+
+// Sales Plan Routes 
+
 
 
 

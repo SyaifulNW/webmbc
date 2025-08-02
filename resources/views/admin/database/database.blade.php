@@ -12,11 +12,25 @@
 <div class="content">
     <div class="card card-info card-outline">
         <div class="card-header">
-            <div class="card-tools d-flex justify-content-between">
+            <div class="card-tools d-flex justify-content-between w-100">
                 <a href="#" class="btn btn-success" onclick="create()">Tambah &nbsp;<i class="fa-solid fa-plus"></i></a>
-                <!-- <a href="#" class="btn btn-warning">Update Database &nbsp;<i class="fa-solid fa-sync"></i></a> -->
+                <div>
+                    <input type="text" id="tableSearch" class="form-control" placeholder="Cari...">
+                </div>
             </div>
+            <script>
+                $(document).ready(function() {
+                    var table = $('#myTable').DataTable({
+                        responsive: true,
+                        autoWidth: false,
+                    });
+                    $('#tableSearch').on('keyup', function() {
+                        table.search(this.value).draw();
+                    });
+                });
+            </script>
         </div>
+
         <div class="card-body">
             <div style="overflow-x: auto; overflow-y: auto; width: 100%; max-height: 500px;">
                 <table id="myTable" class="table table-bordered table-striped nowrap" style="width: max-content;">
@@ -53,15 +67,41 @@
                             <td>{{ $item->ikut_kelas == 1 ? 'Ya' : 'Tidak' }}</td>
                             <td>
                                 @if($item->kelas_id)
-                                    {{ $item->kelas->nama_kelas }}
+                                {{ $item->kelas->nama_kelas }}
                                 @else
-                                    -
+                                -
                                 @endif
                             <td>
-                                <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm" title="Lihat Detail">
                                     <i class="fa-solid fa-eye" style="color: #ffffff;"></i>
                                 </a>
-                                <a href="{{ route('admin.database.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                <form action="{{ route('data.pindahKeAlumni', $item->id) }}" method="POST" style="display:inline;" class="pindah-alumni-form">
+                                    @csrf
+                                    <button type="button" class="btn btn-success btn-sm btn-pindah-alumni" title="Pindah ke Alumni">
+                                        <i class="fa-solid fa-reply" style="color: #ffffff;"></i>
+                                    </button>
+                                </form>
+                                <script>
+                                    $(document).on('click', '.btn-pindah-alumni', function(e) {
+                                        e.preventDefault();
+                                        var form = $(this).closest('form');
+                                        Swal.fire({
+                                            title: 'Yakin pindah ke alumni?',
+                                            text: "Data akan dipindahkan ke alumni.",
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#28a745',
+                                            cancelButtonColor: '#3085d6',
+                                            confirmButtonText: 'Ya, pindahkan!',
+                                            cancelButtonText: 'Batal'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                form.submit();
+                                            }
+                                        });
+                                    });
+                                </script>
+                                <a href="{{ route('admin.database.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit Data">
                                     <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                                 </a>
                                 <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
@@ -98,7 +138,7 @@
                         @endforeach
                     </tbody>
                 </table>
-              
+
             </div>
         </div>
     </div>
@@ -109,23 +149,22 @@
 
 <script>
     $('#createForm').on('submit', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    $.ajax({
-        url: $(this).attr('action'),
-        method: 'POST',
-        data: $(this).serialize(),
-        success: function(res) {
-            alert('Berhasil disimpan!');
-            $('#createPesertaModal').modal('hide');
-            location.reload(); // atau refresh tabel data
-        },
-        error: function(err) {
-            alert('Gagal menyimpan.');
-        }
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(res) {
+                alert('Berhasil disimpan!');
+                $('#createPesertaModal').modal('hide');
+                location.reload(); // atau refresh tabel data
+            },
+            error: function(err) {
+                alert('Gagal menyimpan.');
+            }
+        });
     });
-});
-
 </script>
 
 <script>
@@ -252,10 +291,10 @@
                             <option value="Bisnis Transportasi & Logistik">Bisnis Transportasi & Logistik</option>
                             <option value="Bisnis Pariwisata & Hospitality">Bisnis Pariwisata & Hospitality</option>
                             <option value="Bisnis Sosial (Social Enterprise)">Bisnis Sosial (Social Enterprise)</option>
-                
+
                         </select>
                     </div>
-                
+
                     <div class="form-group">
                         <label for="no_wa">No. WA</label>
                         <input type="text" class="form-control" id="no_wa" name="no_wa" required>
@@ -300,7 +339,7 @@
                         });
                     </script>
 
-              
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>

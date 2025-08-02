@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Kelas; // Ensure you import the Kelas model
 use App\Models\data;
+use App\Models\Alumni; // Ensure you import the Alumni model
+use App\Models\salesplan; // Ensure you import the Salesplan model
 use App\Models\jenisbisnis; // Ensure you import the Jenis model
 use Illuminate\Support\Facades\DB;
 
@@ -52,7 +54,7 @@ class dataController extends Controller
         // Custom field
         if ($request->input('leads_custom') === null) {
             $data->leads_custom = ''; // Set to empty string if null
-        } else { 
+        } else {
             $data->leads_custom = $request->input('leads_custom');
         }
         $data->provinsi_id = $request->input('provinsi_id');
@@ -68,11 +70,29 @@ class dataController extends Controller
         $data->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0; // Convert to boolean
         $data->kelas_id = $request->input('kelas_id');
         $data->save();
+        // Salesplan 
+        //  if ($data->ikut_kelas && $data->kelas_id) {
+        // $kelas = Kelas::find($data->kelas_id);
+
+        // if ($kelas) {
+        //     $cek = SalesPlan::where('nama', $data->nama)
+        //         ->where('kelas', $kelas->nama_kelas)
+        //         ->first();
+
+        //     if (!$cek) {
+        //         SalesPlan::create([
+        //             'nama' => $data->nama,
+        //             'sumber_lead' => $data->leads,
+        //             'nama_bisnis' => $data->nama_bisnis,
+        //             'kendala' => $data->kendala,
+        //             'kelas' => $kelas->nama_kelas,
+        //             'indikator_warna' => 'cold',
+        //         ]);
+        //     }
+        // }
+        // }
         // Redirect to the index page with a success message
         return redirect()->route('admin.database.database')->with('success', 'Data has been added successfully.');
-
-        
-        
     }
 
     /**
@@ -137,12 +157,13 @@ class dataController extends Controller
         $data->kendala = $request->input('kendala');
         // Ya atau tidak
         $data->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0; // Convert to boolean
+        
         $data->kelas_id = $request->input('kelas_id');
         $data->save();
         // Redirect to the index page with a success message
         return redirect()->route('admin.database.database')->with('success', 'Data has been updated successfully.');
     }
-    
+
 
     /**
      * Remove the specified resource from storage.
@@ -158,5 +179,39 @@ class dataController extends Controller
         $data->delete();
         // Redirect to the index page with a success message
         return redirect()->route('admin.database.database')->with('success', 'Data has been deleted successfully.');
+    }
+
+    public function pindahKeAlumni($id)
+    {
+        // Fetch the data by ID
+        $data = data::findOrFail($id);
+
+        // Create a new Alumni instance
+        $alumni = new \App\Models\Alumni();
+        $alumni->nama = $data->nama;
+        $alumni->leads = $data->leads;
+        $alumni->leads_custom = $data->leads_custom;
+        $alumni->provinsi_id = $data->provinsi_id;
+        $alumni->provinsi_nama = $data->provinsi_nama;
+        $alumni->kota_id = $data->kota_id;
+        $alumni->kota_nama = $data->kota_nama;
+        $alumni->jenis_bisnis = $data->jenisbisnis;
+        $alumni->nama_bisnis = $data->nama_bisnis;
+        $alumni->no_wa = $data->no_wa;
+        $alumni->kendala = $data->kendala;
+        $alumni->ikut_kelas = $data->ikut_kelas;
+        $alumni->kelas_id = $data->kelas_id;
+        // Additional fields for alumni
+        $alumni->sudah_pernah_ikut_kelas_apa_saja = null; // Set as needed
+        $alumni->kelas_yang_belum_diikuti_apa_saja = null; // Set as needed
+
+        // Save the alumni record
+        $alumni->save();
+
+        // Delete the original data record
+        $data->delete();
+
+        // Redirect to the alumni index page with a success message
+        return redirect()->route('admin.alumni.alumni')->with('success', 'Data has been moved to Alumni successfully.');
     }
 }

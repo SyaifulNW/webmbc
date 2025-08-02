@@ -53,7 +53,7 @@
       <!-- Sidebar -->
 
       <ul
-        class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion"
+        class="navbar-nav bg-gradient-info sidebar sidebar-dark accordion"
         id="accordionSidebar"
       >
       <br>
@@ -95,7 +95,7 @@
               <a class="collapse-item" href="{{ route('admin.database.database') }}">
                 Data Calon Peserta Baru
               </a>
-              <a class="collapse-item" href="#">
+              <a class="collapse-item" href="{{ route('admin.alumni.alumni') }}">
                 Data Peserta Alumni
               </a>
             </div>
@@ -223,7 +223,7 @@
                   aria-expanded="false"
                 >
                   <span class="mr-2 d-none d-lg-inline text-gray-600 small"
-                    ><strong>CS SHAFA</strong>
+                    ><strong>ADMINISTRATOR</strong>
                   </span>
                   <img
                     class="img-profile rounded-circle"
@@ -315,7 +315,7 @@
               data-dismiss="modal"
               aria-label="Close"
             >
-              <span aria-hidden="true">×</span>
+              <span aria-hidden="true">X</span>
             </button>
           </div>
           <div class="modal-body">
