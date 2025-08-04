@@ -101,6 +101,32 @@
                                         });
                                     });
                                 </script>
+                                <form action="{{ route('data.pindahKeSalesPlan', $item->id) }}" method="POST" style="display:inline;" class="pindah-salesplan-form">
+                                    @csrf
+                                    <button type="button" class="btn btn-primary btn-sm btn-pindah-salesplan" title="Pindah ke Sales Plan">
+                                        <i class="fa-solid fa-arrow-right" style="color: #ffffff;"></i>
+                                    </button>
+                                </form>
+                                <script>
+                                    $(document).on('click', '.btn-pindah-salesplan', function(e) {
+                                        e.preventDefault();
+                                        var form = $(this).closest('form');
+                                        Swal.fire({
+                                            title: 'Yakin pindah ke Sales Plan?',
+                                            text: "Data akan dipindahkan ke Sales Plan.",
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#007bff',
+                                            cancelButtonColor: '#3085d6',
+                                            confirmButtonText: 'Ya, pindahkan!',
+                                            cancelButtonText: 'Batal'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                form.submit();
+                                            }
+                                        });
+                                    });
+                                </script>
                                 <a href="{{ route('admin.database.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit Data">
                                     <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                                 </a>

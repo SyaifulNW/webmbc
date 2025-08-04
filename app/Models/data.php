@@ -46,5 +46,9 @@ class data extends Model
     {
         return $this->belongsTo('App\Models\jenisbisnis', 'jenis_bisnis');
     }
+    public function salesplan()
+    {
+        return $this->hasMany('App\Models\salesplan', 'data_id');
+    }
 }
 

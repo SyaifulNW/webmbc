@@ -70,28 +70,6 @@ class dataController extends Controller
         $data->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0; // Convert to boolean
         $data->kelas_id = $request->input('kelas_id');
         $data->save();
-        // Salesplan 
-        //  if ($data->ikut_kelas && $data->kelas_id) {
-        // $kelas = Kelas::find($data->kelas_id);
-
-        // if ($kelas) {
-        //     $cek = SalesPlan::where('nama', $data->nama)
-        //         ->where('kelas', $kelas->nama_kelas)
-        //         ->first();
-
-        //     if (!$cek) {
-        //         SalesPlan::create([
-        //             'nama' => $data->nama,
-        //             'sumber_lead' => $data->leads,
-        //             'nama_bisnis' => $data->nama_bisnis,
-        //             'kendala' => $data->kendala,
-        //             'kelas' => $kelas->nama_kelas,
-        //             'indikator_warna' => 'cold',
-        //         ]);
-        //     }
-        // }
-        // }
-        // Redirect to the index page with a success message
         return redirect()->route('admin.database.database')->with('success', 'Data has been added successfully.');
     }
 
@@ -157,9 +135,19 @@ class dataController extends Controller
         $data->kendala = $request->input('kendala');
         // Ya atau tidak
         $data->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0; // Convert to boolean
-        
+
         $data->kelas_id = $request->input('kelas_id');
         $data->save();
+
+        // Otomatis masuk ke Sales Plan jika ikut kelas
+        if ($data->ikut_kelas && $data->kelas_id && !$data->salesPlan) {
+            SalesPlan::create([
+                'data_id' => $data->id,
+                'keterangan' => 'Dimasukkan otomatis saat peserta memilih ikut kelas',
+                'indikator_warna' => 'kuning',
+            ]);
+        }
+
         // Redirect to the index page with a success message
         return redirect()->route('admin.database.database')->with('success', 'Data has been updated successfully.');
     }
@@ -213,5 +201,27 @@ class dataController extends Controller
 
         // Redirect to the alumni index page with a success message
         return redirect()->route('admin.alumni.alumni')->with('success', 'Data has been moved to Alumni successfully.');
+    }
+
+    public function pindahkesalesplan($id)
+    {
+        $data = Data::with('kelas')->findOrFail($id);
+
+        // Cek apakah sudah punya sales plan
+        if ($data->salesplan->isNotEmpty()) {
+            return redirect()->back()->with('error', 'Data ini sudah memiliki Sales Plan.');
+        }
+        // Cek apakah ikut kelas
+        if (!$data->ikut_kelas || !$data->kelas_id) {
+            return back()->with('error', 'Peserta belum memilih kelas.');
+        }
+        // Simpan ke database salesplan
+        SalesPlan::create([
+            'data_id' => $data->id,
+            'keterangan' => 'Dimasukkan otomatis berdasarkan kelas: ' . ($data->kelas->nama ?? 'Tidak diketahui'),
+            'status' => 'cold', // default warna indikator
+        ]);
+        // Redirect ke halaman sales plan
+        return redirect()->route('admin.salesplan.index')->with('success', 'Data telah ditambahkan ke Sales Plan.');
     }
 }

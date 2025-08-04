@@ -1,5 +1,95 @@
 @extends('layouts.masteradmin')
 @section('content')
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        font-size: 14px;
+        padding: 6px;
+        text-align: left;
+    }
+
+    @media only screen and (max-width: 768px) {
+
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+            display: block;
+        }
+
+        thead {
+            display: none;
+        }
+
+        td {
+            position: relative;
+            padding-left: 50%;
+        }
+
+        td:before {
+            position: absolute;
+            left: 6px;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        td:nth-of-type(1):before {
+            content: "Nama";
+        }
+
+        td:nth-of-type(2):before {
+            content: "Kelas";
+        }
+
+        td:nth-of-type(3):before {
+            content: "FU1 Hasil";
+        }
+
+        td:nth-of-type(4):before {
+            content: "FU1 TL";
+        }
+
+        td:nth-of-type(5):before {
+            content: "FU2 Hasil";
+        }
+
+        td:nth-of-type(6):before {
+            content: "FU2 TL";
+        }
+
+        td:nth-of-type(7):before {
+            content: "FU3 Hasil";
+        }
+
+        td:nth-of-type(8):before {
+            content: "FU3 TL";
+        }
+
+        td:nth-of-type(9):before {
+            content: "FU4 Hasil";
+        }
+
+        td:nth-of-type(10):before {
+            content: "FU4 TL";
+        }
+
+        td:nth-of-type(11):before {
+            content: "FU5 Hasil";
+        }
+
+        td:nth-of-type(12):before {
+            content: "FU5 TL";
+        }
+    }
+</style>
+
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Sales Plan</h1>
     <div class="col-sm-6">
@@ -10,75 +100,70 @@
     </div>
 </div>
 
-<div class="content">
-    <div class="card card-info card-outline">
-        <div class="card-header">
-            <h3 class="card-title">Sales Plan untuk Kelas: {{ $kelas }}</h3>
-        </div>
-        <div class="card-body">
-            <div style="overflow-x: auto; overflow-y: auto; width: 100%; max-height: 600px;">
-                <table id="myTable" class="table table-bordered table-striped nowrap" style="width: max-content;">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Sumber Lead</th>
-                            <th>Nama Bisnis</th>
-                            <th>Kendala</th>
-                            @for ($i = 1; $i <= 8; $i++)
-                                <th>FU {{ $i }}<br><small>Hasil & Rencana</small></th>
-                            @endfor
-                            <th>Keterangan</th>
-                            <th>Indikator Warna</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($data as $item)
-                        <tr>
-                            <form action="{{ route('sales-plan.update', $item->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->nama }}</td>
-                                <td>{{ $item->sumber_lead }}</td>
-                                <td>{{ $item->nama_bisnis }}</td>
-                                <td>{{ $item->kendala }}</td>
-                                
-                                @for ($i = 1; $i <= 8; $i++)
-                                    <td>
-                                        <input type="text" name="fu{{ $i }}_hasil" class="form-control mb-1" placeholder="Hasil" value="{{ $item->{'fu'.$i.'_hasil'} }}">
-                                        <input type="text" name="fu{{ $i }}_rencana" class="form-control" placeholder="Rencana" value="{{ $item->{'fu'.$i.'_rencana'} }}">
-                                    </td>
-                                @endfor
+<div class="container">
+  <div style="overflow-x: auto; white-space: nowrap;">
+    <table style="border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif; font-size: 14px; min-width: 1200px;">
+        <thead>
+            <tr style="background: linear-gradient(to right, #376bb9ff, #1c7f91ff); color: white;">
+                <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Kelas</th>
+                <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Nama</th>
+                <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Sumber Lead</th>
+                <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Situasi</th>
+                <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Kendala</th>
+                <th colspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">FU1</th>
+                <th colspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">FU2</th>
+                <th colspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">FU3</th>
+                <th colspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">FU4</th>
+                <th colspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">FU5</th>
+                <th rowspan="2" style=" text-align:center; padding: 10px; border: 1px solid #ccc;">Keterangan</th>
+                <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Status</th>
+                <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Action</th>
+           
+            </tr>
+            <tr style="background: linear-gradient(to right, #376bb9ff, #1c7f91ff); color: white;">
+                <th style="padding: 8px; border: 1px solid #ccc;">Hasil</th>
+                <th style="padding: 8px; border: 1px solid #ccc;">Tindak Lanjut</th>
+                <th style="padding: 8px; border: 1px solid #ccc;">Hasil</th>
+                <th style="padding: 8px; border: 1px solid #ccc;">Tindak Lanjut</th>
+                <th style="padding: 8px; border: 1px solid #ccc;">Hasil</th>
+                <th style="padding: 8px; border: 1px solid #ccc;">Tindak Lanjut</th>
+                <th style="padding: 8px; border: 1px solid #ccc;">Hasil</th>
+                <th style="padding: 8px; border: 1px solid #ccc;">Tindak Lanjut</th>
+                <th style="padding: 8px; border: 1px solid #ccc;">Hasil</th>
+                <th style="padding: 8px; border: 1px solid #ccc;">Tindak Lanjut</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($salesplans as $plan)
+            <tr style="background: linear-gradient(to right, #e6e7e9ff, #fafbfcff); color: black;">
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kelas->nama_kelas ?? '-' }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->nama ?? '-' }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->leads ?? '-' }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->situasi_bisnis ?? '-' }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kendala ?? '-' }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu1_hasil }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu1_tindak_lanjut }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu2_hasil }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu2_tindak_lanjut }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu3_hasil }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu3_tindak_lanjut }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu4_hasil }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu4_tindak_lanjut }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_hasil }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_tindak_lanjut }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->keterangan }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->status }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;" >
+                      <a href="#" class="btn btn-warning btn-sm" title="Edit Data">
+                                    <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
+                                </a>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
 
-                                <td>
-                                    <textarea name="keterangan" class="form-control" rows="2">{{ $item->keterangan }}</textarea>
-                                </td>
-                                <td>
-                                    <select name="indikator_warna" class="form-control">
-                                        <option value="green" {{ $item->indikator_warna == 'green' ? 'selected' : '' }}>Green</option>
-                                        <option value="yellow" {{ $item->indikator_warna == 'yellow' ? 'selected' : '' }}>Yellow</option>
-                                        <option value="red" {{ $item->indikator_warna == 'red' ? 'selected' : '' }}>Red</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <!-- Show -->
-                                    <a href="{{ route('sales-plan.show', [$kelas, $item->id]) }}" class="btn btn-info btn-sm">
-                                        <i class="fa-solid fa-eye" style="color: #ffffff;"></i>
-                                    </a>
-                                    <a href="{{ route('sales-plan.edit', [$kelas, $item->id]) }}" class="btn btn-warning btn-sm">
-                                        <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
-                                    </a>
 
-                                </td>
-                            </form>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 </div>
 @endsection

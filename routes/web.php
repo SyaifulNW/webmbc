@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\dataController;
 use App\Http\Controllers\OngkirController;
 use App\Http\Controllers\WilayahController;
+use App\Http\Controllers\alumniController;
+use App\Http\Controllers\SalesPlanController;
 
 
 /*
@@ -54,6 +56,9 @@ Route::delete('/admin/alumni/{id}', [App\Http\Controllers\alumniController::clas
 Route::get('/admin/alumni/{id}', [App\Http\Controllers\alumniController::class, 'show'])->name('admin.alumni.show');    
 
 // Sales Plan Routes 
+Route::post('/data/{id}/pindah-ke-salesplan', [DataController::class, 'pindahKeSalesPlan'])->name('data.pindahKeSalesPlan');
+Route::get('/admin/salesplans', [SalesPlanController::class, 'index'])->name('admin.salesplan.index');
+
 
 
 
