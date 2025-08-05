@@ -135,18 +135,11 @@
             </thead>
             <tbody>
                 @foreach ($salesplans as $plan)
-                @php
-                if ($plan->status === 'cold') {
-                $bgColor = 'background-color: #ffffffff;'; 
-                } elseif ($plan->status === 'Warm') {
-                $bgColor = 'background-color: #f3ff52ff;'; 
-                } elseif ($plan->status === 'No') {
-                $bgColor = 'background-color: #45f035ff;'; 
-                } else {
-                $bgColor = 'background-color: #e92525ff;';
-                }
-                @endphp
-                <tr style="background: linear-gradient(to right, #e6e7e9ff, #fafbfcff); color: black;">
+
+                <tr class="@if($plan->status == 'hot') table-success
+            @elseif($plan->status == 'warm') table-warning
+            @elseif($plan->status == 'no') table-danger
+            @endif" style="background: linear-gradient(to right, #e6e7e9ff, #fafbfcff); color: black;">
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kelas->nama_kelas ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->nama ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->leads ?? '-' }}</td>
@@ -163,7 +156,21 @@
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_hasil }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_tindak_lanjut }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->keterangan }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->status }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc; color: white;">
+                        <span
+                            class="badge 
+            @if($plan->status == 'cold') bg-secondary
+            @elseif($plan->status == 'warm') bg-warning
+            @elseif($plan->status == 'hot') bg-success
+            @elseif($plan->status == 'no') bg-danger
+            @else bg-light
+            @endif"
+                            style="padding: 6px 12px; font-size: 13px;">
+                            {{ ucfirst($plan->status) }}
+                        </span>
+                    </td>
+
+
                     <td style="padding: 8px; border: 1px solid #ccc;">
                         <button class="btn btn-sm btn-warning" data-toggle="modal"
                             data-target="#editModal{{ $plan->id }}">
@@ -175,6 +182,7 @@
             </tbody>
         </table>
     </div>
+
 
     <!-- Modal Edit -->
     <div class="modal fade" id="editModal{{ $plan->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $plan->id }}" aria-hidden="true">
@@ -209,10 +217,10 @@
                     <div class="form-group col-md-6">
                         <label>Status</label>
                         <select name="status" class="form-control">
-                            <option value="cold" {{ $plan->status == 'cold' ? 'selected' : '' }}>Cold</option>
-                            <option value="warm" {{ $plan->status == 'warm' ? 'selected' : '' }}>Warm</option>
-                            <option value="hot" {{ $plan->status == 'hot' ? 'selected' : '' }}>Hot</option>
-                            <option value="no" {{ $plan->status == 'no' ? 'selected' : '' }}>No</option>
+                            <option value="cold" {{ $plan->status == 'cold' ? 'selected' : '' }}>cold</option>
+                            <option value="warm" {{ $plan->status == 'warm' ? 'selected' : '' }}>warm</option>
+                            <option value="hot" {{ $plan->status == 'hot' ? 'selected' : '' }}>hot</option>
+                            <option value="no" {{ $plan->status == 'no' ? 'selected' : '' }}>no</option>
                         </select>
                     </div>
                 </div>
@@ -225,6 +233,35 @@
     </div>
 </div>
 
-
 </div>
+<script>
+    $(document).ready(function() {
+        $('.status-cell').each(function() {
+            const status = $(this).text().trim().toLowerCase();
+            const row = $(this).closest('tr');
+
+            switch (status) {
+                case 'hot':
+                    row.css('background-color', '#d4edda'); // Hijau muda
+                    break;
+                case 'warm':
+                    row.css('background-color', '#fff3cd'); // Kuning muda
+                    break;
+                case 'cold':
+                    row.css('background-color', '#ffffff'); // Putih (default)
+                    break;
+                case 'no':
+                    row.css('background-color', '#f8d7da'); // Merah muda
+                    break;
+                default:
+                    row.css('background-color', '#f0f0f0'); // Abu (jika status tidak dikenal)
+            }
+        });
+    });
+</script>
+
+
 @endsection
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
