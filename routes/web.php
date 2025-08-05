@@ -58,6 +58,9 @@ Route::get('/admin/alumni/{id}', [App\Http\Controllers\alumniController::class, 
 // Sales Plan Routes 
 Route::post('/data/{id}/pindah-ke-salesplan', [DataController::class, 'pindahKeSalesPlan'])->name('data.pindahKeSalesPlan');
 Route::get('/admin/salesplans', [SalesPlanController::class, 'index'])->name('admin.salesplan.index');
+Route::put('/admin/salesplan/{id}', [SalesPlanController::class, 'update'])->name('admin.salesplan.update');
+
+
 
 
 

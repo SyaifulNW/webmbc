@@ -109,9 +109,9 @@
     aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
     <div class="bg-white py-2 collapse-inner rounded">
       <h6 class="collapse-header">Daftar Kelas MBC:</h6>
-      <a class="collapse-item {{ request('kelas') == null ? 'active' : '' }}" href="{{ route('admin.salesplan.index') }}">
+      <!-- <a class="collapse-item {{ request('kelas') == null ? 'active' : '' }}" href="{{ route('admin.salesplan.index') }}">
         ALL Kelas
-      </a>
+      </a> -->
       @foreach ($kelas as $item)
         <a class="collapse-item {{ request('kelas') == $item->nama_kelas ? 'active' : '' }}"
           href="{{ route('admin.salesplan.index', ['kelas' => $item->nama_kelas]) }}">

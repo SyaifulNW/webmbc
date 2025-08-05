@@ -56,7 +56,18 @@ class salesplanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $salesplan = SalesPlan::findOrFail($id);
+
+        for ($i = 1; $i <= 5; $i++) {
+            $salesplan->{'fu' . $i . '_hasil'} = $request->input('fu' . $i . '_hasil');
+            $salesplan->{'fu' . $i . '_tindak_lanjut'} = $request->input('fu' . $i . '_tindak_lanjut');
+        }
+
+        $salesplan->keterangan = $request->input('keterangan');
+        $salesplan->status = $request->input('status');
+        $salesplan->save();
+
+        return redirect()->route('admin.salesplan.index')->with('success', 'Sales plan berhasil diperbarui.');
     }
 
     /**
