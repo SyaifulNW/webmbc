@@ -9,6 +9,7 @@ use App\Http\Controllers\alumniController;
 use App\Http\Controllers\SalesPlanController;
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -60,7 +61,11 @@ Route::post('/data/{id}/pindah-ke-salesplan', [DataController::class, 'pindahKeS
 Route::get('/admin/salesplans', [SalesPlanController::class, 'index'])->name('admin.salesplan.index');
 Route::put('/admin/salesplan/{id}', [SalesPlanController::class, 'update'])->name('admin.salesplan.update');
 
+// Export
+Route::get('/salesplan/export', [SalesPlanController::class, 'export'])->name('salesplan.export');
 
+// Daily Activities
+Route::get('/admin/dailyactivity/index', [App\Http\Controllers\DailyController::class, 'index'])->name('admin.dailyactivity.index');
 
 
 

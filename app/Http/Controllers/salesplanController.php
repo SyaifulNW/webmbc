@@ -7,6 +7,7 @@ use App\Models\salesplan; // Ensure you import the Salesplan model
 use App\Models\data; // Ensure you import the Data model
 use Illuminate\Support\Facades\DB;
 use App\Models\Kelas; // Ensure you import the Kelas model
+use Rap2hpoutre\FastExcel\FastExcel;
 
 
 class salesplanController extends Controller
@@ -31,6 +32,13 @@ class salesplanController extends Controller
         $kelasList = Kelas::all(); // untuk daftar di sidebar
 
         return view('admin.salesplan.index', compact('salesplans', 'kelasList', 'kelasFilter'));
+    }
+
+    public function export()
+    {
+        $sales = SalesPlan::all();
+
+        return (new FastExcel($sales))->download('sales_plan.xlsx');
     }
 
 

@@ -125,7 +125,7 @@
 
 
       <li class="nav-item active">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('admin.dailyactivity.index') }}">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>DAILY ACTIVITY</span></a>
       </li>

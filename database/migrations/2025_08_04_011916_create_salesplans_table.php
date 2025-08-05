@@ -27,6 +27,7 @@ class CreateSalesplansTable extends Migration
             }
             $table->text('keterangan')->nullable(); // Keterangan tambahan
             $table->enum('status', ['cold', 'warm','hot','no' ])->default('cold'); // Status penjualan
+
             $table->timestamps();
         });
     }

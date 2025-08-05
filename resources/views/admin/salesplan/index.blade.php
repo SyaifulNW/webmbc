@@ -101,12 +101,18 @@
 </div>
 
 <div class="container">
+
+    <a href="{{ route('salesplan.export') }}" class="btn btn-success mb-3">
+        Download Excel
+    </a>
+
     <div style="overflow-x: auto; white-space: nowrap;">
         <table style="border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif; font-size: 14px; min-width: 1200px;">
             <thead>
                 <tr style="background: linear-gradient(to right, #376bb9ff, #1c7f91ff); color: white;">
-                    <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Kelas</th>
+                    <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">No</th>
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Nama</th>
+                    <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Kelas</th>
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Sumber Lead</th>
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Situasi</th>
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Kendala</th>
@@ -140,8 +146,10 @@
             @elseif($plan->status == 'warm') table-warning
             @elseif($plan->status == 'no') table-danger
             @endif" style="background: linear-gradient(to right, #e6e7e9ff, #fafbfcff); color: black;">
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kelas->nama_kelas ?? '-' }}</td>
+
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->id ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->nama ?? '-' }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kelas->nama_kelas ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->leads ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->situasi_bisnis ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kendala ?? '-' }}</td>

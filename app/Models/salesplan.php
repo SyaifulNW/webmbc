@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class salesplan extends Model
 {
     use HasFactory;
+     use SoftDeletes; // Tambahkan ini
     protected $table ='salesplans'; // Specify the table name if it differs from the model name
     protected $fillable = [
         'data_id',
@@ -25,6 +27,7 @@ class salesplan extends Model
     protected $casts = [    
         'status' => 'string', // Cast status to string
     ];
+    
 
     /**
      * Relasi dengan model data.
@@ -33,6 +36,8 @@ class salesplan extends Model
     {
          return $this->belongsTo(Data::class, 'data_id');
     }
+
+
         
 
 }
