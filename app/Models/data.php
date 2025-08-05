@@ -27,7 +27,7 @@ class data extends Model
     ];
     public function kelas()
     {
-        return $this->belongsTo('App\Models\kelas', 'kelas_id');
+       return $this->belongsTo(Kelas::class, 'kelas_id');
     }
     public function provinsi()
     {

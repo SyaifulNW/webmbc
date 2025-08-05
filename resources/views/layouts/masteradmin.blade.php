@@ -100,24 +100,28 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-          aria-expanded="true" aria-controls="collapseUtilities">
-          <i class="fas fa-fw fa-users"></i>
-          <span><strong>SALES PLAN</strong></span>
+  <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+    aria-expanded="true" aria-controls="collapseUtilities">
+    <i class="fas fa-fw fa-users"></i>
+    <span><strong>SALES PLAN</strong></span>
+  </a>
+  <div id="collapseUtilities" class="collapse {{ request()->has('kelas') ? 'show' : '' }}"
+    aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+    <div class="bg-white py-2 collapse-inner rounded">
+      <h6 class="collapse-header">Daftar Kelas MBC:</h6>
+      <a class="collapse-item {{ request('kelas') == null ? 'active' : '' }}" href="{{ route('admin.salesplan.index') }}">
+        ALL Kelas
+      </a>
+      @foreach ($kelas as $item)
+        <a class="collapse-item {{ request('kelas') == $item->nama_kelas ? 'active' : '' }}"
+          href="{{ route('admin.salesplan.index', ['kelas' => $item->nama_kelas]) }}">
+          {{ $item->nama_kelas }}
         </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-          data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Daftar Kelas MBC:</h6>
-            <a class="collapse-item" href="{{ route('admin.salesplan.index') }}">ALL Kelas</a>
-            @foreach ($kelas as $item)
-            <a class="collapse-item {{ request('kelas') == $item->nama_kelas ? 'active' : '' }}"
-              href="{{ route('admin.salesplan.index', ['kelas' => $item->nama_kelas]) }}">
-              {{ $item->nama_kelas }}
-            </a>
-            @endforeach
-          </div>
-      </li>
+      @endforeach
+    </div>
+  </div>
+</li>
+
 
 
       <li class="nav-item active">

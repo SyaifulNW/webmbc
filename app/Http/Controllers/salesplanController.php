@@ -18,52 +18,23 @@ class salesplanController extends Controller
      */
     public function index(Request $request)
     {
-        $kelasFilter = $request->input('kelas'); // hindari override variabel $kelas
+        $kelasFilter = $request->input('kelas'); // berisi nama kelas dari parameter URL
 
-        $salesplans = SalesPlan::with('data')
+        $salesplans = SalesPlan::with(['data.kelas']) // eager load nested relation
             ->when($kelasFilter, function ($query) use ($kelasFilter) {
-                $query->whereHas('data', function ($subQuery) use ($kelasFilter) {
-                    $subQuery->where('kelas', $kelasFilter); // pastikan nama kolomnya benar
+                $query->whereHas('data.kelas', function ($subQuery) use ($kelasFilter) {
+                    $subQuery->where('nama_kelas', $kelasFilter); // filter by nama_kelas dari tabel kelas
                 });
             })
             ->get();
 
-        $kelasList = Kelas::all(); // jika kamu ingin menampilkan daftar kelas di view
+        $kelasList = Kelas::all(); // untuk daftar di sidebar
 
         return view('admin.salesplan.index', compact('salesplans', 'kelasList', 'kelasFilter'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+    public function show($id) {}
 
     /**
      * Show the form for editing the specified resource.
