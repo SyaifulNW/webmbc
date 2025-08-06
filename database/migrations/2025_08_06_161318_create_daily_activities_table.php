@@ -15,19 +15,7 @@ class CreateDailyActivitiesTable extends Migration
     {
         Schema::create('daily_activities', function (Blueprint $table) {
             $table->id();
-            $table->string('aktivitas');
-            $table->text('deskripsi')->nullable();
-            $table->integer('target_daily')->default(0);
-            $table->integer('target')->default(0);
-            $table->float('bobot')->default(0);
-            $table->integer('real')->default(0);
-            $table->float('nilai')->default(0);
-
-
-            // Kolom tanggal 1 sampai 31
-            for ($i = 1; $i <= 31; $i++) {
-                $table->integer('tanggal_' . $i)->nullable();
-            }
+            $table->date('tanggal');
             $table->timestamps();
         });
     }

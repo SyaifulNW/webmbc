@@ -66,6 +66,15 @@ Route::get('/salesplan/export', [SalesPlanController::class, 'export'])->name('s
 
 // Daily Activities
 Route::get('/admin/dailyactivity/index', [App\Http\Controllers\DailyController::class, 'index'])->name('admin.dailyactivity.index');
+Route::post('/admin/daily-activity', [App\Http\Controllers\DailyController ::class, 'store'])->name('admin.daily-activity.store');
+
+
+// Pindah Salesplan dari Alumni
+Route::post('/admin/alumni/to-salesplan/{id}', [AlumniController::class, 'toSalesplan'])->name('admin.alumni.toSalesplan');
+
+
+
+
 
 
 

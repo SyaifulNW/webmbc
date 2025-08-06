@@ -1,145 +1,86 @@
 @extends('layouts.masteradmin')
 @section('content')
 <div class="container mt-4">
-    <h3 class="text-center mb-4">Daily Activity</h3>
+    <h3 class="text-center mb-4">DAILY ACTIVITY</h3>
 
-    {{-- Aktivitas Pribadi --}}
-    <table class="table table-bordered text-center align-middle">
-        <thead class="table-info">
-            <tr>
-                <th colspan="6">Aktivitas Pribadi</th>
-                <th colspan="3" style="background: yellow;">Tanggal</th>
-            </tr>
-            <tr>
-                <th>No</th>
-                <th>Aktivitas</th>
-                <th>Deskripsi</th>
-                <th>Target Daily</th>
-                <th>Target</th>
-                <th>Bobot</th>
-                <th>Real</th>
-                <th>Nilai</th>
-                <th>1</th>
-                <th>2</th>
-                <th>3</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Niat & Doa Pagi</td>
-                <td>Niatan untuk memberi manfaat kepada sesama Muslim melalui coaching</td>
-                <td>1</td>
-                <td>26</td>
-                <td>30</td>
-                <td>3</td>
-                <td>3</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Review Target Harian</td>
-                <td>Melihat kembali target prospek dan closing</td>
-                <td>1</td>
-                <td>26</td>
-                <td>20</td>
-                <td>3</td>
-                <td>2</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Belajar dan Catat</td>
-                <td>Apa tambahan ilmu dan perbaikan saya hari ini</td>
-                <td>1</td>
-                <td>26</td>
-                <td>50</td>
-                <td>3</td>
-                <td>6</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-            </tr>
-            <tr class="table-success fw-bold">
-                <td colspan="5" class="text-end">Total</td>
-                <td>100</td>
-                <td>9</td>
-                <td>12</td>
-                <td colspan="3"></td>
-            </tr>
-        </tbody>
-    </table>
+    <form action="{{ route('admin.daily-activity.store') }}" method="POST">
+        @csrf
 
-    {{-- Aktivitas Mencari Leads --}}
-    <table class="table table-bordered text-center align-middle mt-5">
-        <thead class="table-info">
-            <tr>
-                <th colspan="6">Aktivitas Mencari Leads</th>
-            </tr>
-            <tr>
-                <th>No</th>
-                <th>Aktivitas</th>
-                <th>Deskripsi</th>
-                <th>Target Daily</th>
-                <th>Target</th>
-                <th>Bobot</th>
-                <th>Real</th>
-                <th>Nilai</th>
-                <th>1</th>
-                <th>2</th>
-                <th>3</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Konten Harian (Story, Feed, TikTok, dll.)</td>
-                <td>Posting Edukasi, testimoni, penawaran soft selling (bergantian)</td>
-                <td>4</td>
-                <td>104</td>
-                <td>20</td>
-                <td>12</td>
-                <td>2.31</td>
-                <td>4</td>
-                <td>4</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>List Building / sales plan</td>
-                <td>Tambah database baru WA, email, atau DM list</td>
-                <td>5</td>
-                <td>130</td>
-                <td>40</td>
-                <td>12</td>
-                <td>3.69</td>
-                <td>5</td>
-                <td>4</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Interaksi Manual</td>
-                <td>Komentar</td>
-                <td>10</td>
-                <td>260</td>
-                <td>10</td>
-                <td>8</td>
-                <td>0.31</td>
-                <td>3</td>
-                <td>3</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="mb-3">
+            <label>Tanggal:</label>
+            <input type="date" name="tanggal" class="form-control" style="width: 200px;" required>
+        </div>
+
+        @php
+            $kategori = [
+                'pribadi' => 'Aktivitas Pribadi',
+                'mencari_leads' => 'Aktivitas Mencari Leads',
+                'memprospek' => 'Aktivitas Memprospek',
+                'closing' => 'Aktivitas Closing',
+                'merawat_customer' => 'Aktivitas Merawat Customer',
+            ];
+        @endphp
+
+        @foreach ($kategori as $key => $judul)
+            <div class="activity-section mb-4">
+                <h5>{{ $loop->iteration }}. {{ $judul }}</h5>
+                <div id="{{ $key }}-container">
+                    @for ($i = 0; $i < 1; $i++) {{-- Default 1 baris --}}
+                        <div class="row mb-2">
+                            <div class="col-md-3">
+                                <input type="text" name="{{ $key }}[0][aktivitas]" placeholder="Aktivitas" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" name="{{ $key }}[0][deskripsi]" placeholder="Deskripsi" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" name="{{ $key }}[0][target]" placeholder="Target Daily" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" name="{{ $key }}[0][real]" placeholder="Real" class="form-control">
+                            </div>
+                        </div>
+                    @endfor
+                </div>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="addRow('{{ $key }}')">+ Tambah Aktivitas</button>
+            </div>
+        @endforeach
+
+        <button type="submit" class="btn btn-primary mt-3">Simpan Aktivitas</button>
+    </form>
 </div>
 
+<script>
+    const counters = {
+        pribadi: 1,
+        mencari_leads: 1,
+        memprospek: 1,
+        closing: 1,
+        merawat_customer: 1
+    };
+
+    function addRow(section) {
+        const container = document.getElementById(`${section}-container`);
+        const index = counters[section];
+
+        const row = document.createElement('div');
+        row.className = 'row mb-2';
+        row.innerHTML = `
+            <div class="col-md-3">
+                <input type="text" name="${section}[${index}][aktivitas]" placeholder="Aktivitas" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="${section}[${index}][deskripsi]" placeholder="Deskripsi" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="${section}[${index}][target]" placeholder="Target Daily" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="${section}[${index}][real]" placeholder="Real" class="form-control">
+            </div>
+        `;
+        container.appendChild(row);
+        counters[section]++;
+    }
+</script>
 @endsection
-
-
-
-

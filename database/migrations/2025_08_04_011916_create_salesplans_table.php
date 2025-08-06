@@ -17,6 +17,7 @@ class CreateSalesplansTable extends Migration
             $table->id();
         
             // Relasi ke tabel data
+            $table->unsignedBigInteger('alumni_id'); // jika relasi ke alumni
             $table->unsignedBigInteger('data_id')->nullable();
             $table->foreign('data_id')->references('id')->on('data')->onDelete('cascade');
 

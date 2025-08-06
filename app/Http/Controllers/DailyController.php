@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Kelas; // Ensure you import the Kelas model
 use App\Models\data;
-
+use App\Models\DailyActivity;
+use App\Models\DailyActivityitem;
 
 class DailyController extends Controller
 {
@@ -42,7 +43,28 @@ class DailyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         $daily = DailyActivity::create([
+        'tanggal' => $request->tanggal,
+    ]);
+
+    $kategoriKeys = ['pribadi', 'mencari_leads', 'memprospek', 'closing', 'merawat_customer'];
+
+    foreach ($kategoriKeys as $kategori) {
+        if ($request->has($kategori)) {
+            foreach ($request->$kategori as $item) {
+                DailyActivityitem::create([
+                    'daily_activity_id' => $daily->id,
+                    'kategori' => $kategori,
+                    'aktivitas' => $item['aktivitas'] ?? null,
+                    'deskripsi' => $item['deskripsi'] ?? null,
+                    'target' => $item['target'] ?? null,
+                    'real' => $item['real'] ?? null,
+                ]);
+            }
+        }
+    }
+
+    return redirect()->back()->with('success', 'Aktivitas harian berhasil disimpan.');
     }
 
     /**

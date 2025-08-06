@@ -7,6 +7,8 @@ use App\Models\Alumni; // Ensure you import the Alumni model
 use App\Models\data; // Ensure you import the data model
 use Illuminate\Support\Facades\DB;
 use App\Models\Kelas; // Ensure you import the Kelas model
+use App\Models\salesplan; // Ensure you import the Salesplan model
+
 
 class alumniController extends Controller
 {
@@ -33,6 +35,57 @@ class alumniController extends Controller
     {
         //
     }
+
+    public function toSalesplan(Request $request, $id)
+    {
+          $alumni = Alumni::findOrFail($id);
+
+    // Daftar tetap semua kelas MBC
+    $kelasMBC = [
+        'Sistemasi Bisnis',
+        'Great Manager',
+        'Scale-Up 10X',
+        'Leadership',
+        'CS dan Sales Jago Closing',
+        'Repeat Order',
+        'Keuangan',
+        'HRD Mastery',
+        'Public Speaking'
+    ];
+
+    // Ambil input kelas yang sudah diikuti, pastikan di-trim dan dipisah benar
+    $sudah = explode(',', $request->input('sudah_pernah_ikut_kelas_apa_saja'));
+    $sudah = array_map('trim', $sudah); // Hilangkan spasi
+    $alumni->sudah_pernah_ikut_kelas_apa_saja = implode(', ', $sudah); // Simpan ulang rapi
+
+    // Jika input kelas belum diikuti kosong, hitung otomatis
+    if (!$request->filled('kelas_yang_belum_diikuti_apa_saja')) {
+        $belum = array_diff($kelasMBC, $sudah); // Hitung kelas yang belum diikuti
+        $alumni->kelas_yang_belum_diikuti_apa_saja = implode(', ', $belum);
+    } else {
+        $alumni->kelas_yang_belum_diikuti_apa_saja = $request->input('kelas_yang_belum_diikuti_apa_saja');
+    }
+
+    $alumni->save();
+
+    // Tambahkan ke tabel salesplans per kelas yang sudah diikuti
+    foreach ($sudah as $kelas) {
+        $existing = Salesplan::where('data_id', $alumni->id)
+            ->where('keterangan', $kelas)
+            ->first();
+
+        if (!$existing) {
+            Salesplan::create([
+                'data_id' => $alumni->id,
+                'keterangan' => $kelas,
+                'status' => 'cold'
+            ]);
+        }
+    }
+
+    return redirect()->route('admin.alumni.alumni')->with('success', 'Data alumni & salesplan berhasil diperbarui!');
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -79,37 +132,38 @@ class alumniController extends Controller
     public function update(Request $request, $id)
     {
 
-        $alumni = Alumni::findOrFail($id);
+       $alumni = Alumni::findOrFail($id);
 
-        // Daftar tetap semua kelas MBC
-        $kelasMBC = [
-            'Sistemasi Bisnis',
-            'Great Manager',
-            'Scale-Up 10X',
-            'Leadership',
-            'CS dan Sales Jago Closing',
-            'Repeat Order',
-            'Keuangan',
-            'HRD Mastery',
-            'Public Speaking'
-        ];
+    // Daftar tetap semua kelas MBC
+    $kelasMBC = [
+        'Sistemasi Bisnis',
+        'Great Manager',
+        'Scale-Up 10X',
+        'Leadership',
+        'CS dan Sales Jago Closing',
+        'Repeat Order',
+        'Keuangan',
+        'HRD Mastery',
+        'Public Speaking'
+    ];
 
-        // Ambil input kelas yang sudah diikuti, pastikan di-trim dan dipisah benar
-        $sudah = explode(',', $request->input('sudah_pernah_ikut_kelas_apa_saja'));
-        $sudah = array_map('trim', $sudah); // Hilangkan spasi
-        $alumni->sudah_pernah_ikut_kelas_apa_saja = implode(', ', $sudah); // Simpan ulang rapi
+    // Ambil input kelas yang sudah diikuti, pastikan di-trim dan dipisah benar
+    $sudah = explode(',', $request->input('sudah_pernah_ikut_kelas_apa_saja'));
+    $sudah = array_map('trim', $sudah); // Hilangkan spasi
+    $alumni->sudah_pernah_ikut_kelas_apa_saja = implode(', ', $sudah); // Simpan ulang rapi
 
-        // Jika input kelas belum diikuti kosong, hitung otomatis
-        if (!$request->filled('kelas_yang_belum_diikuti_apa_saja')) {
-            $belum = array_diff($kelasMBC, $sudah); // Hitung kelas yang belum diikuti
-            $alumni->kelas_yang_belum_diikuti_apa_saja = implode(', ', $belum);
-        } else {
-            $alumni->kelas_yang_belum_diikuti_apa_saja = $request->input('kelas_yang_belum_diikuti_apa_saja');
-        }
+    // Jika input kelas belum diikuti kosong, hitung otomatis
+    if (!$request->filled('kelas_yang_belum_diikuti_apa_saja')) {
+        $belum = array_diff($kelasMBC, $sudah); // Hitung kelas yang belum diikuti
+        $alumni->kelas_yang_belum_diikuti_apa_saja = implode(', ', $belum);
+    } else {
+        $alumni->kelas_yang_belum_diikuti_apa_saja = $request->input('kelas_yang_belum_diikuti_apa_saja');
+    }
 
-        $alumni->save();
+    $alumni->save();
 
-        return redirect()->route('admin.alumni.alumni')->with('success', 'Data alumni berhasil diperbarui!');
+    // Tambahkan ke tabel salesplans per kelas yang sudah diikuti
+    return redirect()->route('admin.alumni.alumni')->with('success', 'Data alumni & salesplan berhasil diperbarui!');
     }
 
     /**

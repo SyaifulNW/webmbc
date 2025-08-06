@@ -97,6 +97,50 @@
                                     </div>
                                 </div>
 
+                                <!-- Modal Tambahkan Ke Salesplan -->
+                                <!-- Tombol Pindah ke Salesplan -->
+                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#salesplanModal{{ $item->id }}" title="Pindah Ke SalesPlan">
+                                    <i class="fa fa-share-square" style="color: white;"></i>
+                                </button>
+
+                                <!-- Modal Salesplan -->
+                                <div class="modal fade" id="salesplanModal{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="salesplanModalLabel{{ $item->id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <form action="{{ route('admin.alumni.toSalesplan', $item->id) }}" method="POST">
+                                            @csrf
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-primary text-white">
+                                                    <h5 class="modal-title" id="salesplanModalLabel{{ $item->id }}">Pindahkan ke Salesplan - {{ $item->nama }}</h5>
+                                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label>Pilih Kelas yang Akan Diikuti:</label>
+                                                        @php
+                                                        $belumIkut = explode(',', $item->kelas_yang_belum_diikuti_apa_saja);
+                                                        $belumIkut = array_map('trim', $belumIkut);
+                                                        @endphp
+                                                        <select name="kelas" class="form-control" required>
+                                                            <option value="">-- Pilih Kelas --</option>
+                                                            @foreach($belumIkut as $kelas)
+                                                            <option value="{{ $kelas }}">{{ $kelas }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Pindahkan</button>
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+
+                                <!-- Modal Delete -->
                                 <form action="{{ route('delete-alumni', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
                                     @csrf
                                     @method('DELETE')
@@ -125,6 +169,7 @@
                                         });
                                     });
                                 </script>
+
                             </td>
                         </tr>
                         @endforeach
