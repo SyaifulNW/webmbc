@@ -3,6 +3,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 
+
 <div class="container-fluid px-4">
     <h3 class="mb-4 font-weight-bold text-dark">📊 DASHBOARD CS MBC</h3>
 
@@ -26,6 +27,8 @@
         <button type="submit" class="btn btn-primary">🔍 Tampilkan</button>
     </div>
 </form>
+
+<p class="text-muted">Menampilkan data untuk bulan: <strong>{{ \Carbon\Carbon::parse(request('bulan'))->translatedFormat('F Y') }}</strong></p>
 
 
     {{-- Omset Per Kelas --}}
@@ -140,258 +143,144 @@
     <div class="container my-4">
         <h4 class="mb-3 text-center text-primary">📅 DAILY ACTIVITY</h4>
 
-        <!-- Aktivitas Pribadi -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">1. Aktivitas Pribadi</div>
-            <div class="card-body p-0">
-                <table class="table table-bordered table-sm mb-0">
-                    <thead class="table-light text-center">
-                        <tr>
-                            <th>No</th>
-                            <th>Aktivitas</th>
-                            <th>Deskripsi</th>
-                            <th>Target Daily</th>
-                            <th>Target</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Niat & Doa Pagi</td>
-                            <td>Niatkan untuk memberi manfaat kepada sesama Muslim melalui coaching</td>
-                            <td>1</td>
-                            <td>26</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Review Target Harian</td>
-                            <td>Melihat kembali target prospek dan closing</td>
-                            <td>1</td>
-                            <td>26</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Belajar dan Catat</td>
-                            <td>Apa tambahan Ilmu dan perbaikan saya hari ini</td>
-                            <td>1</td>
-                            <td>26</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<!-- Aktivitas Pribadi -->
+<!-- Aktivitas 1: Pribadi -->
+<div class="card mb-4">
+  <div class="card-header bg-primary text-white">1. Aktivitas Pribadi</div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-sm text-center align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th rowspan="2">No.</th>
+          <th rowspan="2">Aktivitas</th>
+          <th rowspan="2">Target Daily</th>
+          <th colspan="7">Tanggal</th>
+          <th rowspan="2" class="bg-warning">Nilai</th>
+        </tr>
+        <tr>
+          <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Niat & Doa Pagi</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>2</td><td>Review Target Harian</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>3</td><td>Belajar dan Catat</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-        <!-- Aktivitas Mencari Leads -->
-        <div class="card mb-4">
-            <div class="card-header bg-info text-white">2. Aktivitas Mencari Leads</div>
-            <div class="card-body p-0">
-                <table class="table table-bordered table-sm mb-0">
-                    <thead class="table-light text-center">
-                        <tr>
-                            <th>No</th>
-                            <th>Aktivitas</th>
-                            <th>Deskripsi</th>
-                            <th>Target Daily</th>
-                            <th>Target</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Konten Harian (Story, Feed, TikTok, dll.)</td>
-                            <td>Posting Edukasi, testimoni, penawaran soft selling (bergantian)</td>
-                            <td>4</td>
-                            <td>104</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>List Building / Sales Plan</td>
-                            <td>Tambah database baru WA, email, atau DM list</td>
-                            <td>5</td>
-                            <td>130</td>
-                        </tr>
-                        <tr>
-                            <td rowspan="3">3</td>
-                            <td>Interaksi Manual</td>
-                            <td>Komentar</td>
-                            <td>10</td>
-                            <td>260</td>
-                        </tr>
-                        <tr>
-                            <td>Follow akun market</td>
-                            <td></td>
-                            <td>100</td>
-                            <td>2600</td>
-                        </tr>
-                        <tr>
-                            <td>Like</td>
-                            <td></td>
-                            <td>100</td>
-                            <td>2600</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Join Komunitas</td>
-                            <td>Bergabung ke grup yang prospek</td>
-                            <td>1</td>
-                            <td>26</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<!-- Aktivitas 2: Mencari Leads -->
+<div class="card mb-4">
+  <div class="card-header bg-info text-white">2. Aktivitas Mencari Leads</div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-sm text-center align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th rowspan="2">No.</th>
+          <th rowspan="2">Aktivitas</th>
+          <th rowspan="2">Target Daily</th>
+          <th colspan="7">Tanggal</th>
+          <th rowspan="2" class="bg-warning">Nilai</th>
+        </tr>
+        <tr>
+          <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Konten Harian</td><td>4</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>2</td><td>List Building</td><td>5</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>3a</td><td>Interaksi Manual: Komentar</td><td>10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>3b</td><td>Interaksi Manual: Follow</td><td>100</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>3c</td><td>Interaksi Manual: Like</td><td>100</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>4</td><td>Join Komunitas</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-        <!-- Aktivitas Memprospek -->
-        <div class="card mb-4">
-            <div class="card-header bg-warning text-white">3. Aktivitas Memprospek</div>
-            <div class="card-body p-0">
-                <table class="table table-bordered table-sm mb-0">
-                    <thead class="table-light text-center">
-                        <tr>
-                            <th>No</th>
-                            <th>Aktivitas</th>
-                            <th>Deskripsi</th>
-                            <th>Target Daily</th>
-                            <th>Target</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Follow-Up Soft</td>
-                            <td>Kirim konten edukatif, reminder kelas, testimoni</td>
-                            <td>200</td>
-                            <td>560</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Membangun Hubungan</td>
-                            <td>Menggali masalah dan impian calon peserta</td>
-                            <td>20</td>
-                            <td>520</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Kirim Penawaran</td>
-                            <td>Kirim info kelas dengan penjelasan manfaat</td>
-                            <td>20</td>
-                            <td>520</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<!-- Aktivitas 3: Memprospek -->
+<div class="card mb-4">
+  <div class="card-header bg-warning text-white">3. Aktivitas Memprospek</div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-sm text-center align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th rowspan="2">No.</th>
+          <th rowspan="2">Aktivitas</th>
+          <th rowspan="2">Target Daily</th>
+          <th colspan="7">Tanggal</th>
+          <th rowspan="2" class="bg-warning">Nilai</th>
+        </tr>
+        <tr>
+          <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Follow-Up Soft</td><td>200</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>2</td><td>Membangun Hubungan</td><td>20</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>3</td><td>Kirim Penawaran</td><td>20</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-        <!-- Aktivitas Closing -->
-        <div class="card mb-4">
-            <div class="card-header bg-danger text-white">4. Aktivitas Closing</div>
-            <div class="card-body p-0">
-                <table class="table table-bordered table-sm mb-0">
-                    <thead class="table-light text-center">
-                        <tr>
-                            <th>No</th>
-                            <th>Aktivitas</th>
-                            <th>Deskripsi</th>
-                            <th>Target Daily</th>
-                            <th>Target</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Tanya Keberatan</td>
-                            <td>Apa yang menghambat mereka daftar?</td>
-                            <td>20</td>
-                            <td>520</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Atasi Keberatan</td>
-                            <td>Kirim voice note, testimoni, atau diskusi</td>
-                            <td>20</td>
-                            <td>520</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Penawaran Khusus</td>
-                            <td>Diskon, bonus, urgency terbatas</td>
-                            <td>10</td>
-                            <td>260</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Pendaftaran</td>
-                            <td>Fix mengikuti dan hadir kelas</td>
-                            <td>2,500,000</td>
-                            <td>50,000,000</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Finalisasi Pembayaran</td>
-                            <td>Kirim link invoice, konfirmasi pembayaran</td>
-                            <td>2,500,000</td>
-                            <td>50,000,000</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<!-- Aktivitas 4: Closing -->
+<div class="card mb-4">
+  <div class="card-header bg-danger text-white">4. Aktivitas Closing</div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-sm text-center align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th rowspan="2">No.</th>
+          <th rowspan="2">Aktivitas</th>
+          <th rowspan="2">Target Daily</th>
+          <th colspan="7">Tanggal</th>
+          <th rowspan="2" class="bg-warning">Nilai</th>
+        </tr>
+        <tr>
+          <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Tanya Keberatan</td><td>20</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>2</td><td>Atasi Keberatan</td><td>20</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>3</td><td>Penawaran Khusus</td><td>10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>4</td><td>Pendaftaran</td><td>2,500,000</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>5</td><td>Finalisasi Pembayaran</td><td>2,500,000</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-        <!-- Aktivitas Merawat Customer -->
-        <div class="card mb-4">
-            <div class="card-header bg-success text-white">5. Aktivitas Merawat Customer</div>
-            <div class="card-body p-0">
-                <table class="table table-bordered table-sm mb-0">
-                    <thead class="table-light text-center">
-                        <tr>
-                            <th>No</th>
-                            <th>Aktivitas</th>
-                            <th>Deskripsi</th>
-                            <th>Target Daily</th>
-                            <th>Target</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Follow-up Peserta</td>
-                            <td>Bangun Hubungan, tanya progress, kirim semangat</td>
-                            <td>50</td>
-                            <td>1300</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Minta Testimoni</td>
-                            <td>Peserta yang puas diminta testimoni</td>
-                            <td>3</td>
-                            <td>6</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Program Referral</td>
-                            <td>Ajak mereka referensikan teman</td>
-                            <td>10</td>
-                            <td>260</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Edukasi Lanjutan</td>
-                            <td>Kirim konten lanjutan/upgrade kelas berikutnya</td>
-                            <td>20</td>
-                            <td>520</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Komentar Positive</td>
-                            <td>Komentari positif untuk peserta MBC</td>
-                            <td>10</td>
-                            <td>260</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<!-- Aktivitas 5: Merawat Customer -->
+<div class="card mb-4">
+  <div class="card-header bg-success text-white">5. Aktivitas Merawat Customer</div>
+  <div class="card-body p-0">
+    <table class="table table-bordered table-sm text-center align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th rowspan="2">No.</th>
+          <th rowspan="2">Aktivitas</th>
+          <th rowspan="2">Target Daily</th>
+          <th colspan="7">Tanggal</th>
+          <th rowspan="2" class="bg-warning">Nilai</th>
+        </tr>
+        <tr>
+          <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Follow-up Peserta</td><td>50</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>2</td><td>Minta Testimoni</td><td>3</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>3</td><td>Program Referral</td><td>10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>4</td><td>Edukasi Lanjutan</td><td>20</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+        <tr><td>5</td><td>Komentar Positive</td><td>10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="bg-warning"></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
 
     {{-- CATATAN KOMISI --}}

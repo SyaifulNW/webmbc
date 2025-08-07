@@ -29,27 +29,37 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $bulan = $request->input('bulan') ?? Carbon::now()->format('Y-m');
+         // Ambil bulan dan kelas dari request (atau default ke bulan ini)
+    $bulan = $request->input('bulan') ?? Carbon::now()->format('Y-m');
+    $kelas_id = $request->input('kelas_id');
 
-        // Ambil semua kelas dan relasi salesplan yang sesuai bulan
-        $kelas = Kelas::all();
+    // Ambil semua kelas untuk opsi filter
+    $kelas = Kelas::all();
 
-        $kelasOmset = Kelas::with(['salesplans' => function ($query) use ($bulan) {
-            $query->where('tanggal', 'like', $bulan . '%');
-        }])->get();
+    // Ambil data kelas beserta salesplans yang sesuai filter
+    $kelasOmset = Kelas::with(['salesplans' => function ($query) use ($bulan) {
+        $query->where('tanggal', 'like', $bulan . '%');
+    }]);
 
-        $kelasOmset = $kelasOmset->map(function ($kelas) {
-            $omset = $kelas->salesplans->sum('nominal');
-            $target = 25000000;
+    // Jika user memilih filter kelas tertentu
+    if ($kelas_id) {
+        $kelasOmset->where('id', $kelas_id);
+    }
 
-            return [
-                'nama_kelas' => $kelas->nama_kelas,
-                'omset'      => $omset,
-                'target'     => $target,
-                'persen'     => $omset > 0 ? round(($omset / $target) * 100) : 0,
-            ];
-        });
+    $kelasOmset = $kelasOmset->get();
 
-        return view('home', compact('kelasOmset', 'kelas'));
+    $kelasOmset = $kelasOmset->map(function ($kelas) {
+        $omset = $kelas->salesplans->sum('nominal');
+        $target = 25000000;
+
+        return [
+            'nama_kelas' => $kelas->nama_kelas,
+            'omset'      => $omset,
+            'target'     => $target,
+            'persen'     => $omset > 0 ? round(($omset / $target) * 100) : 0,
+        ];
+    });
+
+    return view('home', compact('kelasOmset', 'kelas'));
     }
 }
