@@ -1,120 +1,404 @@
 @extends('layouts.masteradmin')
 @section('content')
+
 <div class="container-fluid px-4">
-    <h3 class="mb-4">Dashboard CS MBC</h3>
+    <h3 class="mb-4 font-weight-bold text-dark">📊 DASHBOARD CS MBC</h3>
+
+    {{-- Filter --}}
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <label for="bulan">📅 Bulan:</label>
+            <input type="month" id="bulan" class="form-control">
+        </div>
+        <div class="col-md-6">
+            <label for="kelas">🏫 Kelas:</label>
+            <select id="kelas" class="form-control">
+                <option>-- Semua Kelas --</option>
+                <!-- Tambahkan kelas di sini -->
+            </select>
+        </div>
+    </div>
+
+    {{-- Omset Per Kelas --}}
+    <div class="card mb-4 border-success shadow-sm">
+        <div class="card-header bg-white text-success font-weight-bold">
+            💰 OMSET PER KELAS (BULAN INI)
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-sm text-center">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Nama Kelas</th>
+                        <th>Omset</th>
+                        <th>Target</th>
+                        <th>% Tercapai</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($kelasOmset as $kelas)
+                    <tr>
+                        <td>{{ $kelas['nama_kelas'] }}</td>
+                        <td>Rp {{ number_format($kelas['omset'], 0, ',', '.') }}</td>
+                        <td>Rp {{ number_format($kelas['target'], 0, ',', '.') }}</td>
+                        <td class="{{ $kelas['persen'] >= 100 ? 'text-success' : ($kelas['persen'] >= 75 ? 'text-warning' : 'text-danger') }}">
+                            {{ $kelas['persen'] }}%
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <hr>
+            <h5 class="mt-3">Total Omset: <span class="badge bg-success text-white">Rp 45.000.000</span></h5>
+        </div>
+    </div>
+
+    {{-- Informasi Utama --}}
     <div class="row">
-        {{-- Kolom Kiri (8 dari 12 kolom) --}}
-        <div class="col-md-8">
-            <div class="row">
-                {{-- Omset --}}
-                <div class="col-md-12 mb-3">
-                    <div class="card border-success h-100">
-                        <div class="card-body">
-                            <h5 class="text-success">OMSET PER KELAS (BULAN INI)</h5>
-                            <p>Kelas 1: Rp 26.000.000<br>Target: Rp 25.000.000</p>
-                            <div class="progress mb-2">
-                                <div class="progress-bar bg-success" style="width: 104%">104%</div>
-                            </div>
-                            <small class="text-success">✅ Bonus Rp300.000</small>
-                            <hr>
-                            <p>Kelas 2: Rp 19.000.000<br>Target: Rp 25.000.000</p>
-                            <div class="progress mb-2">
-                                <div class="progress-bar bg-warning" style="width: 76%">76%</div>
-                            </div>
-                            <small class="text-danger">❌ Belum Capai Bonus</small>
-                            <hr>
-                            <strong>Total Omset: Rp 45.000.000</strong><br>
-                            <span class="badge bg-secondary mt-2">Belum capai total target gabungan</span>
-                        </div>
-                    </div>
-                </div>
 
-                {{-- Total Closing --}}
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100 border-success">
-                        <div class="card-body">
-                            <h5 class="text-success">TOTAL CLOSING (TAHUN INI)</h5>
-                            <h4>Rp. 25.000.000</h4>
-                            <p>Target: Rp. 60.000.000</p>
-                            <div class="progress">
-                                <div class="progress-bar bg-danger" style="width: 41%">41,6% tercapai</div>
-                            </div>
-                        </div>
-                    </div>
+        {{-- JUMLAH LEAD AKTIF --}}
+        <div class="col-md-3">
+            <div class="card border-primary shadow-sm mb-3">
+                <div class="card-header bg-white text-primary fw-bold">
+                    <i class="fas fa-thumbtack me-1"></i> JUMLAH LEAD AKTIF
                 </div>
-
-                {{-- Komisi --}}
-                <div class="col-md-6 mb-3">
-                    <div class="card border-success h-100">
-                        <div class="card-body">
-                            <h5 class="text-success">KOMISI SEMENTARA</h5>
-                            <h4>Rp 425.000</h4>
-                            <p>Komisi Dasar: Rp 125.000<br>Bonus Target: Rp 300.000</p>
-                        </div>
-                    </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Cold
+                            <span class="badge bg-secondary text-white">0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Warm
+                            <span class="badge bg-warning text-white">4</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Hot
+                            <span class="badge bg-success text-white">7</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            No
+                            <span class="badge bg-danger text-white">2</span>
+                        </li>
+                    </ul>
+                    <p class="mb-0 text-end"><strong>Total Lead Aktif:</strong> 13</p>
                 </div>
             </div>
         </div>
 
-        {{-- Kolom Kanan (4 dari 12 kolom) --}}
-        <div class="col-md-4">
-         <div class="card shadow-sm border-primary">
-    <div class="card-body">
-        <h5 class="text-primary mb-3">📊 JUMLAH LEAD AKTIF</h5>
-        
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <span>Cold</span>
-            <span class="badge bg-white  rounded-pill px-3 py-2">0</span>
-        </div>
-        
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <span>Warm</span>
-            <span class="badge bg-warning text-white rounded-pill px-3 py-2">4</span>
-        </div>
-        
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <span>Hot</span>
-            <span class="badge bg-success text-white rounded-pill px-3 py-2">7</span>
-        </div>
-        
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <span>Tidak Bisa Ikut (No)</span>
-            <span class="badge bg-danger text-white rounded-pill px-3 py-2">2</span>
+        {{-- TOTAL LEAD --}}
+        <div class="col-md-3">
+            <div class="card border-info shadow-sm mb-3">
+                <div class="card-header bg-white text-info fw-bold">
+                    <i class="fas fa-download me-1"></i> TOTAL LEAD
+                </div>
+                <div class="card-body">
+                    <p>Total Semua Lead: <span class="badge bg-info text-white">55</span></p>
+                    <p>Jumlah Lead Kelas: <span class="badge bg-info text-white">22</span></p>
+                </div>
+            </div>
         </div>
 
-        <hr>
+        {{-- JUMLAH ALUMNI --}}
+        <div class="col-md-3">
+            <div class="card border-success shadow-sm mb-3">
+                <div class="card-header bg-white text-success fw-bold">
+                    <i class="fas fa-graduation-cap me-1"></i> JUMLAH ALUMNI
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-0">34 Peserta</h4>
+                </div>
+            </div>
+        </div>
 
-        <div class="d-flex justify-content-between align-items-center">
-            <strong>Total Lead</strong>
-            <span class="badge bg-info text-white rounded-pill px-3 py-2"> 13</span>
+        {{-- KOMISI SEMENTARA --}}
+        <div class="col-md-3">
+            <div class="card border-secondary shadow-sm mb-3">
+                <div class="card-header bg-light text-dark fw-bold">
+                    <i class="fas fa-file-invoice-dollar me-1"></i> KOMISI SEMENTARA
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">Rp. 300.000</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    {{-- DAILY ACTIVITY --}}
+    <div class="container my-4">
+        <h4 class="mb-3 text-center text-primary">📅 DAILY ACTIVITY</h4>
+
+        <!-- Aktivitas Pribadi -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">1. Aktivitas Pribadi</div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-sm mb-0">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>No</th>
+                            <th>Aktivitas</th>
+                            <th>Deskripsi</th>
+                            <th>Target Daily</th>
+                            <th>Target</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Niat & Doa Pagi</td>
+                            <td>Niatkan untuk memberi manfaat kepada sesama Muslim melalui coaching</td>
+                            <td>1</td>
+                            <td>26</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Review Target Harian</td>
+                            <td>Melihat kembali target prospek dan closing</td>
+                            <td>1</td>
+                            <td>26</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Belajar dan Catat</td>
+                            <td>Apa tambahan Ilmu dan perbaikan saya hari ini</td>
+                            <td>1</td>
+                            <td>26</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Aktivitas Mencari Leads -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">2. Aktivitas Mencari Leads</div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-sm mb-0">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>No</th>
+                            <th>Aktivitas</th>
+                            <th>Deskripsi</th>
+                            <th>Target Daily</th>
+                            <th>Target</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Konten Harian (Story, Feed, TikTok, dll.)</td>
+                            <td>Posting Edukasi, testimoni, penawaran soft selling (bergantian)</td>
+                            <td>4</td>
+                            <td>104</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>List Building / Sales Plan</td>
+                            <td>Tambah database baru WA, email, atau DM list</td>
+                            <td>5</td>
+                            <td>130</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="3">3</td>
+                            <td>Interaksi Manual</td>
+                            <td>Komentar</td>
+                            <td>10</td>
+                            <td>260</td>
+                        </tr>
+                        <tr>
+                            <td>Follow akun market</td>
+                            <td></td>
+                            <td>100</td>
+                            <td>2600</td>
+                        </tr>
+                        <tr>
+                            <td>Like</td>
+                            <td></td>
+                            <td>100</td>
+                            <td>2600</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Join Komunitas</td>
+                            <td>Bergabung ke grup yang prospek</td>
+                            <td>1</td>
+                            <td>26</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Aktivitas Memprospek -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-white">3. Aktivitas Memprospek</div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-sm mb-0">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>No</th>
+                            <th>Aktivitas</th>
+                            <th>Deskripsi</th>
+                            <th>Target Daily</th>
+                            <th>Target</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Follow-Up Soft</td>
+                            <td>Kirim konten edukatif, reminder kelas, testimoni</td>
+                            <td>200</td>
+                            <td>560</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Membangun Hubungan</td>
+                            <td>Menggali masalah dan impian calon peserta</td>
+                            <td>20</td>
+                            <td>520</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Kirim Penawaran</td>
+                            <td>Kirim info kelas dengan penjelasan manfaat</td>
+                            <td>20</td>
+                            <td>520</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Aktivitas Closing -->
+        <div class="card mb-4">
+            <div class="card-header bg-danger text-white">4. Aktivitas Closing</div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-sm mb-0">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>No</th>
+                            <th>Aktivitas</th>
+                            <th>Deskripsi</th>
+                            <th>Target Daily</th>
+                            <th>Target</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Tanya Keberatan</td>
+                            <td>Apa yang menghambat mereka daftar?</td>
+                            <td>20</td>
+                            <td>520</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Atasi Keberatan</td>
+                            <td>Kirim voice note, testimoni, atau diskusi</td>
+                            <td>20</td>
+                            <td>520</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Penawaran Khusus</td>
+                            <td>Diskon, bonus, urgency terbatas</td>
+                            <td>10</td>
+                            <td>260</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Pendaftaran</td>
+                            <td>Fix mengikuti dan hadir kelas</td>
+                            <td>2,500,000</td>
+                            <td>50,000,000</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Finalisasi Pembayaran</td>
+                            <td>Kirim link invoice, konfirmasi pembayaran</td>
+                            <td>2,500,000</td>
+                            <td>50,000,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Aktivitas Merawat Customer -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">5. Aktivitas Merawat Customer</div>
+            <div class="card-body p-0">
+                <table class="table table-bordered table-sm mb-0">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>No</th>
+                            <th>Aktivitas</th>
+                            <th>Deskripsi</th>
+                            <th>Target Daily</th>
+                            <th>Target</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Follow-up Peserta</td>
+                            <td>Bangun Hubungan, tanya progress, kirim semangat</td>
+                            <td>50</td>
+                            <td>1300</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Minta Testimoni</td>
+                            <td>Peserta yang puas diminta testimoni</td>
+                            <td>3</td>
+                            <td>6</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Program Referral</td>
+                            <td>Ajak mereka referensikan teman</td>
+                            <td>10</td>
+                            <td>260</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Edukasi Lanjutan</td>
+                            <td>Kirim konten lanjutan/upgrade kelas berikutnya</td>
+                            <td>20</td>
+                            <td>520</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Komentar Positive</td>
+                            <td>Komentari positif untuk peserta MBC</td>
+                            <td>10</td>
+                            <td>260</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-        <br>
 
 
-            <div class="mb-3">
-                <div class="card border-success">
-                    <div class="card-body">
-                        <h5 class="text-success">JUMLAH PESERTA AKTIF</h5>
-                        <h4>7 Peserta</h4>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <div class="card border-info">
-                    <div class="card-body">
-                        <h5 class="text-info">JUMLAH REPEAT ORDER</h5>
-                        <h4>3 Peserta</h4>
-                    </div>
-                </div>
-            </div>
+    {{-- CATATAN KOMISI --}}
+    <!-- <div class="card mt-4 border-dark shadow-sm">
+        <div class="card-header bg-white font-weight-bold text-dark">
+            📝 CATATAN KOMISI
         </div>
-    </div>
+        <div class="card-body">
+            <ul>
+                <li>Komisi Leader: 1% dari omset</li>
+                <li>Komisi CS: 0.5% dari omset</li>
+                <li>Bonus Rp 300.000 jika omset ≥ 25 juta per kelas</li>
+                <li>Bonus Rp 600.000 jika total omset ≥ 50 juta (meski target kelas belum tercapai)</li>
+            </ul>
+        </div>
+    </div> -->
 </div>
 
 @endsection
-
-
-

@@ -18,5 +18,8 @@ class kelas extends Model
     {
         return $this->hasMany('App\Models\data', 'kelas_id');
     }
+    public function salesplans()
+    {
+        return $this->hasMany(SalesPlan::class);
+    }
 }
-

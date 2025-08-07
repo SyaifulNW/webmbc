@@ -82,6 +82,7 @@ class salesplanController extends Controller
 
         $salesplan->keterangan = $request->input('keterangan');
         $salesplan->status = $request->input('status');
+        $salesplan->nominal = $request->input('nominal');
         $salesplan->save();
 
         return redirect()->route('admin.salesplan.index')->with('success', 'Sales plan berhasil diperbarui.');

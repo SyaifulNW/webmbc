@@ -134,6 +134,7 @@
                     <th colspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">FU3</th>
                     <th colspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">FU4</th>
                     <th colspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">FU5</th>
+                    <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Nominal</th>
                     <th rowspan="2" style=" text-align:center; padding: 10px; border: 1px solid #ccc;">Keterangan</th>
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Status</th>
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Action</th>
@@ -175,6 +176,8 @@
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu4_tindak_lanjut }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_hasil }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_tindak_lanjut }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">Rp {{ number_format($plan->nominal, 0, ',', '.') }}</td>
+
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->keterangan }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc; color: white;">
                         <span class="badge 
@@ -231,6 +234,10 @@
                         <input type="text" name="fu{{ $i }}_tindak_lanjut" class="form-control" value="{{ $plan->{'fu'.$i.'_tindak_lanjut'} }}">
                     </div>
                     @endfor
+                    <div class="form-group col-md-12">
+                        <label for="nominal">Nominal</label>
+                        <input type="number" name="nominal" class="form-control" id="nominal" placeholder="Masukkan nominal">
+                    </div>
 
                     <div class="form-group col-md-12">
                         <label>Keterangan</label>
