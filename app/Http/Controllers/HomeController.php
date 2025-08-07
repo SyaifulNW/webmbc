@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Kelas;
 use Carbon\Carbon;
-use App\Models\SalesPlan;
+
+use App\Models\salesplan; // Ensure you import the Salesplan model
 // Ensure you import the Kelas model
 
 
@@ -26,25 +27,29 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $bulanIni = Carbon::now()->format('Y-m');
+        $bulan = $request->input('bulan') ?? Carbon::now()->format('Y-m');
 
-        $kelasOmset = Kelas::with(['salesplans' => function ($query) use ($bulanIni) {
-            $query->where('tanggal', 'like', $bulanIni . '%');
+        // Ambil semua kelas dan relasi salesplan yang sesuai bulan
+        $kelas = Kelas::all();
+
+        $kelasOmset = Kelas::with(['salesplans' => function ($query) use ($bulan) {
+            $query->where('tanggal', 'like', $bulan . '%');
         }])->get();
 
-        // Hitung omset per kelas dan targetnya
         $kelasOmset = $kelasOmset->map(function ($kelas) {
             $omset = $kelas->salesplans->sum('nominal');
+            $target = 25000000;
+
             return [
                 'nama_kelas' => $kelas->nama_kelas,
-                'omset' => $omset,
-                'target' => 25000000, // target default per kelas, bisa ubah sesuai kebutuhan
-                'persen' => $kelas->salesplans->count() ? round(($omset / 25000000) * 100) : 0,
+                'omset'      => $omset,
+                'target'     => $target,
+                'persen'     => $omset > 0 ? round(($omset / $target) * 100) : 0,
             ];
         });
 
-        return view('home', compact('kelasOmset'));
+        return view('home', compact('kelasOmset', 'kelas'));
     }
 }

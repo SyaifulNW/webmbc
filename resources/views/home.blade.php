@@ -1,23 +1,32 @@
 @extends('layouts.masteradmin')
 @section('content')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
 
 <div class="container-fluid px-4">
     <h3 class="mb-4 font-weight-bold text-dark">📊 DASHBOARD CS MBC</h3>
 
-    {{-- Filter --}}
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <label for="bulan">📅 Bulan:</label>
-            <input type="month" id="bulan" class="form-control">
-        </div>
-        <div class="col-md-6">
-            <label for="kelas">🏫 Kelas:</label>
-            <select id="kelas" class="form-control">
-                <option>-- Semua Kelas --</option>
-                <!-- Tambahkan kelas di sini -->
-            </select>
-        </div>
+<form method="GET" action="{{ route('home') }}" class="row mb-4 align-items-end">
+    <div class="col-md-6">
+        <label for="bulan" class="form-label">📅 Bulan:</label>
+        <input type="month" id="bulan" name="bulan" class="form-control" value="{{ request('bulan') }}">
     </div>
+    <div class="col-md-6">
+        <label for="kelas_id" class="form-label">Kelas</label>
+        <select class="form-select" id="kelas_id" name="kelas_id">
+            <option value="">Pilih Kelas</option>
+            @foreach($kelas as $kelasItem)
+            <option value="{{ $kelasItem->id }}" {{ request('kelas_id') == $kelasItem->id ? 'selected' : '' }}>
+                {{ $kelasItem->nama_kelas }}
+            </option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-12 mt-3">
+        <button type="submit" class="btn btn-primary">🔍 Tampilkan</button>
+    </div>
+</form>
+
 
     {{-- Omset Per Kelas --}}
     <div class="card mb-4 border-success shadow-sm">

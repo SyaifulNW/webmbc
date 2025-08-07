@@ -8,7 +8,7 @@ use App\Models\data; // Ensure you import the Data model
 use Illuminate\Support\Facades\DB;
 use App\Models\Kelas; // Ensure you import the Kelas model
 use Rap2hpoutre\FastExcel\FastExcel;
-
+use Carbon\Carbon;
 
 class salesplanController extends Controller
 {
@@ -83,6 +83,8 @@ class salesplanController extends Controller
         $salesplan->keterangan = $request->input('keterangan');
         $salesplan->status = $request->input('status');
         $salesplan->nominal = $request->input('nominal');
+        $salesplan->tanggal = Carbon::now()->format('Y-m-d'); // atau gunakan $request->input('tanggal') jika pakai input manual
+
         $salesplan->save();
 
         return redirect()->route('admin.salesplan.index')->with('success', 'Sales plan berhasil diperbarui.');
