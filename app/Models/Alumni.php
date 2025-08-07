@@ -34,5 +34,13 @@ class Alumni extends Model
     {
         return $this->belongsTo('App\Models\Kelas', 'kelas_id');
     }
-    
+
+    public function data()
+    {
+        return $this->belongsTo(Data::class, 'data_id');
+    }
+    public function salesplan()
+    {
+        return $this->hasMany(SalesPlan::class, 'data_id');
+    }
 }

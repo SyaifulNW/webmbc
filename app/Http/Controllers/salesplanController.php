@@ -30,6 +30,15 @@ class salesplanController extends Controller
             ->get();
 
         $kelasList = Kelas::all(); // untuk daftar di sidebar
+        if ($salesplans->count() === 0) {
+            return view('admin.salesplan.index', [
+                'salesplans' => $salesplans,
+                'kelasList' => $kelasList,
+                'kelasFilter' => $kelasFilter,
+                'message' => 'Data tidak ditemukan untuk kelas yang dipilih.'
+            ]);
+        }
+
 
         return view('admin.salesplan.index', compact('salesplans', 'kelasList', 'kelasFilter'));
     }

@@ -52,10 +52,12 @@
                             <td>{{ $sudahIkut }}</td>
                             <td>{{ $item->kelas_yang_belum_diikuti_apa_saja }}</td>
                             <td>
+                                <!-- Tombol lihat -->
                                 <a href="{{ route('admin.alumni.show', $item->id) }}" class="btn btn-info btn-sm">
                                     <i class="fa-solid fa-eye" style="color: #ffffff;"></i>
                                 </a>
-                                <!-- Tombol Edit Modal -->
+
+                                <!--Tombol Edit -->
                                 <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editKelasModal{{ $item->id }}">
                                     <i class="fa fa-edit" style="color: white;"></i>
                                 </button>
@@ -97,20 +99,23 @@
                                     </div>
                                 </div>
 
-                                <!-- Modal Tambahkan Ke Salesplan -->
-                                <!-- Tombol Pindah ke Salesplan -->
-                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#salesplanModal{{ $item->id }}" title="Pindah Ke SalesPlan">
+
+
+                                <!-- Tombol Pilih Kelas -->
+                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#salesplanModal{{ $item->id }}" title="Pilih Kelas Selanjutnya">
                                     <i class="fa fa-share-square" style="color: white;"></i>
                                 </button>
 
                                 <!-- Modal Salesplan -->
                                 <div class="modal fade" id="salesplanModal{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="salesplanModalLabel{{ $item->id }}" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
-                                        <form action="{{ route('admin.alumni.toSalesplan', $item->id) }}" method="POST">
+                                        <form action="{{ route('admin.alumni.simpanKelas', $item->id) }}" method="POST">
                                             @csrf
                                             <div class="modal-content">
                                                 <div class="modal-header bg-primary text-white">
-                                                    <h5 class="modal-title" id="salesplanModalLabel{{ $item->id }}">Pindahkan ke Salesplan - {{ $item->nama }}</h5>
+                                                    <h5 class="modal-title" id="salesplanModalLabel{{ $item->id }}">
+                                                        Pilih Kelas Selanjutnya - {{ $item->nama }}
+                                                    </h5>
                                                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
@@ -131,7 +136,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-primary">Pindahkan</button>
+                                                    <button type="submit" class="btn btn-success">Simpan Kelas</button>
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                                                 </div>
                                             </div>
@@ -139,38 +144,27 @@
                                     </div>
                                 </div>
 
+                                <!-- ✅ Tambahkan ini di bawah modal -->
+                                @if($item->kelas_yang_akan_diikuti)
+                                <form action="{{ route('admin.alumni.toSalesplan', $item->id) }}" method="POST" class="mt-2">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        Pindahkan ke Salesplan ({{ $item->kelas_yang_akan_diikuti }})
+                                    </button>
+                                </form>
+                                @endif
 
-                                <!-- Modal Delete -->
+                                <!-- Tombol Hapus -->
                                 <form action="{{ route('delete-alumni', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="btn btn-danger btn-sm btn-delete">
+                                    <button type="submit" class="btn btn-danger btn-sm btn-delete" onclick="return confirm('Yakin ingin menghapus data ini?');">
                                         <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                     </button>
                                 </form>
-                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                                <script>
-                                    $(document).on('click', '.btn-delete', function(e) {
-                                        e.preventDefault();
-                                        var form = $(this).closest('form');
-                                        Swal.fire({
-                                            title: 'Yakin hapus data?',
-                                            text: "Data yang dihapus tidak bisa dikembalikan!",
-                                            icon: 'warning',
-                                            showCancelButton: true,
-                                            confirmButtonColor: '#d33',
-                                            cancelButtonColor: '#3085d6',
-                                            confirmButtonText: 'Ya, hapus!',
-                                            cancelButtonText: 'Batal'
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                form.submit();
-                                            }
-                                        });
-                                    });
-                                </script>
 
                             </td>
+
                         </tr>
                         @endforeach
                     </tbody>

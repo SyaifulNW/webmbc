@@ -33,6 +33,7 @@ class CreateAlumniTable extends Migration
             $table->text('sudah_pernah_ikut_kelas_apa_saja')->nullable();
             $table->text('kelas_yang_belum_diikuti_apa_saja')->nullable();
             $table->timestamps();
+            $table->unsignedBigInteger('data_id')->nullable()->after('id'); 
             $table->foreign('data_id')->references('id')->on('data')->onDelete('cascade');
         });
     }

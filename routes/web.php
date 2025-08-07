@@ -71,6 +71,8 @@ Route::post('/admin/daily-activity', [App\Http\Controllers\DailyController ::cla
 
 // Pindah Salesplan dari Alumni
 Route::post('/admin/alumni/to-salesplan/{id}', [AlumniController::class, 'toSalesplan'])->name('admin.alumni.toSalesplan');
+Route::post('/admin/alumni/{id}/simpan-kelas', [AlumniController::class, 'simpanKelas'])->name('admin.alumni.simpanKelas');
+
 
 
 

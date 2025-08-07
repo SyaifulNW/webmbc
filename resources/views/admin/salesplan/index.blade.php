@@ -99,6 +99,19 @@
         </ol>
     </div>
 </div>
+@if(session('message'))
+<div class="alert alert-info">
+    {{ session('message') }}
+</div>
+@endif
+
+@if($salesplans->isEmpty())
+<div class="alert alert-info">
+    Tidak ada data yang sesuai dengan filter.
+</div>
+@else
+{{-- tampilkan tabel atau isi salesplans --}}
+@endif
 
 <div class="container">
 
@@ -140,12 +153,11 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($salesplans as $plan)
-
+                @forelse ($salesplans as $plan)
                 <tr class="@if($plan->status == 'hot') table-success
-            @elseif($plan->status == 'warm') table-warning
-            @elseif($plan->status == 'no') table-danger
-            @endif" style="background: linear-gradient(to right, #e6e7e9ff, #fafbfcff); color: black;">
+        @elseif($plan->status == 'warm') table-warning
+        @elseif($plan->status == 'no') table-danger
+        @endif" style="background: linear-gradient(to right, #e6e7e9ff, #fafbfcff); color: black;">
 
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->id ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->nama ?? '-' }}</td>
@@ -165,20 +177,17 @@
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_tindak_lanjut }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->keterangan }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc; color: white;">
-                        <span
-                            class="badge 
-            @if($plan->status == 'cold') bg-secondary
-            @elseif($plan->status == 'warm') bg-warning
-            @elseif($plan->status == 'hot') bg-success
-            @elseif($plan->status == 'no') bg-danger
-            @else bg-light
-            @endif"
+                        <span class="badge 
+                    @if($plan->status == 'cold') bg-secondary
+                    @elseif($plan->status == 'warm') bg-warning
+                    @elseif($plan->status == 'hot') bg-success
+                    @elseif($plan->status == 'no') bg-danger
+                    @else bg-light
+                    @endif"
                             style="padding: 6px 12px; font-size: 13px;">
                             {{ ucfirst($plan->status) }}
                         </span>
                     </td>
-
-
                     <td style="padding: 8px; border: 1px solid #ccc;">
                         <button class="btn btn-sm btn-warning" data-toggle="modal"
                             data-target="#editModal{{ $plan->id }}">
@@ -186,7 +195,13 @@
                         </button>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="19" style="text-align: center; padding: 20px; color: #999;">
+                        Tidak ada data sales plan ditemukan.
+                    </td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
