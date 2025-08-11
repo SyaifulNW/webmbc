@@ -48,9 +48,11 @@
                             <th>Kendala</th>
                             <th>Ikut Kelas / Tidak</th>
                             <th>Kelas</th>
-
+                            @if(auth()->user()->role == 'administrator')
                             <th>Input Oleh</th>
                             <th>Role</th>
+                            @endif
+
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -75,8 +77,11 @@
                                 -
                                 @endif
                             </td>
+                            @if(auth()->user()->role == 'administrator')
                             <td>{{ $item->created_by }}</td>
                             <td>{{ $item->created_by_role }}</td>
+                            @endif
+
                             <td>
 
                                 <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm" title="Lihat Detail">
@@ -137,6 +142,7 @@
                                 <a href="{{ route('admin.database.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit Data">
                                     <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                                 </a>
+                         @if(auth()->user()->role == 'administrator')
                                 <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
                                     @csrf
                                     @method('DELETE')
@@ -165,6 +171,7 @@
                                         });
                                     });
                                 </script>
+                          @endif
                             </td>
 
                         </tr>
