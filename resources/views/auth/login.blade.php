@@ -44,6 +44,7 @@
 </style>
 
 <div class="login-wrapper">
+    
     <div class="col-md-5">
         <div class="card p-4">
             <div class="card-header">{{ __('Login') }}</div>

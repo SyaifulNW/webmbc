@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\URL;
+
 use App\Models\Kelas; // Ensure you import the Kelas model
 
 
@@ -29,5 +31,8 @@ class AppServiceProvider extends ServiceProvider
          View::composer('*', function ($view) {
         $view->with('kelas', \App\Models\Kelas::all());
     });
+     if (config('app.env') === 'production') {
+        URL::forceScheme('https');
+    }
     }
 }

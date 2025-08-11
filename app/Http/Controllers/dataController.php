@@ -9,6 +9,8 @@ use App\Models\Alumni; // Ensure you import the Alumni model
 use App\Models\salesplan; // Ensure you import the Salesplan model
 use App\Models\jenisbisnis; // Ensure you import the Jenis model
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 
 
 
@@ -21,10 +23,21 @@ class dataController extends Controller
      */
     public function index()
     {
-        // Fetch all data from the 'data' table
-        $data = data::all(); // Use pagination for better performance
-        $kelas = Kelas::all(); // Fetch all classes
-        // Return a view with the data
+
+        $user = Auth::user();
+
+        // Ambil data sesuai role
+        if ($user->email == 'mbchamasah@gmail.com') {
+            $data = data::all();
+        } else {
+            // Filter hanya data yang diinput oleh user login
+            $data = data::where('created_by', $user->name)->get();
+            // Jika di database kamu menyimpan email, ganti jadi:
+            // $data = data::where('created_by', $user->email)->get();
+        }
+
+        $kelas = Kelas::all();
+
         return view('admin.database.database', compact('data', 'kelas'));
     }
 
@@ -69,6 +82,10 @@ class dataController extends Controller
         // Ya atau tidak
         $data->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0; // Convert to boolean
         $data->kelas_id = $request->input('kelas_id');
+
+        // Role
+        $data->created_by = Auth::user()->name;
+        $data->created_by_role = Auth::user()->role;
         $data->save();
         return redirect()->route('admin.database.database')->with('success', 'Data has been added successfully.');
     }

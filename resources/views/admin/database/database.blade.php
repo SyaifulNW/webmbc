@@ -48,6 +48,9 @@
                             <th>Kendala</th>
                             <th>Ikut Kelas / Tidak</th>
                             <th>Kelas</th>
+
+                            <th>Input Oleh</th>
+                            <th>Role</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -71,7 +74,11 @@
                                 @else
                                 -
                                 @endif
+                            </td>
+                            <td>{{ $item->created_by }}</td>
+                            <td>{{ $item->created_by_role }}</td>
                             <td>
+
                                 <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm" title="Lihat Detail">
                                     <i class="fa-solid fa-eye" style="color: #ffffff;"></i>
                                 </a>
