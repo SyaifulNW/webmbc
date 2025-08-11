@@ -91,7 +91,7 @@
 </style>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Sales Plan</h1>
+    <h1 class="h3 mb-0 text-gray-800">Sales Plan</h1>   
     <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -125,8 +125,8 @@
                 <tr style="background: linear-gradient(to right, #376bb9ff, #1c7f91ff); color: white;">
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">No</th>
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Nama</th>
-                    <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Kelas</th>
-                    <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Sumber Lead</th>
+                    <!-- <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Kelas</th>
+                    <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Sumber Lead</th> -->
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Situasi</th>
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Kendala</th>
                     <th colspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">FU1</th>
@@ -137,7 +137,7 @@
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Nominal</th>
                     <th rowspan="2" style=" text-align:center; padding: 10px; border: 1px solid #ccc;">Keterangan</th>
                     <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Status</th>
-                    <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Action</th>
+                    <!-- <th rowspan="2" style="text-align:center; padding: 10px; border: 1px solid #ccc;">Action</th> -->
 
                 </tr>
                 <tr style="background: linear-gradient(to right, #376bb9ff, #1c7f91ff); color: white;">
@@ -160,22 +160,52 @@
         @elseif($plan->status == 'no') table-danger
         @endif" style="background: linear-gradient(to right, #e6e7e9ff, #fafbfcff); color: black;">
 
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->id ?? '-' }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $loop->iteration }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->nama ?? '-' }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kelas->nama_kelas ?? '-' }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->leads ?? '-' }}</td>
+                    <!-- <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kelas->nama_kelas ?? '-' }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->leads ?? '-' }}</td> -->
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->situasi_bisnis ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kendala ?? '-' }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu1_hasil }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu1_tindak_lanjut }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu2_hasil }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu2_tindak_lanjut }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu3_hasil }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu3_tindak_lanjut }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu4_hasil }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu4_tindak_lanjut }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_hasil }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_tindak_lanjut }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu1_hasil }}    <button class="btn btn-sm btn-warning" data-toggle="modal"
+                            data-target="#editModal{{ $plan->id }}">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu1_tindak_lanjut }}   <button class="btn btn-sm btn-warning" data-toggle="modal"
+                            data-target="#editModal{{ $plan->id }}">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu2_hasil }}   <button class="btn btn-sm btn-warning" data-toggle="modal"
+                            data-target="#editModal{{ $plan->id }}">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu2_tindak_lanjut }}   <button class="btn btn-sm btn-warning" data-toggle="modal"
+                            data-target="#editModal{{ $plan->id }}">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu3_hasil }}   <button class="btn btn-sm btn-warning" data-toggle="modal"
+                            data-target="#editModal{{ $plan->id }}">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu3_tindak_lanjut }}   <button class="btn btn-sm btn-warning" data-toggle="modal"
+                            data-target="#editModal{{ $plan->id }}">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu4_hasil }}   <button class="btn btn-sm btn-warning" data-toggle="modal"
+                            data-target="#editModal{{ $plan->id }}">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu4_tindak_lanjut }}   <button class="btn btn-sm btn-warning" data-toggle="modal"
+                            data-target="#editModal{{ $plan->id }}">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_hasil }}   <button class="btn btn-sm btn-warning" data-toggle="modal"
+                            data-target="#editModal{{ $plan->id }}">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->fu5_tindak_lanjut }}   <button class="btn btn-sm btn-warning" data-toggle="modal"
+                            data-target="#editModal{{ $plan->id }}">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
                     <td style="padding: 8px; border: 1px solid #ccc;">Rp {{ number_format($plan->nominal, 0, ',', '.') }}</td>
 
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->keterangan }}</td>
@@ -191,12 +221,12 @@
                             {{ ucfirst($plan->status) }}
                         </span>
                     </td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">
+                    <!-- <td style="padding: 8px; border: 1px solid #ccc;">
                         <button class="btn btn-sm btn-warning" data-toggle="modal"
                             data-target="#editModal{{ $plan->id }}">
                             <i class="fas fa-pen"></i>
                         </button>
-                    </td>
+                    </td> -->
                 </tr>
                 @empty
                 <tr>

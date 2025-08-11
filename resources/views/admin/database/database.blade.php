@@ -77,7 +77,7 @@
                                 -
                                 @endif
                             </td>
-                            @if(auth()->user()->role == 'administrator')
+                            @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <td>{{ $item->created_by }}</td>
                             <td>{{ $item->created_by_role }}</td>
                             @endif
@@ -142,7 +142,7 @@
                                 <a href="{{ route('admin.database.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit Data">
                                     <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                                 </a>
-                         @if(auth()->user()->role == 'administrator')
+                         @if(auth()->user()->email == 'mbchamasah@gmail.com')
                                 <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
                                     @csrf
                                     @method('DELETE')
