@@ -95,7 +95,42 @@ class alumniController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {}
+    public function store(Request $request) {
+
+    $alumni = new Alumni();
+    $alumni->nama = $request->input('nama');
+
+    // Enum field
+    $alumni->leads = $request->input('leads');
+
+    // Custom field
+    if ($request->input('leads_custom') === null) {
+        $alumni->leads_custom = '';
+    } else {
+        $alumni->leads_custom = $request->input('leads_custom');
+    }
+
+    $alumni->provinsi_id = $request->input('provinsi_id');
+    $alumni->provinsi_nama = $request->input('provinsi_nama');
+    $alumni->kota_id = $request->input('kota_id');
+    $alumni->kota_nama = $request->input('kota_nama');
+    $alumni->jenis_bisnis = $request->input('jenis_bisnis');
+    $alumni->nama_bisnis = $request->input('nama_bisnis');
+    $alumni->no_wa = $request->input('no_wa');
+    $alumni->kendala = $request->input('kendala');
+
+    // Ya atau tidak
+    $alumni->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0;
+    $alumni->kelas_id = $request->input('kelas_id');
+
+    $alumni->sudah_pernah_ikut_kelas_apa_saja = $request->input('sudah_pernah_ikut_kelas_apa_saja');
+    $alumni->kelas_yang_belum_diikuti_apa_saja = $request->input('kelas_yang_belum_diikuti_apa_saja');
+
+    $alumni->save();
+
+    return redirect()->route('admin.alumni.index')
+        ->with('success', 'Data alumni berhasil ditambahkan.');
+    }
 
     /**
      * Display the specified resource.

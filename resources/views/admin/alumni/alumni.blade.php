@@ -12,6 +12,109 @@
 <div class="content">
     <div class="card card-info card-outline">
         <div class="card-header">
+            <div class="mb-3">
+                <button class="btn btn-success" data-toggle="modal" data-target="#createAlumniModal">
+                    <i class="fa fa-plus"></i> Tambah Alumni
+                </button>
+            </div>
+            <div class="modal fade" id="createAlumniModal" tabindex="-1" role="dialog" aria-labelledby="createAlumniModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form action="{{ route('admin.alumni.store') }}" method="POST">
+                        @csrf
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title" id="createAlumniModalLabel">Tambah Alumni Baru</h5>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>Nama Peserta</label>
+                                    <input type="text" name="nama" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Sumber Leads</label>
+                                    <input type="text" name="leads" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="provinsi">Provinsi</label>
+                                    <select id="provinsi" class="form-control" name="provinsi_id" required>
+                                        <option value="">Pilih Provinsi</option>
+                                    </select>
+                                    <input type="hidden" name="provinsi_nama" id="provinsi_nama">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="kota">Kota</label>
+                                    <select id="kota" class="form-control" name="kota_id" required>
+                                        <option value="">Pilih Kota</option>
+                                    </select>
+                                    <input type="hidden" name="kota_nama" id="kota_nama">
+                                </div>
+
+                                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                <script>
+                                    // Ambil provinsi saat halaman dibuka
+                                    fetch('/wilayah/provinsi')
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            data.forEach(prov => {
+                                                document.getElementById('provinsi').innerHTML += `<option value="${prov.id}" data-nama="${prov.name}">${prov.name}</option>`;
+                                            });
+                                        });
+
+                                    // Saat provinsi dipilih, ambil kota
+                                    document.getElementById('provinsi').addEventListener('change', function() {
+                                        const id = this.value;
+                                        const nama = this.options[this.selectedIndex].text;
+                                        document.getElementById('provinsi_nama').value = nama;
+
+                                        fetch(`/wilayah/kota/${id}`)
+                                            .then(res => res.json())
+                                            .then(data => {
+                                                let kotaSelect = document.getElementById('kota');
+                                                kotaSelect.innerHTML = '<option value="">Pilih Kota</option>';
+                                                data.forEach(kota => {
+                                                    kotaSelect.innerHTML += `<option value="${kota.id}" data-nama="${kota.name}">${kota.name}</option>`;
+                                                });
+                                            });
+                                    });
+
+                                    document.getElementById('kota').addEventListener('change', function() {
+                                        const nama = this.options[this.selectedIndex].text;
+                                        document.getElementById('kota_nama').value = nama;
+                                    });
+                                </script>
+
+                                <div class="form-group">
+                                    <label>Nama Bisnis</label>
+                                    <input type="text" name="nama_bisnis" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>No. WA</label>
+                                    <input type="text" name="no_wa" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Kendala</label>
+                                    <textarea name="kendala" class="form-control"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kelas yang Belum Diikuti</label>
+                                    <textarea name="kelas_yang_belum_diikuti_apa_saja" class="form-control"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Simpan</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
         <div class="card-body">
             <div style="overflow-x: auto; overflow-y: auto; width: 100%; max-height: 500px;">

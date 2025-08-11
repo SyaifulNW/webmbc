@@ -1,4 +1,4 @@
-@extends('layouts.masteradmin')
+@extends('layouts.masteradmin') 
 @section('content')
 <div class="container mt-4">
     <h3 class="text-center mb-4">DAILY ACTIVITY</h3>
@@ -12,37 +12,87 @@
         </div>
 
         @php
-            $kategori = [
-                'pribadi' => 'Aktivitas Pribadi',
-                'mencari_leads' => 'Aktivitas Mencari Leads',
-                'memprospek' => 'Aktivitas Memprospek',
-                'closing' => 'Aktivitas Closing',
-                'merawat_customer' => 'Aktivitas Merawat Customer',
+            // Daftar aktivitas statis tanpa deskripsi
+            $activities = [
+                'pribadi' => [
+                    ['aktivitas' => 'Niat & Doa Pagi', 'bobot' => 1],
+                    ['aktivitas' => 'Review Target Harian', 'bobot' => 1],
+                    ['aktivitas' => 'Belajar dan Catat', 'bobot' => 1],
+                ],
+                'mencari_leads' => [
+                    ['aktivitas' => 'Konten Harian', 'bobot' => 4],
+                    ['aktivitas' => 'List Building / Sales Plan', 'bobot' => 5],
+                    ['aktivitas' => 'Interaksi Manual - Komentar', 'bobot' => 10],
+                    ['aktivitas' => 'Interaksi Manual - Follow', 'bobot' => 100],
+                    ['aktivitas' => 'Interaksi Manual - Like', 'bobot' => 100],
+                    ['aktivitas' => 'Join Komunitas', 'bobot' => 1],
+                ],
+                'memprospek' => [
+                    ['aktivitas' => 'Follow-Up Soft', 'bobot' => 200],
+                    ['aktivitas' => 'Membangun Hubungan', 'bobot' => 20],
+                    ['aktivitas' => 'Kirim Penawaran', 'bobot' => 20],
+                ],
+                'closing' => [
+                    ['aktivitas' => 'Tanya Keberatan', 'bobot' => 20],
+                    ['aktivitas' => 'Atasi Keberatan', 'bobot' => 20],
+                    ['aktivitas' => 'Penawaran Khusus', 'bobot' => 10],
+                    ['aktivitas' => 'Pendaftaran', 'bobot' => 2500000],
+                    ['aktivitas' => 'Finalisasi Pembayaran', 'bobot' => 2500000],
+                ],
+                'merawat_customer' => [
+                    ['aktivitas' => 'Follow-up Peserta', 'bobot' => 50],
+                    ['aktivitas' => 'Minta Testimoni', 'bobot' => 3],
+                    ['aktivitas' => 'Program Referral', 'bobot' => 10],
+                    ['aktivitas' => 'Edukasi Lanjutan', 'bobot' => 20],
+                    ['aktivitas' => 'Komentar Positif', 'bobot' => 10],
+                ],
             ];
         @endphp
 
-        @foreach ($kategori as $key => $judul)
+        @foreach ($activities as $kategori => $items)
             <div class="activity-section mb-4">
-                <h5>{{ $loop->iteration }}. {{ $judul }}</h5>
-                <div id="{{ $key }}-container">
-                    @for ($i = 0; $i < 1; $i++) {{-- Default 1 baris --}}
-                        <div class="row mb-2">
-                            <div class="col-md-3">
-                                <input type="text" name="{{ $key }}[0][aktivitas]" placeholder="Aktivitas" class="form-control">
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" name="{{ $key }}[0][deskripsi]" placeholder="Deskripsi" class="form-control">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="number" name="{{ $key }}[0][target]" placeholder="Target Daily" class="form-control">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="number" name="{{ $key }}[0][real]" placeholder="Real" class="form-control">
-                            </div>
-                        </div>
-                    @endfor
-                </div>
-                <button type="button" class="btn btn-sm btn-secondary" onclick="addRow('{{ $key }}')">+ Tambah Aktivitas</button>
+                <h5>{{ ucfirst(str_replace('_',' ', $kategori)) }}</h5>
+                <table class="table table-bordered daily-table" data-kategori="{{ $kategori }}">
+                    <thead>
+                        <tr class="table-primary">
+                            <th>No</th>
+                            <th>Aktivitas</th>
+                            <th>Target Daily</th>
+                            <th>Realisasi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($items as $i => $item)
+                            <tr>
+                                <td>{{ $i+1 }}</td>
+                                <td>{{ $item['aktivitas'] }}</td>
+                                <td>
+                                    <input type="number" 
+                                           name="{{ $kategori }}[{{ $i }}][target]" 
+                                           class="form-control" 
+                                           value="{{ $item['bobot'] }}" 
+                                           readonly>
+                                    <input type="hidden" 
+                                           name="{{ $kategori }}[{{ $i }}][bobot]" 
+                                           value="{{ $item['bobot'] }}">
+                                </td>
+                                <td>
+                                    <input type="number" 
+                                           name="{{ $kategori }}[{{ $i }}][real]" 
+                                           class="form-control real-input" 
+                                           step="any" 
+                                           required>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-secondary">
+                            <th colspan="3" class="text-end">Total:</th>
+                            <th class="total-cell">0</th>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
         @endforeach
 
@@ -51,36 +101,16 @@
 </div>
 
 <script>
-    const counters = {
-        pribadi: 1,
-        mencari_leads: 1,
-        memprospek: 1,
-        closing: 1,
-        merawat_customer: 1
-    };
-
-    function addRow(section) {
-        const container = document.getElementById(`${section}-container`);
-        const index = counters[section];
-
-        const row = document.createElement('div');
-        row.className = 'row mb-2';
-        row.innerHTML = `
-            <div class="col-md-3">
-                <input type="text" name="${section}[${index}][aktivitas]" placeholder="Aktivitas" class="form-control">
-            </div>
-            <div class="col-md-3">
-                <input type="text" name="${section}[${index}][deskripsi]" placeholder="Deskripsi" class="form-control">
-            </div>
-            <div class="col-md-2">
-                <input type="number" name="${section}[${index}][target]" placeholder="Target Daily" class="form-control">
-            </div>
-            <div class="col-md-2">
-                <input type="number" name="${section}[${index}][real]" placeholder="Real" class="form-control">
-            </div>
-        `;
-        container.appendChild(row);
-        counters[section]++;
+document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('real-input')) {
+        const table = e.target.closest('.daily-table');
+        let total = 0;
+        table.querySelectorAll('.real-input').forEach(input => {
+            total += parseFloat(input.value) || 0;
+        });
+        table.querySelector('.total-cell').textContent = total;
     }
+});
 </script>
+
 @endsection

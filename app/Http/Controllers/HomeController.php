@@ -30,6 +30,7 @@ class HomeController extends Controller
     public function index(Request $request)
     {
          // Ambil bulan dan kelas dari request (atau default ke bulan ini)
+     // Ambil bulan dan kelas dari request (atau default ke bulan ini)
     $bulan = $request->input('bulan') ?? Carbon::now()->format('Y-m');
     $kelas_id = $request->input('kelas_id');
 
@@ -60,6 +61,23 @@ class HomeController extends Controller
         ];
     });
 
-    return view('home', compact('kelasOmset', 'kelas'));
-    }
+    // ===== Tambahan untuk hitung Jumlah Lead Aktif =====
+    $cold = SalesPlan::where('status', 'cold')->count();
+    $warm = SalesPlan::where('status', 'warm')->count();
+    $hot = SalesPlan::where('status', 'hot')->count();
+    $no = SalesPlan::where('status', 'no')->count();
+
+    $totalLeadAktif = $cold + $warm + $hot + $no;
+
+    // Kirim semua data ke view
+    return view('home', compact(
+        'kelasOmset',
+        'kelas',
+        'cold',
+        'warm',
+        'hot',
+        'no',
+        'totalLeadAktif'
+    ));
+}
 }
