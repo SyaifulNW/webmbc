@@ -3,9 +3,35 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 
-
 <div class="container-fluid px-4">
     <h3 class="mb-4 font-weight-bold text-dark">📊 DASHBOARD CS MBC</h3>
+@php
+use Carbon\Carbon;
+
+// Ambil bulan (default bulan sekarang)
+$bulanDipilih = request('bulan', now()->format('Y-m'));
+
+// Gunakan bahasa Inggris agar cocok dengan key array
+$namaBulan = Carbon::parse($bulanDipilih)->format('F');
+
+// Mapping bulan ke kelas
+$kelasPerBulan = [
+    'August' => ['Sistemasi Bisnis Expert', 'HRD'],
+    'September' => ['Repeat Order Revolusi', 'Great Manager'],
+    'October' => ['Keuangan', 'CS & Sales Jago Closing'],
+    'November' => ['Scale Up', 'Leadership'],
+    'December' => ['HRD MASTERY'],
+];
+
+// Ambil kelas sesuai bulan atau semua kelas dari DB
+$kelasTersedia = $kelasPerBulan[$namaBulan] ?? $kelas->pluck('nama_kelas')->toArray();
+
+// Filter omset sesuai bulan
+$kelasOmsetFiltered = collect($kelasOmset)
+    ->whereIn('nama_kelas', $kelasTersedia)
+    ->values();
+@endphp
+
 <form method="GET" action="{{ route('home') }}" class="row mb-4 align-items-end">
     <div class="col-md-6">
         <label for="bulan" class="form-label">📅 Bulan:</label>
@@ -14,16 +40,16 @@
             id="bulan" 
             name="bulan" 
             class="form-control" 
-            value="{{ request('bulan', now()->format('Y-m')) }}">
+            value="{{ $bulanDipilih }}">
     </div>
 
     <div class="col-md-6">
         <label for="kelas_id" class="form-label">Kelas</label>
         <select class="form-select" id="kelas_id" name="kelas_id">
             <option value="">Pilih Kelas</option>
-            @foreach($kelas as $item)
-                <option value="{{ $item->id }}" {{ request('kelas_id') == $item->id ? 'selected' : '' }}>
-                    {{ $item->nama_kelas }}
+            @foreach($kelasTersedia as $namaKelas)
+                <option value="{{ $namaKelas }}" {{ request('kelas_id') == $namaKelas ? 'selected' : '' }}>
+                    {{ $namaKelas }}
                 </option>
             @endforeach
         </select>
@@ -36,19 +62,13 @@
 
 <p class="text-muted">
     Menampilkan data untuk bulan: 
-    <strong>
-        @if(request('bulan'))
-            {{ \Carbon\Carbon::parse(request('bulan'))->translatedFormat('F Y') }}
-        @else
-            {{ now()->translatedFormat('F Y') }}
-        @endif
-    </strong>
+    <strong>{{ Carbon::parse($bulanDipilih)->translatedFormat('F Y') }}</strong>
 </p>
 
 {{-- Omset Per Kelas --}}
 <div class="card mb-4 border-success shadow-sm">
     <div class="card-header bg-white text-success font-weight-bold">
-        💰 OMSET KELAS (BULAN INI)
+        💰 OMSET KELAS ({{ strtoupper($namaBulan) }} {{ Carbon::parse($bulanDipilih)->year }})
     </div>
     <div class="card-body">
         <table class="table table-bordered table-sm text-center">
@@ -61,7 +81,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($kelasOmset as $k)
+                @forelse ($kelasOmsetFiltered as $k)
                     <tr>
                         <td>{{ $k['nama_kelas'] }}</td>
                         <td>Rp {{ number_format($k['omset'], 0, ',', '.') }}</td>
@@ -82,55 +102,13 @@
         <h5 class="mt-3">
             Total Omset: 
             <span class="badge bg-success text-white">
-                Rp {{ number_format(collect($kelasOmset)->sum('omset'), 0, ',', '.') }}
+                Rp {{ number_format($kelasOmsetFiltered->sum('omset'), 0, ',', '.') }}
             </span>
         </h5>
     </div>
 </div>
 
 
-    {{-- Omset Per Kelas --}}
-    <div class="card mb-4 border-success shadow-sm">
-        <div class="card-header bg-white text-success font-weight-bold">
-            💰 OMSET KELAS (BULAN INI)
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered table-sm text-center">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Nama Kelas</th>
-                        <th>Omset</th>
-                        <th>Target</th>
-                        <th>% Tercapai</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($kelasOmset as $k)
-                    <tr>
-                        <td>{{ $k['nama_kelas'] }}</td>
-                        <td>Rp {{ number_format($k['omset'], 0, ',', '.') }}</td>
-                        <td>Rp {{ number_format($k['target'], 0, ',', '.') }}</td>
-                        <td class="{{ $k['persen'] >= 100 ? 'text-success' : ($k['persen'] >= 75 ? 'text-warning' : 'text-danger') }}">
-                            {{ $k['persen'] }}%
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="text-muted">Tidak ada data untuk bulan ini</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-            <hr>
-            <h5 class="mt-3">
-                Total Omset:
-                <span class="badge bg-success text-white">
-                    Rp {{ number_format(collect($kelasOmset)->sum('omset'), 0, ',', '.') }}
-                </span>
-            </h5>
-        </div>
-    </div>
 
     {{-- Informasi Utama --}}
     <div class="row">

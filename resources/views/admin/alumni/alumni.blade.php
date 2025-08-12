@@ -1,5 +1,6 @@
 @extends('layouts.masteradmin')
 @section('content')
+
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Database Alumni</h1>
     <div class="col-sm-6">
@@ -13,9 +14,11 @@
     <div class="card card-info card-outline">
         <div class="card-header">
             <div class="mb-3">
-                <!-- <button class="btn btn-success" data-toggle="modal" data-target="#createAlumniModal">
+                @if(auth()->user()->email == 'mbchamasah@gmail.com')
+                <button class="btn btn-success" data-toggle="modal" data-target="#createAlumniModal">
                     <i class="fa fa-plus"></i> Tambah Alumni
-                </button> -->
+                </button>
+                @endif
             </div>
             <div class="modal fade" id="createAlumniModal" tabindex="-1" role="dialog" aria-labelledby="createAlumniModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -35,8 +38,16 @@
                                     <input type="text" name="nama" class="form-control" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Sumber Leads</label>
-                                    <input type="text" name="leads" class="form-control">
+                                    <label for="leads">Sumber Leads</label>
+                                    <select name="leads" id="leads" class="form-control">
+                                        <option value="Iklan">Iklan</option>
+                                        <option value="Instagram">Instagram</option>
+                                        <option value="Facebook">Facebook</option>
+                                        <option value="Tiktok">Tiktok</option>
+                                        <option value="Lain-Lain">Lain-Lain</option>
+                                    </select>
+
+                                    <input type="text" name="leads_custom" class="form-control mt-2" placeholder="Isi jika Lain-Lain">
                                 </div>
                                 <div class="form-group">
                                     <label for="provinsi">Provinsi</label>
@@ -92,6 +103,27 @@
                                     <label>Nama Bisnis</label>
                                     <input type="text" name="nama_bisnis" class="form-control">
                                 </div>
+                                   <div class="form-group">
+                        <label for="jenisbisnis">Jenis Bisnis</label>
+                        <select name="jenisbisnis" id="jenisbisnis" class="form-control">
+                            <option value="Bisnis Properti">Bisnis Properti</option>
+                            <option value="Bisnis Manufaktur">Bisnis Manufaktur</option>
+                            <option value="Bisnis F&B (Food & Beverage)">Bisnis F&B (Food & Beverage)</option>
+                            <option value="Bisnis Jasa">Bisnis Jasa</option>
+                            <option value="Bisnis Digital">Bisnis Digital</option>
+                            <option value="Bisnis Online">Bisnis Online</option>
+                            <option value="Bisnis Franchise">Bisnis Franchise</option>
+                            <option value="Bisnis Edukasi & Pelatihan">Bisnis Edukasi & Pelatihan</option>
+                            <option value="Bisnis Kreatif">Bisnis Kreatif</option>
+                            <option value="Bisnis Agribisnis">Bisnis Agribisnis</option>
+                            <option value="Bisnis Kesehatan & Kecantikan">Bisnis Kesehatan & Kecantikan</option>
+                            <option value="Bisnis Keuangan">Bisnis Keuangan</option>
+                            <option value="Bisnis Transportasi & Logistik">Bisnis Transportasi & Logistik</option>
+                            <option value="Bisnis Pariwisata & Hospitality">Bisnis Pariwisata & Hospitality</option>
+                            <option value="Bisnis Sosial (Social Enterprise)">Bisnis Sosial (Social Enterprise)</option>
+
+                        </select>
+                    </div>
                                 <div class="form-group">
                                     <label>No. WA</label>
                                     <input type="text" name="no_wa" class="form-control">
@@ -102,8 +134,33 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Kelas yang Belum Diikuti</label>
-                                    <textarea name="kelas_yang_belum_diikuti_apa_saja" class="form-control"></textarea>
+                                    <select
+                                        class="form-control"
+                                        id="kelas_yang_belum_diikuti"
+                                        name="kelas_yang_belum_diikuti[]"
+                                        multiple>
+                                        @foreach($kelas as $k)
+                                        <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">Tekan CTRL (Windows) / CMD (Mac) untuk memilih lebih dari satu</small>
                                 </div>
+
+                                <div class="form-group mt-3">
+                                    <label>Sudah Pernah Ikut Kelas Apa</label>
+                                    <select
+                                        class="form-control"
+                                        id="sudah_pernah_ikut_kelas"
+                                        name="sudah_pernah_ikut_kelas[]"
+                                        multiple>
+                                        @foreach($kelas as $k)
+                                        <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">Tekan CTRL (Windows) / CMD (Mac) untuk memilih lebih dari satu</small>
+                                </div>
+
+
                             </div>
 
                             <div class="modal-footer">
@@ -333,3 +390,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- Optional: Bootstrap 4 Theme -->
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet" />
