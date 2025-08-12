@@ -48,7 +48,7 @@
                             <th>Kendala</th>
                             <th>Ikut Kelas / Tidak</th>
                             <th>Kelas</th>
-                            @if(auth()->user()->role == 'administrator')
+                            @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <th>Input Oleh</th>
                             <th>Role</th>
                             @endif

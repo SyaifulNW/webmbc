@@ -13,9 +13,9 @@
     <div class="card card-info card-outline">
         <div class="card-header">
             <div class="mb-3">
-                <button class="btn btn-success" data-toggle="modal" data-target="#createAlumniModal">
+                <!-- <button class="btn btn-success" data-toggle="modal" data-target="#createAlumniModal">
                     <i class="fa fa-plus"></i> Tambah Alumni
-                </button>
+                </button> -->
             </div>
             <div class="modal fade" id="createAlumniModal" tabindex="-1" role="dialog" aria-labelledby="createAlumniModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
