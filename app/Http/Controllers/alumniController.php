@@ -128,7 +128,7 @@ class alumniController extends Controller
 
     $alumni->save();
 
-    return redirect()->route('admin.alumni.index')
+    return redirect()->route('admin.alumni.alumni')
         ->with('success', 'Data alumni berhasil ditambahkan.');
     }
 

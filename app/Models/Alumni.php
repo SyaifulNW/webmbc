@@ -27,8 +27,8 @@ class Alumni extends Model
         'kelas_yang_belum_diikuti_apa_saja'
     ];
     protected $casts = [
-        'ikut_kelas' => 'boolean', // Cast ikut_kelas to boolean
-        'kelas_id' => 'integer', // Cast kelas_id to integer
+       'sudah_pernah_ikut_kelas_apa_saja' => 'array',
+    'kelas_yang_belum_diikuti_apa_saja' => 'array',
     ];
     public function kelas()
     {

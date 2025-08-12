@@ -104,8 +104,8 @@
                                     <input type="text" name="nama_bisnis" class="form-control">
                                 </div>
                                    <div class="form-group">
-                        <label for="jenisbisnis">Jenis Bisnis</label>
-                        <select name="jenisbisnis" id="jenisbisnis" class="form-control">
+                        <label for="jenis_bisnis">Jenis Bisnis</label>
+                        <select name="jenis_bisnis" id="jenis_bisnis" class="form-control">
                             <option value="Bisnis Properti">Bisnis Properti</option>
                             <option value="Bisnis Manufaktur">Bisnis Manufaktur</option>
                             <option value="Bisnis F&B (Food & Beverage)">Bisnis F&B (Food & Beverage)</option>
