@@ -18,7 +18,7 @@
                 <button class="btn btn-success" data-toggle="modal" data-target="#createAlumniModal">
                     <i class="fa fa-plus"></i> Tambah Alumni
                 </button>
-     
+
             </div>
             <div class="modal fade" id="createAlumniModal" tabindex="-1" role="dialog" aria-labelledby="createAlumniModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -133,33 +133,50 @@
                                     <textarea name="kendala" class="form-control"></textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label>Kelas yang Belum Diikuti</label>
-                                    <select
-                                        class="form-control"
-                                        id="kelas_yang_belum_diikuti"
-                                        name="kelas_yang_belum_diikuti[]"
-                                        multiple>
-                                        @foreach($kelas as $k)
-                                        <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
-                                        @endforeach
-                                    </select>
-                                    <small class="text-muted">Tekan CTRL (Windows) / CMD (Mac) untuk memilih lebih dari satu</small>
+                                    <label class="fw-bold mb-2">Kelas yang Belum Diikuti</label>
+                                    <div class="card border-danger">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                @foreach($kelas as $k)
+                                                <div class="col-md-6 mb-2">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="kelas_yang_belum_diikuti_apa_saja[]"
+                                                            value="{{ $k->id }}"
+                                                            id="belum_{{ $k->id }}">
+                                                        <label class="form-check-label text-danger fw-semibold" for="belum_{{ $k->id }}">
+                                                            {{ $k->nama_kelas }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="form-group mt-3">
-                                    <label>Sudah Pernah Ikut Kelas Apa</label>
-                                    <select
-                                        class="form-control"
-                                        id="sudah_pernah_ikut_kelas"
-                                        name="sudah_pernah_ikut_kelas[]"
-                                        multiple>
-                                        @foreach($kelas as $k)
-                                        <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
-                                        @endforeach
-                                    </select>
-                                    <small class="text-muted">Tekan CTRL (Windows) / CMD (Mac) untuk memilih lebih dari satu</small>
+                                    <label class="fw-bold mb-2">Sudah Pernah Ikut Kelas Apa</label>
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                @foreach($kelas as $k)
+                                                <div class="col-md-6 mb-2">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="sudah_pernah_ikut_kelas_apa_saja[]"
+                                                            value="{{ $k->id }}"
+                                                            id="sudah_{{ $k->id }}">
+                                                        <label class="form-check-label text-success fw-semibold" for="sudah_{{ $k->id }}">
+                                                            {{ $k->nama_kelas }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-
 
                             </div>
 
@@ -188,9 +205,9 @@
                             <th>Kendala</th>
                             <th>Sudah Pernah Ikut Kelas</th>
                             <th>Kelas Yang Belum Ikut</th>
-                        @if(auth()->user()->email == 'mbchamasah@gmail.com')
+                            @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <th>Input Oleh</th>
-                        @endif
+                            @endif
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -205,16 +222,14 @@
                             <td>{{ $item->nama_bisnis }}</td>
                             <td>{{ $item->no_wa }}</td>
                             <td>{{ $item->kendala }}</td>
-                            @php
-                            $kelasIds = json_decode($item->kelas_id ?? '[]', true);
-                            $kelasIds = is_array($kelasIds) ? $kelasIds : [$kelasIds]; // Paksa jadi array
+                            <td>
+                                Kelas yang sudah diikuti
+                            </td>
 
-                            $kelasTerdaftar = \App\Models\Kelas::whereIn('id', $kelasIds)->pluck('nama_kelas')->toArray();
-                            $sudahIkut = implode(', ', $kelasTerdaftar);
-                            @endphp
-                            <td>{{ $sudahIkut }}</td>
-                            <td>{{ $item->kelas_yang_belum_diikuti_apa_saja }}</td>
-                           @if(auth()->user()->email == 'mbchamasah@gmail.com')
+                            <td>
+                                kelas yang belum diikuti
+                            </td>
+                            @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <td>{{$item->created_by}}</td>
                             @endif
                             <td>
@@ -229,41 +244,6 @@
                                 </button>
                                 <!-- Modal Edit -->
                                 <!-- Modal Edit Kelas -->
-                                <div class="modal fade" id="editKelasModal{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="editKelasLabel{{ $item->id }}" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <form action="{{ route('admin.alumni.update', $item->id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-success text-white">
-                                                    <h5 class="modal-title" id="editKelasLabel{{ $item->id }}">Edit Kelas Alumni - {{ $item->nama }}</h5>
-                                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <!-- Sudah Ikut -->
-                                                    <div class="form-group">
-                                                        <label>Sudah Pernah Ikut Kelas:</label>
-                                                        <textarea class="form-control" rows="3">{{ $sudahIkut }}</textarea>
-                                                        <small class="form-text text-muted">Otomatis berdasarkan kelas yang pernah diikuti</small>
-                                                    </div>
-
-                                                    <!-- Belum Ikut -->
-                                                    <div class="form-group">
-                                                        <label>Kelas Yang Belum Diikuti:</label>
-                                                        <textarea name="kelas_yang_belum_diikuti_apa_saja" class="form-control" rows="3">{{ $item->kelas_yang_belum_diikuti_apa_saja }}</textarea>
-                                                        <small class="form-text text-muted">Otomatis bisa digenerate jika kosong</small>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-success">Simpan Perubahan</button>
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
 
 
 
@@ -272,43 +252,6 @@
                                     <i class="fa fa-share-square" style="color: white;"></i>
                                 </button>
 
-                                <!-- Modal Salesplan -->
-                                <div class="modal fade" id="salesplanModal{{ $item->id }}" tabindex="-1" role="dialog" aria-labelledby="salesplanModalLabel{{ $item->id }}" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <form action="{{ route('admin.alumni.simpanKelas', $item->id) }}" method="POST">
-                                            @csrf
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-primary text-white">
-                                                    <h5 class="modal-title" id="salesplanModalLabel{{ $item->id }}">
-                                                        Pilih Kelas Selanjutnya - {{ $item->nama }}
-                                                    </h5>
-                                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="form-group">
-                                                        <label>Pilih Kelas yang Akan Diikuti:</label>
-                                                        @php
-                                                        $belumIkut = explode(',', $item->kelas_yang_belum_diikuti_apa_saja);
-                                                        $belumIkut = array_map('trim', $belumIkut);
-                                                        @endphp
-                                                        <select name="kelas" class="form-control" required>
-                                                            <option value="">-- Pilih Kelas --</option>
-                                                            @foreach($belumIkut as $kelas)
-                                                            <option value="{{ $kelas }}">{{ $kelas }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-success">Simpan Kelas</button>
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
 
                                 <!-- ✅ Tambahkan ini di bawah modal -->
                                 @if($item->kelas_yang_akan_diikuti)

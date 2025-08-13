@@ -28,11 +28,11 @@ class alumniController extends Controller
         // Return a view with the alumni data
 
         if (auth()->user()->email === 'mbchamasah@gmail.com') {
-            // Administrator → lihat semua alumni
+
             $alumni = Alumni::all();
         } else {
-            // Admin biasa → lihat data yang dia input
-            $alumni = Alumni::where('created_by', auth()->id())->get();
+
+            $alumni = Alumni::where('created_by', auth()->user()->name)->get();
         }
 
 
@@ -135,10 +135,8 @@ class alumniController extends Controller
         // Ya atau tidak
         $alumni->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0;
         $alumni->kelas_id = $request->input('kelas_id');
-
-        $alumni->sudah_pernah_ikut_kelas_apa_saja = $request->input('sudah_pernah_ikut_kelas_apa_saja');
-        $alumni->kelas_yang_belum_diikuti_apa_saja = $request->input('kelas_yang_belum_diikuti_apa_saja');
-
+        $alumni->sudah_pernah_ikut_kelas_apa_saja = json_encode($request->input('sudah_pernah_ikut_kelas_apa_saja', []));
+        $alumni->kelas_yang_belum_diikuti_apa_saja = json_encode($request->input('kelas_yang_belum_diikuti_apa_saja', []));
         $alumni->created_by = Auth::user()->name;
         $alumni->save();
 

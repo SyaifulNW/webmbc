@@ -91,7 +91,7 @@
 </style>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Sales Plan</h1>
+    <h1 class="h3 mb-0 text-gray-800">Sales Plan /  HRD Mastery</h1>   
     <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -129,7 +129,7 @@
                     @for ($i = 1; $i <= 5; $i++)
                         <th colspan="3" style="padding: 10px; border: 1px solid #ccc;">FU{{ $i }}</th>
                         @endfor
-                        <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Nominal</th>
+                        <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Potensi</th>
                         <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Keterangan</th>
                         <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Status</th>
                         <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Action</th>
@@ -291,6 +291,38 @@
         </form>
     </div>
 </div>
+
+{{-- Tabel Sales Plan yang sudah ada --}}
+
+{{-- Tabel Daftar Peserta --}}
+<h4 style="margin-top: 30px; font-weight: bold;">Daftar Peserta / HRD Mastery</h4> 
+<div style="overflow-x: auto; white-space: nowrap;">
+    <table style="border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif; font-size: 14px; min-width: 500px;">
+        <thead>
+            <tr style="background: linear-gradient(to right, #376bb9ff, #1c7f91ff); color: white;">
+                <th style="padding: 10px; border: 1px solid #ccc;">No</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Nama</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Nominal</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr style="background: #fdfdfd; color: black;">
+                <td style="padding: 8px; border: 1px solid #ccc;"></td>
+                <td style="padding: 8px; border: 1px solid #ccc;"></td>
+                <td style="padding: 8px; border: 1px solid #ccc;"></td>
+            </tr>
+
+            <tr>
+                <td colspan="3" style="text-align: center; padding: 15px; color: #999;">
+                    Belum ada peserta yang transfer.
+                </td>
+            </tr>
+   
+        </tbody>
+    </table>
+</div>
+
 
 </div>
 <script>
