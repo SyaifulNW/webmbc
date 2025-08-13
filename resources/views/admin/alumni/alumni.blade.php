@@ -14,11 +14,11 @@
     <div class="card card-info card-outline">
         <div class="card-header">
             <div class="mb-3">
-                @if(auth()->user()->email == 'mbchamasah@gmail.com')
+
                 <button class="btn btn-success" data-toggle="modal" data-target="#createAlumniModal">
                     <i class="fa fa-plus"></i> Tambah Alumni
                 </button>
-                @endif
+     
             </div>
             <div class="modal fade" id="createAlumniModal" tabindex="-1" role="dialog" aria-labelledby="createAlumniModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -103,27 +103,27 @@
                                     <label>Nama Bisnis</label>
                                     <input type="text" name="nama_bisnis" class="form-control">
                                 </div>
-                                   <div class="form-group">
-                        <label for="jenis_bisnis">Jenis Bisnis</label>
-                        <select name="jenis_bisnis" id="jenis_bisnis" class="form-control">
-                            <option value="Bisnis Properti">Bisnis Properti</option>
-                            <option value="Bisnis Manufaktur">Bisnis Manufaktur</option>
-                            <option value="Bisnis F&B (Food & Beverage)">Bisnis F&B (Food & Beverage)</option>
-                            <option value="Bisnis Jasa">Bisnis Jasa</option>
-                            <option value="Bisnis Digital">Bisnis Digital</option>
-                            <option value="Bisnis Online">Bisnis Online</option>
-                            <option value="Bisnis Franchise">Bisnis Franchise</option>
-                            <option value="Bisnis Edukasi & Pelatihan">Bisnis Edukasi & Pelatihan</option>
-                            <option value="Bisnis Kreatif">Bisnis Kreatif</option>
-                            <option value="Bisnis Agribisnis">Bisnis Agribisnis</option>
-                            <option value="Bisnis Kesehatan & Kecantikan">Bisnis Kesehatan & Kecantikan</option>
-                            <option value="Bisnis Keuangan">Bisnis Keuangan</option>
-                            <option value="Bisnis Transportasi & Logistik">Bisnis Transportasi & Logistik</option>
-                            <option value="Bisnis Pariwisata & Hospitality">Bisnis Pariwisata & Hospitality</option>
-                            <option value="Bisnis Sosial (Social Enterprise)">Bisnis Sosial (Social Enterprise)</option>
+                                <div class="form-group">
+                                    <label for="jenis_bisnis">Jenis Bisnis</label>
+                                    <select name="jenis_bisnis" id="jenis_bisnis" class="form-control">
+                                        <option value="Bisnis Properti">Bisnis Properti</option>
+                                        <option value="Bisnis Manufaktur">Bisnis Manufaktur</option>
+                                        <option value="Bisnis F&B (Food & Beverage)">Bisnis F&B (Food & Beverage)</option>
+                                        <option value="Bisnis Jasa">Bisnis Jasa</option>
+                                        <option value="Bisnis Digital">Bisnis Digital</option>
+                                        <option value="Bisnis Online">Bisnis Online</option>
+                                        <option value="Bisnis Franchise">Bisnis Franchise</option>
+                                        <option value="Bisnis Edukasi & Pelatihan">Bisnis Edukasi & Pelatihan</option>
+                                        <option value="Bisnis Kreatif">Bisnis Kreatif</option>
+                                        <option value="Bisnis Agribisnis">Bisnis Agribisnis</option>
+                                        <option value="Bisnis Kesehatan & Kecantikan">Bisnis Kesehatan & Kecantikan</option>
+                                        <option value="Bisnis Keuangan">Bisnis Keuangan</option>
+                                        <option value="Bisnis Transportasi & Logistik">Bisnis Transportasi & Logistik</option>
+                                        <option value="Bisnis Pariwisata & Hospitality">Bisnis Pariwisata & Hospitality</option>
+                                        <option value="Bisnis Sosial (Social Enterprise)">Bisnis Sosial (Social Enterprise)</option>
 
-                        </select>
-                    </div>
+                                    </select>
+                                </div>
                                 <div class="form-group">
                                     <label>No. WA</label>
                                     <input type="text" name="no_wa" class="form-control">
@@ -188,6 +188,9 @@
                             <th>Kendala</th>
                             <th>Sudah Pernah Ikut Kelas</th>
                             <th>Kelas Yang Belum Ikut</th>
+                        @if(auth()->user()->email == 'mbchamasah@gmail.com')
+                            <th>Input Oleh</th>
+                        @endif
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -211,6 +214,9 @@
                             @endphp
                             <td>{{ $sudahIkut }}</td>
                             <td>{{ $item->kelas_yang_belum_diikuti_apa_saja }}</td>
+                           @if(auth()->user()->email == 'mbchamasah@gmail.com')
+                            <td>{{$item->created_by}}</td>
+                            @endif
                             <td>
                                 <!-- Tombol lihat -->
                                 <a href="{{ route('admin.alumni.show', $item->id) }}" class="btn btn-info btn-sm">
@@ -239,7 +245,7 @@
                                                     <!-- Sudah Ikut -->
                                                     <div class="form-group">
                                                         <label>Sudah Pernah Ikut Kelas:</label>
-                                                        <textarea class="form-control" rows="3" readonly>{{ $sudahIkut }}</textarea>
+                                                        <textarea class="form-control" rows="3">{{ $sudahIkut }}</textarea>
                                                         <small class="form-text text-muted">Otomatis berdasarkan kelas yang pernah diikuti</small>
                                                     </div>
 

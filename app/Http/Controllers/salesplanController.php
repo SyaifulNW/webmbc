@@ -75,11 +75,6 @@ class salesplanController extends Controller
     {
         $salesplan = SalesPlan::findOrFail($id);
 
-        for ($i = 1; $i <= 5; $i++) {
-            $salesplan->{'fu' . $i . '_hasil'} = $request->input('fu' . $i . '_hasil');
-            $salesplan->{'fu' . $i . '_tindak_lanjut'} = $request->input('fu' . $i . '_tindak_lanjut');
-        }
-
         $salesplan->keterangan = $request->input('keterangan');
         $salesplan->status = $request->input('status');
         $salesplan->nominal = $request->input('nominal');
@@ -89,6 +84,23 @@ class salesplanController extends Controller
 
         return redirect()->route('admin.salesplan.index')->with('success', 'Sales plan berhasil diperbarui.');
     }
+
+    public function updateFU(Request $request, $id, $fu)
+{
+    $plan = SalesPlan::findOrFail($id);
+
+    // Pastikan FU hanya 1-5
+    if ($fu < 1 || $fu > 5) {
+        abort(404);
+    }
+
+    $plan->{'fu'.$fu.'_hasil'} = $request->input('fu'.$fu.'_hasil');
+    $plan->{'fu'.$fu.'_tindak_lanjut'} = $request->input('fu'.$fu.'_tindak_lanjut');
+    $plan->save();
+
+    return back()->with('success', "FU{$fu} berhasil diperbarui.");
+}
+
 
     /**
      * Remove the specified resource from storage.

@@ -8,6 +8,8 @@ use App\Models\data; // Ensure you import the data model
 use Illuminate\Support\Facades\DB;
 use App\Models\Kelas; // Ensure you import the Kelas model
 use App\Models\salesplan; // Ensure you import the Salesplan model
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Log;
 
 
@@ -24,6 +26,16 @@ class alumniController extends Controller
         $alumni = Alumni::all(); // Use pagination for better performance if needed
         $kelas = Kelas::all(); // Fetch all classes for dropdowns or other purposes
         // Return a view with the alumni data
+
+        if (auth()->user()->email === 'mbchamasah@gmail.com') {
+            // Administrator → lihat semua alumni
+            $alumni = Alumni::all();
+        } else {
+            // Admin biasa → lihat data yang dia input
+            $alumni = Alumni::where('created_by', auth()->id())->get();
+        }
+
+
         return view('admin.alumni.alumni', compact('alumni', 'kelas'));
     }
 
@@ -39,40 +51,40 @@ class alumniController extends Controller
 
     public function toSalesplan(Request $request, $id)
     {
-       $alumni = Alumni::findOrFail($id);
-    $kelas = $alumni->kelas_yang_akan_diikuti;
+        $alumni = Alumni::findOrFail($id);
+        $kelas = $alumni->kelas_yang_akan_diikuti;
 
-    if (!$kelas) {
-        return redirect()->back()->with('error', 'Kelas belum dipilih.');
-    }
+        if (!$kelas) {
+            return redirect()->back()->with('error', 'Kelas belum dipilih.');
+        }
 
-    // Gunakan ID dari tabel data
-    $dataId = $alumni->data_id;
+        // Gunakan ID dari tabel data
+        $dataId = $alumni->data_id;
 
-    if (!$dataId) {
-        return redirect()->back()->with('error', 'Data ID tidak ditemukan pada alumni.');
-    }
+        if (!$dataId) {
+            return redirect()->back()->with('error', 'Data ID tidak ditemukan pada alumni.');
+        }
 
-    // Cek apakah sudah ada di salesplan
-    $existing = Salesplan::where('data_id', $dataId)
-        ->where('keterangan', $kelas)
-        ->first();
+        // Cek apakah sudah ada di salesplan
+        $existing = Salesplan::where('data_id', $dataId)
+            ->where('keterangan', $kelas)
+            ->first();
 
-    if (!$existing) {
-        Salesplan::create([
-            'data_id' => $dataId,
-            'keterangan' => $kelas,
-            'status' => 'cold',
-        ]);
+        if (!$existing) {
+            Salesplan::create([
+                'data_id' => $dataId,
+                'keterangan' => $kelas,
+                'status' => 'cold',
+            ]);
 
-        // Kosongkan field setelah dipindahkan
-        $alumni->kelas_yang_akan_diikuti = null;
-        $alumni->save();
+            // Kosongkan field setelah dipindahkan
+            $alumni->kelas_yang_akan_diikuti = null;
+            $alumni->save();
 
-        return redirect()->back()->with('success', 'Data berhasil dipindahkan ke Salesplan.');
-    }
+            return redirect()->back()->with('success', 'Data berhasil dipindahkan ke Salesplan.');
+        }
 
-    return redirect()->back()->with('info', 'Data sudah ada di Salesplan.');
+        return redirect()->back()->with('info', 'Data sudah ada di Salesplan.');
     }
 
     public function simpanKelas(Request $request, $id)
@@ -95,41 +107,43 @@ class alumniController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
 
-    $alumni = new Alumni();
-    $alumni->nama = $request->input('nama');
+        $alumni = new Alumni();
+        $alumni->nama = $request->input('nama');
 
-    // Enum field
-    $alumni->leads = $request->input('leads');
+        // Enum field
+        $alumni->leads = $request->input('leads');
 
-    // Custom field
-    if ($request->input('leads_custom') === null) {
-        $alumni->leads_custom = '';
-    } else {
-        $alumni->leads_custom = $request->input('leads_custom');
-    }
+        // Custom field
+        if ($request->input('leads_custom') === null) {
+            $alumni->leads_custom = '';
+        } else {
+            $alumni->leads_custom = $request->input('leads_custom');
+        }
 
-    $alumni->provinsi_id = $request->input('provinsi_id');
-    $alumni->provinsi_nama = $request->input('provinsi_nama');
-    $alumni->kota_id = $request->input('kota_id');
-    $alumni->kota_nama = $request->input('kota_nama');
-    $alumni->jenis_bisnis = $request->input('jenis_bisnis');
-    $alumni->nama_bisnis = $request->input('nama_bisnis');
-    $alumni->no_wa = $request->input('no_wa');
-    $alumni->kendala = $request->input('kendala');
+        $alumni->provinsi_id = $request->input('provinsi_id');
+        $alumni->provinsi_nama = $request->input('provinsi_nama');
+        $alumni->kota_id = $request->input('kota_id');
+        $alumni->kota_nama = $request->input('kota_nama');
+        $alumni->jenis_bisnis = $request->input('jenis_bisnis');
+        $alumni->nama_bisnis = $request->input('nama_bisnis');
+        $alumni->no_wa = $request->input('no_wa');
+        $alumni->kendala = $request->input('kendala');
 
-    // Ya atau tidak
-    $alumni->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0;
-    $alumni->kelas_id = $request->input('kelas_id');
+        // Ya atau tidak
+        $alumni->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0;
+        $alumni->kelas_id = $request->input('kelas_id');
 
-    $alumni->sudah_pernah_ikut_kelas_apa_saja = $request->input('sudah_pernah_ikut_kelas_apa_saja');
-    $alumni->kelas_yang_belum_diikuti_apa_saja = $request->input('kelas_yang_belum_diikuti_apa_saja');
+        $alumni->sudah_pernah_ikut_kelas_apa_saja = $request->input('sudah_pernah_ikut_kelas_apa_saja');
+        $alumni->kelas_yang_belum_diikuti_apa_saja = $request->input('kelas_yang_belum_diikuti_apa_saja');
 
-    $alumni->save();
+        $alumni->created_by = Auth::user()->name;
+        $alumni->save();
 
-    return redirect()->route('admin.alumni.alumni')
-        ->with('success', 'Data alumni berhasil ditambahkan.');
+        return redirect()->route('admin.alumni.alumni')
+            ->with('success', 'Data alumni berhasil ditambahkan.');
     }
 
     /**

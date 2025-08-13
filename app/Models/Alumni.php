@@ -24,11 +24,13 @@ class Alumni extends Model
         'ikut_kelas',
         'kelas_id',
         'sudah_pernah_ikut_kelas_apa_saja',
-        'kelas_yang_belum_diikuti_apa_saja'
+        'kelas_yang_belum_diikuti_apa_saja',
+        'created_by'
+
     ];
     protected $casts = [
-       'sudah_pernah_ikut_kelas_apa_saja' => 'array',
-    'kelas_yang_belum_diikuti_apa_saja' => 'array',
+        'sudah_pernah_ikut_kelas_apa_saja' => 'array',
+        'kelas_yang_belum_diikuti_apa_saja' => 'array',
     ];
     public function kelas()
     {
@@ -42,5 +44,9 @@ class Alumni extends Model
     public function salesplan()
     {
         return $this->hasMany(SalesPlan::class, 'data_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

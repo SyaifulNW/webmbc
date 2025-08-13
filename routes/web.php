@@ -82,6 +82,8 @@ Route::post('/admin/daily-activity', [App\Http\Controllers\DailyController ::cla
 Route::post('/admin/alumni/to-salesplan/{id}', [AlumniController::class, 'toSalesplan'])->name('admin.alumni.toSalesplan');
 Route::post('/admin/alumni/{id}/simpan-kelas', [AlumniController::class, 'simpanKelas'])->name('admin.alumni.simpanKelas');
 
+// Per FU
+Route::put('/salesplan/{id}/fu/{fu}', [SalesPlanController::class, 'updateFU'])->name('admin.salesplan.update-fu');
 
 
 
