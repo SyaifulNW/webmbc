@@ -29,6 +29,14 @@ class salesplanController extends Controller
             })
             ->get();
 
+        // if (auth()->user()->role == 'administrator') {
+        //     $salesplans = SalesPlan::all();
+        // } else {
+        //     $salesplans = SalesPlan::where('created_by', auth()->user()->name)->get();
+        // }
+
+        return view('admin.salesplan.index', compact('salesplans'));
+
         $kelasList = Kelas::all(); // untuk daftar di sidebar
         if ($salesplans->count() === 0) {
             return view('admin.salesplan.index', [
@@ -86,20 +94,20 @@ class salesplanController extends Controller
     }
 
     public function updateFU(Request $request, $id, $fu)
-{
-    $plan = SalesPlan::findOrFail($id);
+    {
+        $plan = SalesPlan::findOrFail($id);
 
-    // Pastikan FU hanya 1-5
-    if ($fu < 1 || $fu > 5) {
-        abort(404);
+        // Pastikan FU hanya 1-5
+        if ($fu < 1 || $fu > 5) {
+            abort(404);
+        }
+
+        $plan->{'fu' . $fu . '_hasil'} = $request->input('fu' . $fu . '_hasil');
+        $plan->{'fu' . $fu . '_tindak_lanjut'} = $request->input('fu' . $fu . '_tindak_lanjut');
+        $plan->save();
+
+        return back()->with('success', "FU{$fu} berhasil diperbarui.");
     }
-
-    $plan->{'fu'.$fu.'_hasil'} = $request->input('fu'.$fu.'_hasil');
-    $plan->{'fu'.$fu.'_tindak_lanjut'} = $request->input('fu'.$fu.'_tindak_lanjut');
-    $plan->save();
-
-    return back()->with('success', "FU{$fu} berhasil diperbarui.");
-}
 
 
     /**

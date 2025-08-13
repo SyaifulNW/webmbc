@@ -113,6 +113,7 @@
                                         });
                                     });
                                 </script>
+                                
                                 <form action="{{ route('data.pindahKeSalesPlan', $item->id) }}" method="POST" style="display:inline;" class="pindah-salesplan-form">
                                     @csrf
                                     <button type="button" class="btn btn-primary btn-sm btn-pindah-salesplan" title="Pindah ke Sales Plan">
@@ -150,6 +151,7 @@
                                         <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                     </button>
                                 </form>
+                                          @endif
                                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                 <script>
                                     $(document).on('click', '.btn-delete', function(e) {
@@ -171,7 +173,7 @@
                                         });
                                     });
                                 </script>
-                          @endif
+                
                             </td>
 
                         </tr>

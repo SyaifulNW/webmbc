@@ -222,16 +222,30 @@
                             <td>{{ $item->nama_bisnis }}</td>
                             <td>{{ $item->no_wa }}</td>
                             <td>{{ $item->kendala }}</td>
-                            <td>
-                                Kelas yang sudah diikuti
+
+                            <td class="text-white">
+                                @foreach((array) ($item->sudah_pernah_ikut_kelas_apa_saja ?? []) as $kelasId)
+                                @php
+                                $namaKelas = $kelas->firstWhere('id', $kelasId)->nama_kelas ?? 'Tidak ditemukan';
+                                @endphp
+                                <span class="badge bg-success">{{ $namaKelas }}</span>
+                                @endforeach
                             </td>
 
-                            <td>
-                                kelas yang belum diikuti
+                            {{-- Kolom kelas yang belum diikuti --}}
+                            <td class="text-white">
+                                @foreach((array) ($item->kelas_yang_belum_diikuti_apa_saja ?? []) as $kelasId)
+                                @php
+                                $namaKelas = $kelas->firstWhere('id', $kelasId)->nama_kelas ?? 'Tidak ditemukan';
+                                @endphp
+                                <span class="badge bg-danger">{{ $namaKelas }}</span>
+                                @endforeach
                             </td>
+
                             @if(auth()->user()->email == 'mbchamasah@gmail.com')
-                            <td>{{$item->created_by}}</td>
+                            <td>{{ $item->created_by }}</td>
                             @endif
+
                             <td>
                                 <!-- Tombol lihat -->
                                 <a href="{{ route('admin.alumni.show', $item->id) }}" class="btn btn-info btn-sm">
@@ -271,11 +285,10 @@
                                         <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                     </button>
                                 </form>
-
                             </td>
-
                         </tr>
                         @endforeach
+
                     </tbody>
                 </table>
 
