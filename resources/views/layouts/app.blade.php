@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-<link href="https://ea70f9198e19.ngrok-free.app/backend/css/sb-admin-2.min.css" rel="stylesheet">
+<link href="https://b948f3914ff3.ngrok-free.app/backend/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="{{asset('backend/css/sb-admin-2.min.css')}}" rel="stylesheet">
     
 

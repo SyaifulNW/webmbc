@@ -228,16 +228,20 @@ class dataController extends Controller
         if ($data->salesplan->isNotEmpty()) {
             return redirect()->back()->with('error', 'Data ini sudah memiliki Sales Plan.');
         }
+
         // Cek apakah ikut kelas
         if (!$data->ikut_kelas || !$data->kelas_id) {
             return back()->with('error', 'Peserta belum memilih kelas.');
         }
+
         // Simpan ke database salesplan
         SalesPlan::create([
-            'data_id' => $data->id,
-            'keterangan' => 'Dimasukkan otomatis berdasarkan kelas: ' . ($data->kelas->nama ?? 'Tidak diketahui'),
-            'status' => 'cold', // default warna indikator
+            'data_id'     => $data->id,
+            'keterangan'  => 'Dimasukkan otomatis berdasarkan kelas: ' . ($data->kelas->nama ?? 'Tidak diketahui'),
+            'status'      => 'cold', // default warna indikator
+            'created_by' => auth()->user()->name, // ID user yang membuat
         ]);
+
         // Redirect ke halaman sales plan
         return redirect()->route('admin.salesplan.index')->with('success', 'Data telah ditambahkan ke Sales Plan.');
     }

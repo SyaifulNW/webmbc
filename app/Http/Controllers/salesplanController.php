@@ -27,26 +27,22 @@ class salesplanController extends Controller
                     $subQuery->where('nama_kelas', $kelasFilter); // filter by nama_kelas dari tabel kelas
                 });
             })
+            ->when(auth()->user()->email !== 'mbchamasah@gmail.com', function ($query) {
+                // Filter berdasarkan nama user di kolom created_by
+                $query->where('created_by', auth()->user()->name);
+            })
             ->get();
 
-        // if (auth()->user()->role == 'administrator') {
-        //     $salesplans = SalesPlan::all();
-        // } else {
-        //     $salesplans = SalesPlan::where('created_by', auth()->user()->name)->get();
-        // }
-
-        return view('admin.salesplan.index', compact('salesplans'));
-
         $kelasList = Kelas::all(); // untuk daftar di sidebar
+
         if ($salesplans->count() === 0) {
             return view('admin.salesplan.index', [
-                'salesplans' => $salesplans,
-                'kelasList' => $kelasList,
+                'salesplans'  => $salesplans,
+                'kelasList'   => $kelasList,
                 'kelasFilter' => $kelasFilter,
-                'message' => 'Data tidak ditemukan untuk kelas yang dipilih.'
+                'message'     => 'Data tidak ditemukan untuk kelas yang dipilih.'
             ]);
         }
-
 
         return view('admin.salesplan.index', compact('salesplans', 'kelasList', 'kelasFilter'));
     }
