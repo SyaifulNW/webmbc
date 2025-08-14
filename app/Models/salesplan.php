@@ -31,7 +31,8 @@ class salesplan extends Model
         'fu8_tindak_lanjut',
         'keterangan',
         'status',
-        'nominal'
+        'nominal',
+        'created_by'
     ];
     protected $casts = [
         'status' => 'string', // Cast status to string
@@ -47,6 +48,20 @@ class salesplan extends Model
     }
     public function kelas()
     {
-    return $this->belongsTo(Kelas::class, 'kelas_id');
+        return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    public function getCreatedByNameAttribute()
+    {
+        $names = [
+            1 => 'Administrator',
+            2 => 'Linda',
+            3 => 'Yasmin',
+            4 => 'Tursia',
+            5 => 'Livia',
+            6 => 'Shafa',
+        ];
+
+        return $names[$this->created_by] ?? '-';
     }
 }

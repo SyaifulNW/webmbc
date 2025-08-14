@@ -29,7 +29,7 @@ class salesplanController extends Controller
             })
             ->when(auth()->user()->email !== 'mbchamasah@gmail.com', function ($query) {
                 // Filter berdasarkan nama user di kolom created_by
-                $query->where('created_by', auth()->user()->name);
+                $query->where('created_by', auth()->user()->id);
             })
             ->get();
 

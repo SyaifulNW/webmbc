@@ -10,6 +10,8 @@ use App\Models\salesplan; // Ensure you import the Salesplan model
 use App\Models\jenisbisnis; // Ensure you import the Jenis model
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\dataImport;
 
 
 
@@ -21,11 +23,13 @@ class dataController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
 
         $user = Auth::user();
 
+        $data = Data::where('status_peserta', 'Peserta Baru')->get();
         // Ambil data sesuai role
         if ($user->email == 'mbchamasah@gmail.com') {
             $data = data::all();
@@ -62,6 +66,7 @@ class dataController extends Controller
     {
         $data = new data();
         $data->nama = $request->input('nama');
+        $data->status_peserta = $request->input('status_peserta', 'Peserta Baru');
         // Enum field
         $data->leads = $request->input('leads'); // Assuming 'leads' is an enum field
         // Custom field
@@ -79,9 +84,10 @@ class dataController extends Controller
         $data->no_wa = $request->input('no_wa');
         $data->situasi_bisnis = $request->input('situasi_bisnis');
         $data->kendala = $request->input('kendala');
-        // Ya atau tidak
-        $data->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0; // Convert to boolean
         $data->kelas_id = $request->input('kelas_id');
+        // Ya atau tidak
+        // Enum Peserta Baru
+
 
         // Role
         $data->created_by = Auth::user()->name;
@@ -96,6 +102,20 @@ class dataController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function updatePotensiKelas(Request $request, $id)
+    {
+        $request->validate([
+            'potensi_kelas' => 'required|string|max:255',
+        ]);
+
+        $data = data::findOrFail($id);
+        $data->potensi_kelas_pertama = $request->potensi_kelas;
+        $data->save();
+
+        return response()->json(['success' => true]);
+    }
+
     public function show($id)
     {
         // Fetch the data by ID
@@ -150,20 +170,12 @@ class dataController extends Controller
         $data->no_wa = $request->input('no_wa');
         $data->situasi_bisnis = $request->input('situasi_bisnis');
         $data->kendala = $request->input('kendala');
-        // Ya atau tidak
-        $data->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0; // Convert to boolean
-
         $data->kelas_id = $request->input('kelas_id');
+        // Ya atau tidak
+
         $data->save();
 
-        // Otomatis masuk ke Sales Plan jika ikut kelas
-        if ($data->ikut_kelas && $data->kelas_id && !$data->salesPlan) {
-            SalesPlan::create([
-                'data_id' => $data->id,
-                'keterangan' => 'Dimasukkan otomatis saat peserta memilih ikut kelas',
-                'indikator_warna' => 'kuning',
-            ]);
-        }
+
 
         // Redirect to the index page with a success message
         return redirect()->route('admin.database.database')->with('success', 'Data has been updated successfully.');
@@ -220,6 +232,33 @@ class dataController extends Controller
         return redirect()->route('admin.alumni.alumni')->with('success', 'Data has been moved to Alumni successfully.');
     }
 
+    // app/Http/Controllers/DatabaseController.php
+
+public function peserta_baru()
+{
+    if (Auth::user()->email === 'mbchamasah@gmail.com') {
+        $data = data::where('status_peserta', 'peserta_baru')->get();
+    } else {
+        $data = data::where('status_peserta', 'peserta_baru')
+                       ->where('created_by', Auth::user()->name)
+                       ->get();
+    }
+    return view('admin.database.database', compact('data'));
+}
+
+public function alumni()
+{
+    if (Auth::user()->email === 'mbchamasah@gmail.com') {
+        $data = data::where('status_peserta', 'alumni')->get();
+    } else {
+        $data = data::where('status_peserta', 'alumni')
+                       ->where('created_by', Auth::user()->name)
+                       ->get();
+    }
+    return view('admin.database.database', compact('data'));
+}
+
+
     public function pindahkesalesplan($id)
     {
         $data = Data::with('kelas')->findOrFail($id);
@@ -239,7 +278,7 @@ class dataController extends Controller
             'data_id'     => $data->id,
             'keterangan'  => 'Dimasukkan otomatis berdasarkan kelas: ' . ($data->kelas->nama ?? 'Tidak diketahui'),
             'status'      => 'cold', // default warna indikator
-            'created_by' => auth()->user()->name, // ID user yang membuat
+            'created_by' => auth()->id(), // ID user yang membuat
         ]);
 
         // Redirect ke halaman sales plan

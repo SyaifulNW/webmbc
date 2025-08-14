@@ -46,6 +46,12 @@ Route::put('/admin/database/{id}', [App\Http\Controllers\dataController::class, 
 Route::delete('/admin/database/{id}', [App\Http\Controllers\dataController::class, 'destroy'])->name('delete-database');
 Route::get('/admin/database/{id}', [App\Http\Controllers\dataController::class, 'show'])->name('admin.database.show');
 
+// Routes baru + Alumni
+// routes/web.php
+Route::get('/admin/database/database', [dataController::class, 'peserta_baru'])->name('admin.database.database');
+Route::get('/admin/alumni/alumni', [dataController::class, 'alumni'])->name('admin.alumni.alumni');
+
+
 // Ongkir Routes
 Route::get('/ongkir/provinsi', [OngkirController::class, 'getProvinsi'])->name('ongkir.provinsi');
 Route::get('/ongkir/kota', [OngkirController::class, 'getKota'])->name('ongkir.kota');
@@ -87,6 +93,8 @@ Route::post('/admin/alumni/{id}/simpan-kelas', [AlumniController::class, 'simpan
 // Per FU
 Route::put('/salesplan/{id}/fu/{fu}', [SalesPlanController::class, 'updateFU'])->name('admin.salesplan.update-fu');
 
+// Update Potensi Kelas
+Route::post('/peserta/{id}/update-potensi', [dataController::class, 'updatePotensiKelas'])->name('peserta.updatePotensi');
 
 
 

@@ -18,6 +18,8 @@
                     <input type="text" id="tableSearch" class="form-control" placeholder="Cari...">
                 </div>
             </div>
+
+
             <script>
                 $(document).ready(function() {
                     var table = $('#myTable').DataTable({
@@ -38,6 +40,7 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Peserta</th>
+                            <th>Status Peserta</th>
                             <th>Sumber Leads</th>
                             <th>Provinsi</th>
                             <th>Kota</th>
@@ -46,15 +49,16 @@
                             <th>No.WA</th>
                             <th>Situasi Bisnis</th>
                             <th>Kendala</th>
-                            <th>Ikut Kelas / Tidak</th>
-                            <th>Kelas</th>
+      
+                            <th>Potensi Kelas Pertama</th>
+                    
                             @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <th>Input Oleh</th>
                             <th>Role</th>
                             @endif
 
                             <th>Action</th>
-                
+
                         </tr>
                     </thead>
                     <tbody>
@@ -62,6 +66,7 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->nama }}</td>
+                            <td>{{ $item->status_peserta }}</td>
                             <td>{{ $item->leads }}</td>
                             <td>{{ $item->provinsi_nama }}</td>
                             <td>{{ $item->kota_nama }}</td>
@@ -70,7 +75,7 @@
                             <td>{{ $item->no_wa }}</td>
                             <td>{{ $item->situasi_bisnis }}</td>
                             <td>{{ $item->kendala }}</td>
-                            <td>{{ $item->ikut_kelas == 1 ? 'Ya' : 'Tidak' }}</td>
+                    
                             <td>
                                 @if($item->kelas_id)
                                 {{ $item->kelas->nama_kelas }}
@@ -78,6 +83,7 @@
                                 -
                                 @endif
                             </td>
+             
                             @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <td>{{ $item->created_by }}</td>
                             <td>{{ $item->created_by_role }}</td>
@@ -114,7 +120,7 @@
                                         });
                                     });
                                 </script>
-                                
+
                                 <form action="{{ route('data.pindahKeSalesPlan', $item->id) }}" method="POST" style="display:inline;" class="pindah-salesplan-form">
                                     @csrf
                                     <button type="button" class="btn btn-primary btn-sm btn-pindah-salesplan" title="Pindah ke Sales Plan">
@@ -144,7 +150,7 @@
                                 <a href="{{ route('admin.database.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit Data">
                                     <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                                 </a>
-                         @if(auth()->user()->email == 'mbchamasah@gmail.com')
+                                @if(auth()->user()->email == 'mbchamasah@gmail.com')
                                 <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
                                     @csrf
                                     @method('DELETE')
@@ -152,7 +158,7 @@
                                         <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                     </button>
                                 </form>
-                                          @endif
+                                @endif
                                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                 <script>
                                     $(document).on('click', '.btn-delete', function(e) {
@@ -174,7 +180,7 @@
                                         });
                                     });
                                 </script>
-                
+
                             </td>
 
                         </tr>
@@ -246,10 +252,34 @@
             <form id="createForm" action="{{ route('admin.database.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
+                    
+                    {{-- Nama Peserta --}}
                     <div class="form-group">
                         <label for="nama">Nama Peserta</label>
                         <input type="text" class="form-control" id="nama" name="nama" required>
                     </div>
+
+                    {{-- Status Peserta --}}
+                    <div class="form-group">
+                        <label for="status_peserta">Status Peserta</label>
+                        <select name="status_peserta" id="status_peserta" class="form-control">
+                            <option value="Peserta Baru">Peserta Baru</option>
+                            <option value="Alumni">Alumni</option>
+                        </select>
+                    </div>
+
+                    {{-- Potensi Kelas --}}
+                    <div class="form-group">
+                        <label for="kelas_id">Potensi Kelas</label>
+                        <select name="kelas_id" id="kelas_id" class="form-control">
+                            <option value="">Pilih Potensi Kelas</option>
+                            @foreach($kelas as $item)
+                                <option value="{{ $item->id }}">{{ $item->nama_kelas }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Sumber Leads --}}
                     <div class="form-group">
                         <label for="leads">Sumber Leads</label>
                         <select name="leads" id="leads" class="form-control">
@@ -259,9 +289,10 @@
                             <option value="Tiktok">Tiktok</option>
                             <option value="Lain-Lain">Lain-Lain</option>
                         </select>
-
                         <input type="text" name="leads_custom" class="form-control mt-2" placeholder="Isi jika Lain-Lain">
                     </div>
+
+                    {{-- Provinsi --}}
                     <div class="form-group">
                         <label for="provinsi">Provinsi</label>
                         <select id="provinsi" class="form-control" name="provinsi_id" required>
@@ -270,6 +301,7 @@
                         <input type="hidden" name="provinsi_nama" id="provinsi_nama">
                     </div>
 
+                    {{-- Kota --}}
                     <div class="form-group">
                         <label for="kota">Kota</label>
                         <select id="kota" class="form-control" name="kota_id" required>
@@ -278,44 +310,45 @@
                         <input type="hidden" name="kota_nama" id="kota_nama">
                     </div>
 
+                    {{-- Script Ambil Wilayah --}}
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script>
-                        // Ambil provinsi saat halaman dibuka
                         fetch('/wilayah/provinsi')
                             .then(res => res.json())
                             .then(data => {
                                 data.forEach(prov => {
-                                    document.getElementById('provinsi').innerHTML += `<option value="${prov.id}" data-nama="${prov.name}">${prov.name}</option>`;
+                                    $('#provinsi').append(`<option value="${prov.id}" data-nama="${prov.name}">${prov.name}</option>`);
                                 });
                             });
 
-                        // Saat provinsi dipilih, ambil kota
-                        document.getElementById('provinsi').addEventListener('change', function() {
-                            const id = this.value;
-                            const nama = this.options[this.selectedIndex].text;
-                            document.getElementById('provinsi_nama').value = nama;
+                        $('#provinsi').on('change', function() {
+                            const id = $(this).val();
+                            const nama = $(this).find('option:selected').text();
+                            $('#provinsi_nama').val(nama);
 
                             fetch(`/wilayah/kota/${id}`)
                                 .then(res => res.json())
                                 .then(data => {
-                                    let kotaSelect = document.getElementById('kota');
-                                    kotaSelect.innerHTML = '<option value="">Pilih Kota</option>';
+                                    $('#kota').html('<option value="">Pilih Kota</option>');
                                     data.forEach(kota => {
-                                        kotaSelect.innerHTML += `<option value="${kota.id}" data-nama="${kota.name}">${kota.name}</option>`;
+                                        $('#kota').append(`<option value="${kota.id}" data-nama="${kota.name}">${kota.name}</option>`);
                                     });
                                 });
                         });
 
-                        document.getElementById('kota').addEventListener('change', function() {
-                            const nama = this.options[this.selectedIndex].text;
-                            document.getElementById('kota_nama').value = nama;
+                        $('#kota').on('change', function() {
+                            const nama = $(this).find('option:selected').text();
+                            $('#kota_nama').val(nama);
                         });
                     </script>
 
+                    {{-- Nama Bisnis --}}
                     <div class="form-group">
                         <label for="nama_bisnis">Nama Bisnis</label>
                         <input type="text" class="form-control" id="nama_bisnis" name="nama_bisnis" required>
                     </div>
+
+                    {{-- Jenis Bisnis --}}
                     <div class="form-group">
                         <label for="jenisbisnis">Jenis Bisnis</label>
                         <select name="jenisbisnis" id="jenisbisnis" class="form-control">
@@ -334,54 +367,26 @@
                             <option value="Bisnis Transportasi & Logistik">Bisnis Transportasi & Logistik</option>
                             <option value="Bisnis Pariwisata & Hospitality">Bisnis Pariwisata & Hospitality</option>
                             <option value="Bisnis Sosial (Social Enterprise)">Bisnis Sosial (Social Enterprise)</option>
-
                         </select>
                     </div>
 
+                    {{-- No WA --}}
                     <div class="form-group">
                         <label for="no_wa">No. WA</label>
                         <input type="text" class="form-control" id="no_wa" name="no_wa" required>
                     </div>
+
+                    {{-- Situasi Bisnis --}}
                     <div class="form-group">
                         <label for="situasi_bisnis">Situasi Bisnis</label>
                         <textarea class="form-control" id="situasi_bisnis" name="situasi_bisnis" rows="3"></textarea>
                     </div>
+
+                    {{-- Kendala --}}
                     <div class="form-group">
                         <label for="kendala">Kendala</label>
                         <textarea class="form-control" id="kendala" name="kendala" rows="3"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label for="ikut_kelas">Apakah Prospek Ikut Kelas / Tidak</label>
-                        <select class="form-control" id="ikut_kelas" name="ikut_kelas">
-                            <option value="1">Ya</option>
-                            <option value="0">Tidak</option>
-                        </select>
-                    </div>
-
-                    <!-- Kelas -->
-                    <div class="form-group" id="kelas_form_group" style="display: none;">
-                        <label for="kelas">Kelas</label>
-                        <select class="form-control" id="kelas" name="kelas_id">
-                            <option value="">Pilih Kelas</option>
-                            @foreach($kelas as $k)
-                            <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <script>
-                        $(document).ready(function() {
-                            $('#ikut_kelas').on('change', function() {
-                                if ($(this).val() == '1') {
-                                    $('#kelas_form_group').show();
-                                } else {
-                                    $('#kelas_form_group').hide();
-                                    $('#kelas').val('');
-                                }
-                            });
-                        });
-                    </script>
-
 
                 </div>
                 <div class="modal-footer">
@@ -392,6 +397,7 @@
         </div>
     </div>
 </div>
+
 
 
 

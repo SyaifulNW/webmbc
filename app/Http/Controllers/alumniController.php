@@ -22,21 +22,24 @@ class alumniController extends Controller
      */
     public function index()
     {
-        // Fetch all alumni data
-        $alumni = Alumni::all(); // Use pagination for better performance if needed
-        $kelas = Kelas::all(); // Fetch all classes for dropdowns or other purposes
-        // Return a view with the alumni data
+       $user = Auth::user();
 
-        if (auth()->user()->email === 'mbchamasah@gmail.com') {
+    // Base query
+    $query = Data::query();
 
-            $alumni = Alumni::all();
-        } else {
+    // Filter status_peserta alumni
+    $query->where('status_peserta', 'alumni');
 
-            $alumni = Alumni::where('created_by', auth()->user()->name)->get();
-        }
+    // Filter role
+    if ($user->email !== 'mbchamasah@gmail.com') {
+        $query->where('created_by', $user->name);
+    }
 
+    $data = $query->get();
 
-        return view('admin.alumni.alumni', compact('alumni', 'kelas'));
+    $kelas = Kelas::all();
+
+    return view('admin.database.database', compact('data', 'kelas'));
     }
 
     /**

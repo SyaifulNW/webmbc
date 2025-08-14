@@ -126,7 +126,9 @@
                     <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Nama</th>
                     <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Situasi</th>
                     <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Kendala</th>
+                    @if(auth()->user()->email == 'mbchamasah@gmail.com')
                     <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Input Oleh</th>
+                    @endif
                     @for ($i = 1; $i <= 5; $i++)
                         <th colspan="3" style="padding: 10px; border: 1px solid #ccc;">FU{{ $i }}</th>
                         @endfor
@@ -158,7 +160,11 @@
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->nama ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->situasi_bisnis ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kendala ?? '-' }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->created_by ?? '-' }}</td>
+                    @if(auth()->user()->email == 'mbchamasah@gmail.com')
+                    <td style="padding: 8px; border: 1px solid #ccc;">
+                        {{ $plan->created_by_name }}
+                    </td>
+                    @endif
 
                     {{-- FU1 - FU5 --}}
                     @for ($i = 1; $i <= 5; $i++)
@@ -228,7 +234,7 @@
                         </td>
                         <td style="padding: 8px; border: 1px solid #ccc;">
                             <a href="{{ route('admin.salesplan.edit', $plan->id) }}" class="btn btn-primary">
-                                        <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
+                                <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                             </a>
                         </td>
                 </tr>
