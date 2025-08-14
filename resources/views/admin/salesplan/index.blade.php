@@ -91,7 +91,7 @@
 </style>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Sales Plan /  HRD Mastery</h1>   
+    <h1 class="h3 mb-0 text-gray-800">Sales Plan / HRD Mastery</h1>
     <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -126,6 +126,7 @@
                     <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Nama</th>
                     <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Situasi</th>
                     <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Kendala</th>
+                    <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Input Oleh</th>
                     @for ($i = 1; $i <= 5; $i++)
                         <th colspan="3" style="padding: 10px; border: 1px solid #ccc;">FU{{ $i }}</th>
                         @endfor
@@ -133,6 +134,8 @@
                         <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Keterangan</th>
                         <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Status</th>
                         <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Action</th>
+
+
                 </tr>
                 <tr style="background: linear-gradient(to right, #376bb9ff, #1c7f91ff); color: white;">
                     @for ($i = 1; $i <= 5; $i++)
@@ -155,6 +158,7 @@
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->nama ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->situasi_bisnis ?? '-' }}</td>
                     <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kendala ?? '-' }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->created_by ?? '-' }}</td>
 
                     {{-- FU1 - FU5 --}}
                     @for ($i = 1; $i <= 5; $i++)
@@ -174,6 +178,8 @@
                                 <i class="fas fa-edit"></i>
                             </button>
                         </td>
+
+
 
                         {{-- Modal Edit FU --}}
                         <div class="modal fade" id="editFU{{ $i }}Modal{{ $plan->id }}" tabindex="-1" role="dialog">
@@ -221,9 +227,9 @@
                             </span>
                         </td>
                         <td style="padding: 8px; border: 1px solid #ccc;">
-                            <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editModal{{ $plan->id }}">
-                                <i class="fas fa-pen"></i>
-                            </button>
+                            <a href="{{ route('admin.salesplan.edit', $plan->id) }}" class="btn btn-primary">
+                                        <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
+                            </a>
                         </td>
                 </tr>
                 @empty
@@ -239,9 +245,11 @@
 
 
 
-    <!-- Modal Edit -->
+    <!-- Modal Edit Status Potensi Keterangan-->
+    <!-- Modal Edit Status Potensi Keterangan -->
+    <!-- Modal Edit Status Potensi Keterangan -->
     <div class="modal fade" id="editModal{{ $plan->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $plan->id }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog" role="document">
             <form method="POST" action="{{ route('admin.salesplan.update', $plan->id) }}">
                 @csrf
                 @method('PUT')
@@ -252,50 +260,57 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body row">
-        
-                            <div class="form-group col-md-6">
-                            <label>FU{{ $i }} Hasil</label>
-                            <input type="text" name="fu{{ $i }}_hasil" class="form-control" value="{{ $plan->{'fu'.$i.'_hasil'} }}">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>FU{{ $i }} Tindak Lanjut</label>
-                        <input type="text" name="fu{{ $i }}_tindak_lanjut" class="form-control" value="{{ $plan->{'fu'.$i.'_tindak_lanjut'} }}">
-                    </div>
-          
-                    <div class="form-group col-md-12">
-                        <label for="nominal">Potensi</label>
-                        <input type="number" name="nominal" class="form-control" id="nominal" placeholder="Masukkan nominal">
+
+                    <div class="modal-body">
+                        {{-- Potensi --}}
+                        <div class="form-group">
+                            <label for="nominal">Potensi</label>
+                            <input
+                                type="number"
+                                name="nominal"
+                                class="form-control"
+                                id="nominal"
+                                value="{{ $plan->nominal ?? '' }}"
+                                placeholder="Masukkan nominal">
+                        </div>
+
+                        {{-- Keterangan --}}
+                        <div class="form-group">
+                            <label>Keterangan</label>
+                            <textarea
+                                name="keterangan"
+                                class="form-control"
+                                rows="2">{{ $plan->keterangan }}</textarea>
+                        </div>
+
+                        {{-- Status --}}
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select name="status" class="form-control">
+                                <option value="cold" {{ $plan->status == 'cold' ? 'selected' : '' }}>Cold</option>
+                                <option value="warm" {{ $plan->status == 'warm' ? 'selected' : '' }}>Mau Transfer</option>
+                                <option value="hot" {{ $plan->status == 'hot' ? 'selected' : '' }}>Sudah Transfer</option>
+                                <option value="no" {{ $plan->status == 'no' ? 'selected' : '' }}>No</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div class="form-group col-md-12">
-                        <label>Keterangan</label>
-                        <textarea name="keterangan" class="form-control" rows="2">{{ $plan->keterangan }}</textarea>
-                    </div>
-
-                    <div class="form-group col-md-6">
-                        <label>Status</label>
-                        <select name="status" class="form-control">
-                            <option value="cold" {{ $plan->status == 'cold' ? 'selected' : '' }}>cold</option>
-                            <option value="warm" {{ $plan->status == 'warm' ? 'selected' : '' }}>Mau Transfer</option>
-                            <option value="hot" {{ $plan->status == 'hot' ? 'selected' : '' }}>Sudah Transfer</option>
-                            <option value="no" {{ $plan->status == 'no' ? 'selected' : '' }}>No</option>
-                        </select>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Simpan</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                </div>
+            </form>
         </div>
-        </form>
     </div>
+
+
 </div>
 
 {{-- Tabel Sales Plan yang sudah ada --}}
 
 {{-- Tabel Daftar Peserta --}}
-<h4 style="margin-top: 30px; font-weight: bold;">Daftar Peserta / HRD Mastery</h4> 
+<h4 style="margin-top: 30px; font-weight: bold;">Daftar Peserta / HRD Mastery</h4>
 <div style="overflow-x: auto; white-space: nowrap;">
     <table style="border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif; font-size: 14px; min-width: 500px;">
         <thead>
@@ -318,7 +333,7 @@
                     Belum ada peserta yang transfer.
                 </td>
             </tr>
-   
+
         </tbody>
     </table>
 </div>

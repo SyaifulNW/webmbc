@@ -65,7 +65,10 @@ class salesplanController extends Controller
      */
     public function edit($id)
     {
-        //
+           $plan = SalesPlan::findOrFail($id);
+
+    // Kirim data ke view edit
+    return view('admin.salesplan.edit', compact('plan'));
     }
 
     /**
