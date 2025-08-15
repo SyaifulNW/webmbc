@@ -52,6 +52,9 @@ class alumniController extends Controller
         //
     }
 
+
+
+
     public function toSalesplan(Request $request, $id)
     {
         $alumni = Alumni::findOrFail($id);

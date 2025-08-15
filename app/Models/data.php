@@ -22,6 +22,7 @@ class data extends Model
         'no_wa',
         'situasi_bisnis',
         'kendala',
+        'kelas_id', 'created_by', 'created_by_role',
         'ikut_kelas',
         'kelas_id',
     ];

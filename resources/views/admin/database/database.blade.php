@@ -128,15 +128,18 @@
                                 <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm">
                                     <i class="fa-solid fa-eye" style="color: #ffffff;"></i>
                                 </a>
+
                                 @if(auth()->user()->email == 'mbchamasah@gmail.com')
-                                <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
+                                <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin mau hapus data ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="btn btn-danger btn-sm btn-delete">
+                                    <button type="submit" class="btn btn-danger btn-sm">
                                         <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                     </button>
                                 </form>
                                 @endif
+
+
                             </td>
                         </tr>
                         @endforeach
@@ -370,13 +373,13 @@
                     </div>
 
                     {{-- Status Peserta --}}
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="status_peserta">Status Peserta</label>
                         <select name="status_peserta" id="status_peserta" class="form-control">
                             <option value="Peserta Baru">Peserta Baru</option>
                             <option value="Alumni">Alumni</option>
                         </select>
-                    </div>
+                    </div> -->
 
                     {{-- Potensi Kelas --}}
                     <div class="form-group">
