@@ -2,146 +2,134 @@
 @section('content')
 
 <div class="container-fluid px-4">
-    <h3 class="mb-4">Edit Database Calon Peserta</h3>
+    <h3 class="mb-4">Edit Database Peserta</h3>
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-edit me-1"></i>
-            Edit Data Calon Peserta: {{ $data->nama }}
+            Edit Data Peserta: {{ $data->nama }}
         </div>
         <div class="card-body">
             <form action="{{ route('admin.database.update', $data->id) }}" method="POST">
                 @csrf
                 @method('PUT')
+
+                {{-- Nama --}}
                 <div class="mb-3">
                     <label for="nama" class="form-label">Nama</label>
-                    <input type="text" class="form-control" id="nama" name="nama" value="{{ $data->nama }}" required>
+                    <input type="text" class="form-control" id="nama" name="nama"
+                        value="{{ old('nama', $data->nama) }}" required>
                 </div>
-              <div class="form-group">
-                        <label for="leads">Sumber Leads</label>
-                        <select name="leads" id="leads" class="form-control">
-                            <option value="Iklan">Iklan</option>
-                            <option value="Instagram">Instagram</option>
-                            <option value="Facebook">Facebook</option>
-                            <option value="Tiktok">Tiktok</option>
-                            <option value="Lain-Lain">Lain-Lain</option>
-                        </select>
 
-                        <input type="text" name="leads_custom" class="form-control mt-2" placeholder="Isi jika Lain-Lain">
-                    </div>
-               <div class="form-group">
-                        <label for="provinsi">Provinsi</label>
-                        <select id="provinsi" class="form-control" name="provinsi_id" required>
-                            <option value="">Pilih Provinsi</option>
-                        </select>
-                        <input type="hidden" name="provinsi_nama" id="provinsi_nama">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="kota">Kota</label>
-                        <select id="kota" class="form-control" name="kota_id" required>
-                            <option value="">Pilih Kota</option>
-                        </select>
-                        <input type="hidden" name="kota_nama" id="kota_nama">
-                    </div>
-
-
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script>
-                        // Ambil provinsi saat halaman dibuka
-                        fetch('/wilayah/provinsi')
-                            .then(res => res.json())
-                            .then(data => {
-                                data.forEach(prov => {
-                                    document.getElementById('provinsi').innerHTML += `<option value="${prov.id}" data-nama="${prov.name}">${prov.name}</option>`;
-                                });
-                            });
-
-                        // Saat provinsi dipilih, ambil kota
-                        document.getElementById('provinsi').addEventListener('change', function() {
-                            const id = this.value;
-                            const nama = this.options[this.selectedIndex].text;
-                            document.getElementById('provinsi_nama').value = nama;
-
-                            fetch(`/wilayah/kota/${id}`)
-                                .then(res => res.json())
-                                .then(data => {
-                                    let kotaSelect = document.getElementById('kota');
-                                    kotaSelect.innerHTML = '<option value="">Pilih Kota</option>';
-                                    data.forEach(kota => {
-                                        kotaSelect.innerHTML += `<option value="${kota.id}" data-nama="${kota.name}">${kota.name}</option>`;
-                                    });
-                                });
-                        });
-
-                        document.getElementById('kota').addEventListener('change', function() {
-                            const nama = this.options[this.selectedIndex].text;
-                            document.getElementById('kota_nama').value = nama;
-                        });
-                    </script>
+                {{-- Status Peserta --}}
                 <div class="mb-3">
-                    <label for="nama_bisnis" class="form-label">Nama Bisnis</label>
-                    <input type="text" class="form-control" id="nama_bisnis" name="nama_bisnis" value="{{ $data->nama_bisnis }}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="jenisbisnis" class="form-label">Jenis Bisnis</label>
-                   <select name="jenisbisnis" id="jenisbisnis" class="form-control">
-                            <option value="Bisnis Properti">Bisnis Properti</option>
-                            <option value="Bisnis Manufaktur">Bisnis Manufaktur</option>
-                            <option value="Bisnis F&B (Food & Beverage)">Bisnis F&B (Food & Beverage)</option>
-                            <option value="Bisnis Jasa">Bisnis Jasa</option>
-                            <option value="Bisnis Digital">Bisnis Digital</option>
-                            <option value="Bisnis Online">Bisnis Online</option>
-                            <option value="Bisnis Franchise">Bisnis Franchise</option>
-                            <option value="Bisnis Edukasi & Pelatihan">Bisnis Edukasi & Pelatihan</option>
-                            <option value="Bisnis Kreatif">Bisnis Kreatif</option>
-                            <option value="Bisnis Agribisnis">Bisnis Agribisnis</option>
-                            <option value="Bisnis Kesehatan & Kecantikan">Bisnis Kesehatan & Kecantikan</option>
-                            <option value="Bisnis Keuangan">Bisnis Keuangan</option>
-                            <option value="Bisnis Transportasi & Logistik">Bisnis Transportasi & Logistik</option>
-                            <option value="Bisnis Pariwisata & Hospitality">Bisnis Pariwisata & Hospitality</option>
-                            <option value="Bisnis Sosial (Social Enterprise)">Bisnis Sosial (Social Enterprise)</option>
-                
-                        </select>
-                    
-                </div>
-                <div class="mb-3">
-                    <label for="no_wa" class="form-label">No. Whatsapp</label>
-                    <input type="text" class="form-control" id="no_wa" name="no_wa" value="{{ $data->no_wa }}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="kendala" class="form-label">Kendala</label>
-                    <textarea class="form-control" id="kendala" name="kendala" rows="3" required>{{ $data->kendala }}</textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="situasi_bisnis" class="form-label">Situasi Bisnis</label>
-                    <textarea class="form-control" id="situasi_bisnis" name="situasi_bisnis" rows="3" required>{{ $data->situasi_bisnis }}</textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="ikut_kelas" class="form-label">Ikut Kelas</label>
-                    <select class="form-select" id="ikut_kelas" name="ikut_kelas" required>
-                        <option value="1" {{ $data->ikut_kelas == 1 ? 'selected' : '' }}>Ya</option>
-                        <option value="0" {{ $data->ikut_kelas == 0 ? 'selected' : '' }}>Tidak</option>
+                    <label for="status_peserta" class="form-label">Status Peserta</label>
+                    <select class="form-select" id="status_peserta" name="status_peserta" required>
+                        <option value="peserta_baru" {{ $data->status_peserta === 'peserta_baru' ? 'selected' : '' }}>Peserta Baru</option>
+                        <option value="alumni" {{ $data->status_peserta === 'alumni' ? 'selected' : '' }}>Alumni</option>
                     </select>
                 </div>
+
+                {{-- Sumber Leads --}}
+                <div class="form-group">
+                    <label for="leads">Sumber Leads</label>
+                    <select name="leads" id="leads" class="form-control">
+                        <option value="Iklan" {{ $data->leads === 'Iklan' ? 'selected' : '' }}>Iklan</option>
+                        <option value="Instagram" {{ $data->leads === 'Instagram' ? 'selected' : '' }}>Instagram</option>
+                        <option value="Facebook" {{ $data->leads === 'Facebook' ? 'selected' : '' }}>Facebook</option>
+                        <option value="Tiktok" {{ $data->leads === 'Tiktok' ? 'selected' : '' }}>Tiktok</option>
+                        <option value="Lain-Lain" {{ $data->leads === 'Lain-Lain' ? 'selected' : '' }}>Lain-Lain</option>
+                    </select>
+                    <input type="text" name="leads_custom" class="form-control mt-2"
+                        placeholder="Isi jika Lain-Lain"
+                        value="{{ old('leads_custom', $data->leads_custom) }}">
+                </div>
+
+                {{-- Provinsi --}}
+                <div class="form-group">
+                    <label for="provinsi">Provinsi</label>
+                    <select id="provinsi_disabled" class="form-control" disabled>
+                        <option value="{{ $data->provinsi_id }}">{{ $data->provinsi_nama }}</option>
+                    </select>
+                    <input type="hidden" name="provinsi_id" value="{{ $data->provinsi_id }}">
+                    <input type="hidden" name="provinsi_nama" value="{{ $data->provinsi_nama }}">
+                </div>
+
+                {{-- Kota --}}
+                <div class="form-group">
+                    <label for="kota">Kota</label>
+                    <select id="kota_disabled" class="form-control" disabled>
+                        <option value="{{ $data->kota_id }}">{{ $data->kota_nama }}</option>
+                    </select>
+                    <input type="hidden" name="kota_id" value="{{ $data->kota_id }}">
+                    <input type="hidden" name="kota_nama" value="{{ $data->kota_nama }}">
+                </div>
+
+
+                {{-- Nama Bisnis --}}
                 <div class="mb-3">
-                    <label for="kelas_id" class="form-label">Kelas</label>
-                    <select class="form-select" id="kelas_id" name="kelas_id">
-                        <option value="">Pilih Kelas</option>
-                        @foreach($kelas as $kelasItem)
-                            <option value="{{ $kelasItem->id }}" {{ $data->kelas_id == $kelasItem->id ? 'selected' : '' }}>{{ $kelasItem->nama_kelas }}</option>
+                    <label for="nama_bisnis" class="form-label">Nama Bisnis</label>
+                    <input type="text" class="form-control" id="nama_bisnis" name="nama_bisnis"
+                        value="{{ old('nama_bisnis', $data->nama_bisnis) }}" required>
+                </div>
+
+                {{-- Jenis Bisnis --}}
+                <div class="mb-3">
+                    <label for="jenisbisnis" class="form-label">Jenis Bisnis</label>
+                    <select name="jenisbisnis" id="jenisbisnis" class="form-control">
+                        @php
+                        $jenisList = [
+                        "Bisnis Properti",
+                        "Bisnis Manufaktur",
+                        "Bisnis F&B (Food & Beverage)",
+                        "Bisnis Jasa",
+                        "Bisnis Digital",
+                        "Bisnis Online",
+                        "Bisnis Franchise",
+                        "Bisnis Edukasi & Pelatihan",
+                        "Bisnis Kreatif",
+                        "Bisnis Agribisnis",
+                        "Bisnis Kesehatan & Kecantikan",
+                        "Bisnis Keuangan",
+                        "Bisnis Transportasi & Logistik",
+                        "Bisnis Pariwisata & Hospitality",
+                        "Bisnis Sosial (Social Enterprise)"
+                        ];
+                        @endphp
+                        @foreach($jenisList as $jenis)
+                        <option value="{{ $jenis }}" {{ $data->jenisbisnis === $jenis ? 'selected' : '' }}>{{ $jenis }}</option>
                         @endforeach
                     </select>
                 </div>
+
+                {{-- No Whatsapp --}}
+                <div class="mb-3">
+                    <label for="no_wa" class="form-label">No. Whatsapp</label>
+                    <input type="text" class="form-control" id="no_wa" name="no_wa"
+                        value="{{ old('no_wa', $data->no_wa) }}" required>
+                </div>
+
+                {{-- Kendala --}}
+                <div class="mb-3">
+                    <label for="kendala" class="form-label">Kendala</label>
+                    <textarea class="form-control" id="kendala" name="kendala" rows="3" required>{{ old('kendala', $data->kendala) }}</textarea>
+                </div>
+
+                {{-- Situasi Bisnis --}}
+                <div class="mb-3">
+                    <label for="situasi_bisnis" class="form-label">Situasi Bisnis</label>
+                    <textarea class="form-control" id="situasi_bisnis" name="situasi_bisnis" rows="3" required>{{ old('situasi_bisnis', $data->situasi_bisnis) }}</textarea>
+                </div>
+
+ 
+
                 <button type="submit" class="btn btn-primary">Update</button>
             </form>
         </div>
     </div>
+
     <div class="mt-3">
         <a href="{{ route('admin.database.database') }}" class="btn btn-secondary">Kembali ke Daftar</a>
     </div>
 </div>
 
-
-
 @endsection
-

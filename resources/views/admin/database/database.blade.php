@@ -1,5 +1,6 @@
 @extends('layouts.masteradmin')
 @section('content')
+
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Database Calon Peserta</h1>
     <div class="col-sm-6">
@@ -9,6 +10,7 @@
         </ol>
     </div>
 </div>
+
 <div class="content">
     <div class="card card-info card-outline">
         <div class="card-header">
@@ -21,13 +23,13 @@
 
 
             <script>
-                $(document).ready(function() {
-                    var table = $('#myTable').DataTable({
-                        responsive: true,
-                        autoWidth: false,
-                    });
-                    $('#tableSearch').on('keyup', function() {
-                        table.search(this.value).draw();
+                document.getElementById('tableSearch').addEventListener('keyup', function() {
+                    let filter = this.value.toLowerCase(); // kata kunci pencarian
+                    let rows = document.querySelectorAll('#myTable tbody tr'); // semua baris tabel
+
+                    rows.forEach(function(row) {
+                        let text = row.textContent.toLowerCase(); // gabungan semua teks dalam baris
+                        row.style.display = text.includes(filter) ? '' : 'none'; // tampilkan / sembunyikan
                     });
                 });
             </script>
@@ -40,18 +42,19 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Peserta</th>
-                            <th>Status Peserta</th>
+                            <!-- <th>Status Peserta</th> -->
                             <th>Sumber Leads</th>
                             <th>Provinsi</th>
                             <th>Kota</th>
                             <th>Nama Bisnis</th>
                             <th>Jenis Bisnis</th>
                             <th>No.WA</th>
+                            <th>CTA</th>
                             <th>Situasi Bisnis</th>
                             <th>Kendala</th>
-      
+
                             <th>Potensi Kelas Pertama</th>
-                    
+
                             @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <th>Input Oleh</th>
                             <th>Role</th>
@@ -63,92 +66,67 @@
                     </thead>
                     <tbody>
                         @foreach($data as $item)
-                        <tr>
+                        <tr data-id="{{ $item->id }}">
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->nama }}</td>
-                            <td>{{ $item->status_peserta }}</td>
-                            <td>{{ $item->leads }}</td>
-                            <td>{{ $item->provinsi_nama }}</td>
-                            <td>{{ $item->kota_nama }}</td>
-                            <td>{{ $item->nama_bisnis }}</td>
-                            <td>{{ $item->jenisbisnis }}</td>
-                            <td>{{ $item->no_wa }}</td>
-                            <td>{{ $item->situasi_bisnis }}</td>
-                            <td>{{ $item->kendala }}</td>
-                    
+
+                            <td contenteditable="true" class="editable" data-field="nama">{{ $item->nama }}</td>
+                            <!-- <td contenteditable="true" class="editable" data-field="status_peserta">{{ $item->status_peserta }}</td> -->
+                            <td contenteditable="true" class="editable" data-field="leads">{{ $item->leads }}</td>
+                            <td contenteditable="true" class="editable" data-field="provinsi_nama">{{ $item->provinsi_nama }}</td>
+                            <td contenteditable="true" class="editable" data-field="kota_nama">{{ $item->kota_nama }}</td>
+                            <td contenteditable="true" class="editable" data-field="nama_bisnis">{{ $item->nama_bisnis }}</td>
+                            <td contenteditable="true" class="editable" data-field="jenisbisnis">{{ $item->jenisbisnis }}</td>
+                            <td contenteditable="true" class="editable" data-field="no_wa">{{ $item->no_wa }}</td>
+
                             <td>
-                                @if($item->kelas_id)
-                                {{ $item->kelas->nama_kelas }}
-                                @else
-                                -
-                                @endif
+                                @php
+                                $waNumber = preg_replace('/^0/', '62', $item->no_wa); // Ganti 0 jadi 62
+                                @endphp
+                                <a href="https://wa.me/{{ $waNumber }}"
+                                    target="_blank"
+                                    class="btn btn-success btn-sm wa-button">
+                                    <i class="bi bi-whatsapp"></i> Chat WA
+                                </a>
                             </td>
-             
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    document.querySelectorAll('.editable[data-field="no_wa"]').forEach(function(cell) {
+                                        cell.addEventListener('input', function() {
+                                            let newNumber = cell.textContent.trim();
+                                            let waNumber = newNumber.replace(/^0/, '62'); // ganti 0 awal jadi 62
+                                            let waButton = cell.parentElement.querySelector('.wa-button');
+                                            if (waButton) {
+                                                waButton.href = "https://wa.me/" + waNumber;
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
+                            <td contenteditable="true" class="editable" data-field="situasi_bisnis">{{ $item->situasi_bisnis }}</td>
+                            <td contenteditable="true" class="editable" data-field="kendala">{{ $item->kendala }}</td>
+
+                            <!-- Potensi Kelas Pertama sebagai dropdown -->
+                            <td>
+                                <select class="form-control form-control-sm select-potensi" data-id="{{ $item->id }}">
+                                    <option value="">- Pilih Kelas -</option>
+                                    @foreach($kelas as $k)
+                                    <option value="{{ $k->id }}" {{ $item->kelas_id == $k->id ? 'selected' : '' }}>
+                                        {{ $k->nama_kelas }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </td>
+
                             @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <td>{{ $item->created_by }}</td>
                             <td>{{ $item->created_by_role }}</td>
                             @endif
 
                             <td>
-
-                                <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm" title="Lihat Detail">
+                                <!-- Action tetap sama -->
+                                <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm">
                                     <i class="fa-solid fa-eye" style="color: #ffffff;"></i>
-                                </a>
-                                <form action="{{ route('data.pindahKeAlumni', $item->id) }}" method="POST" style="display:inline;" class="pindah-alumni-form">
-                                    @csrf
-                                    <button type="button" class="btn btn-success btn-sm btn-pindah-alumni" title="Pindah ke Alumni">
-                                        <i class="fa-solid fa-reply" style="color: #ffffff;"></i>
-                                    </button>
-                                </form>
-                                <script>
-                                    $(document).on('click', '.btn-pindah-alumni', function(e) {
-                                        e.preventDefault();
-                                        var form = $(this).closest('form');
-                                        Swal.fire({
-                                            title: 'Yakin pindah ke alumni?',
-                                            text: "Data akan dipindahkan ke alumni.",
-                                            icon: 'warning',
-                                            showCancelButton: true,
-                                            confirmButtonColor: '#28a745',
-                                            cancelButtonColor: '#3085d6',
-                                            confirmButtonText: 'Ya, pindahkan!',
-                                            cancelButtonText: 'Batal'
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                form.submit();
-                                            }
-                                        });
-                                    });
-                                </script>
-
-                                <form action="{{ route('data.pindahKeSalesPlan', $item->id) }}" method="POST" style="display:inline;" class="pindah-salesplan-form">
-                                    @csrf
-                                    <button type="button" class="btn btn-primary btn-sm btn-pindah-salesplan" title="Pindah ke Sales Plan">
-                                        <i class="fa-solid fa-arrow-right" style="color: #ffffff;"></i>
-                                    </button>
-                                </form>
-                                <script>
-                                    $(document).on('click', '.btn-pindah-salesplan', function(e) {
-                                        e.preventDefault();
-                                        var form = $(this).closest('form');
-                                        Swal.fire({
-                                            title: 'Yakin pindah ke Sales Plan?',
-                                            text: "Data akan dipindahkan ke Sales Plan.",
-                                            icon: 'warning',
-                                            showCancelButton: true,
-                                            confirmButtonColor: '#007bff',
-                                            cancelButtonColor: '#3085d6',
-                                            confirmButtonText: 'Ya, pindahkan!',
-                                            cancelButtonText: 'Batal'
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                form.submit();
-                                            }
-                                        });
-                                    });
-                                </script>
-                                <a href="{{ route('admin.database.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit Data">
-                                    <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
                                 </a>
                                 @if(auth()->user()->email == 'mbchamasah@gmail.com')
                                 <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
@@ -159,34 +137,166 @@
                                     </button>
                                 </form>
                                 @endif
-                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                                <script>
-                                    $(document).on('click', '.btn-delete', function(e) {
-                                        e.preventDefault();
-                                        var form = $(this).closest('form');
-                                        Swal.fire({
-                                            title: 'Yakin hapus data?',
-                                            text: "Data yang dihapus tidak bisa dikembalikan!",
-                                            icon: 'warning',
-                                            showCancelButton: true,
-                                            confirmButtonColor: '#d33',
-                                            cancelButtonColor: '#3085d6',
-                                            confirmButtonText: 'Ya, hapus!',
-                                            cancelButtonText: 'Batal'
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                form.submit();
-                                            }
-                                        });
-                                    });
-                                </script>
-
                             </td>
-
                         </tr>
                         @endforeach
                     </tbody>
+
                 </table>
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script>
+                    $(document).ready(function() {
+
+                        // Untuk kolom text
+                        $('.editable').on('blur', function() {
+                            let value = $(this).text();
+                            let field = $(this).data('field');
+                            let id = $(this).closest('tr').data('id');
+
+                            $.ajax({
+                                url: '/admin/database/update-inline',
+                                method: 'POST',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    id: id,
+                                    field: field,
+                                    value: value
+                                },
+                                success: function(res) {
+                                    console.log('Updated:', field);
+                                },
+                                error: function() {
+                                    alert('Gagal update data');
+                                }
+                            });
+                        });
+
+                        // Untuk dropdown Potensi Kelas
+                        $('.select-potensi').on('change', function() {
+                            let id = $(this).data('id');
+                            let kelas_id = $(this).val();
+
+                            $.ajax({
+                                url: `/admin/database/update-potensi/${id}`,
+                                type: 'POST',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    kelas_id: kelas_id
+                                },
+                                success: function(response) {
+                                    console.log('Potensi kelas updated');
+                                },
+                                error: function() {
+                                    alert('Gagal update potensi kelas');
+                                }
+                            });
+                        });
+
+                    });
+                </script>
+                <style>
+                    .editable {
+                        cursor: pointer;
+                    }
+
+                    .editing {
+                        background-color: #fff3cd !important;
+                        /* kuning saat edit */
+                    }
+
+                    .status-icon {
+                        margin-left: 5px;
+                        font-size: 14px;
+                    }
+
+                    .status-success {
+                        color: green;
+                    }
+
+                    .status-error {
+                        color: red;
+                    }
+                </style>
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script>
+                    $(document).ready(function() {
+
+                        // Untuk kolom text
+                        $('.editable').on('focus', function() {
+                            $(this).addClass('editing');
+                        });
+
+                        $('.editable').on('blur', function() {
+                            let $this = $(this);
+                            let value = $this.text();
+                            let field = $this.data('field');
+                            let id = $this.closest('tr').data('id');
+
+                            $this.removeClass('editing');
+
+                            $.ajax({
+                                url: '/admin/database/update-inline',
+                                method: 'POST',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    id: id,
+                                    field: field,
+                                    value: value
+                                },
+                                success: function() {
+                                    showStatusIcon($this, true);
+                                },
+                                error: function() {
+                                    showStatusIcon($this, false);
+                                }
+                            });
+                        });
+
+                        // Untuk dropdown Potensi Kelas
+                        $('.select-potensi').on('change', function() {
+                            let $this = $(this);
+                            let id = $this.data('id');
+                            let kelas_id = $this.val();
+                            let iconSpan = $this.next('.status-icon');
+
+                            $.ajax({
+                                url: `/admin/database/update-potensi/${id}`,
+                                type: 'POST',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    kelas_id: kelas_id
+                                },
+                                success: function() {
+                                    iconSpan.html('<i class="fa fa-check status-success"></i>');
+                                    setTimeout(() => iconSpan.html(''), 2000);
+                                },
+                                error: function() {
+                                    iconSpan.html('<i class="fa fa-times status-error"></i>');
+                                    setTimeout(() => iconSpan.html(''), 2000);
+                                }
+                            });
+                        });
+
+                        // Fungsi tampil icon centang atau silang
+                        function showStatusIcon($element, success) {
+                            let iconHtml = success ?
+                                '<i class="fa fa-check status-success"></i>' :
+                                '<i class="fa fa-times status-error"></i>';
+
+                            let iconSpan = $('<span class="status-icon">' + iconHtml + '</span>');
+                            $element.after(iconSpan);
+
+                            setTimeout(() => {
+                                iconSpan.fadeOut(300, function() {
+                                    $(this).remove();
+                                });
+                            }, 2000);
+                        }
+
+                    });
+                </script>
+
+
 
             </div>
         </div>
@@ -252,7 +362,7 @@
             <form id="createForm" action="{{ route('admin.database.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
-                    
+
                     {{-- Nama Peserta --}}
                     <div class="form-group">
                         <label for="nama">Nama Peserta</label>
@@ -274,7 +384,7 @@
                         <select name="kelas_id" id="kelas_id" class="form-control">
                             <option value="">Pilih Potensi Kelas</option>
                             @foreach($kelas as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama_kelas }}</option>
+                            <option value="{{ $item->id }}">{{ $item->nama_kelas }}</option>
                             @endforeach
                         </select>
                     </div>

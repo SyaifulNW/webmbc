@@ -46,6 +46,12 @@ Route::put('/admin/database/{id}', [App\Http\Controllers\dataController::class, 
 Route::delete('/admin/database/{id}', [App\Http\Controllers\dataController::class, 'destroy'])->name('delete-database');
 Route::get('/admin/database/{id}', [App\Http\Controllers\dataController::class, 'show'])->name('admin.database.show');
 
+// Potensi
+
+Route::post('/admin/database/update-potensi/{id}', [dataController::class, 'updatePotensi']);
+
+
+
 // Routes baru + Alumni
 // routes/web.php
 Route::get('/admin/database/database', [dataController::class, 'peserta_baru'])->name('admin.database.database');
@@ -94,10 +100,11 @@ Route::post('/admin/alumni/{id}/simpan-kelas', [AlumniController::class, 'simpan
 Route::put('/salesplan/{id}/fu/{fu}', [SalesPlanController::class, 'updateFU'])->name('admin.salesplan.update-fu');
 
 // Update Potensi Kelas
-Route::post('/peserta/{id}/update-potensi', [dataController::class, 'updatePotensiKelas'])->name('peserta.updatePotensi');
 
 
-
+//Edit Ajax
+Route::post('/admin/database/update-inline', [dataController::class, 'updateInline']);
+Route::post('/admin/database/update-potensi/{id}', [dataController::class, 'updatePotensi']);
 
 
 

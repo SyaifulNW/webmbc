@@ -29,7 +29,7 @@ class dataController extends Controller
 
         $user = Auth::user();
 
-        $data = Data::where('status_peserta', 'Peserta Baru')->get();
+     
         // Ambil data sesuai role
         if ($user->email == 'mbchamasah@gmail.com') {
             $data = data::all();
@@ -62,11 +62,24 @@ class dataController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function updateInline(Request $request)
+    {
+        $data = data::findOrFail($request->id);
+        $field = $request->field;
+        $data->$field = $request->value;
+        $data->save();
+
+        return response()->json(['success' => true]);
+    }
+
+
+
+
     public function store(Request $request)
     {
         $data = new data();
         $data->nama = $request->input('nama');
-        $data->status_peserta = $request->input('status_peserta', 'Peserta Baru');
+        $data->status_peserta = $request->input('status_peserta', 'peserta_baru');
         // Enum field
         $data->leads = $request->input('leads'); // Assuming 'leads' is an enum field
         // Custom field
@@ -84,7 +97,7 @@ class dataController extends Controller
         $data->no_wa = $request->input('no_wa');
         $data->situasi_bisnis = $request->input('situasi_bisnis');
         $data->kendala = $request->input('kendala');
-        $data->kelas_id = $request->input('kelas_id');
+
         // Ya atau tidak
         // Enum Peserta Baru
 
@@ -103,18 +116,15 @@ class dataController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function updatePotensiKelas(Request $request, $id)
+    public function updatePotensi(Request $request, $id)
     {
-        $request->validate([
-            'potensi_kelas' => 'required|string|max:255',
-        ]);
-
         $data = data::findOrFail($id);
-        $data->potensi_kelas_pertama = $request->potensi_kelas;
+        $data->kelas_id = $request->kelas_id;
         $data->save();
 
         return response()->json(['success' => true]);
     }
+
 
     public function show($id)
     {
@@ -153,6 +163,7 @@ class dataController extends Controller
         // Validate the request data
         $data = data::findOrFail($id);
         $data->nama = $request->input('nama');
+        $data->status_peserta = $request->input('status_peserta', 'Peserta Baru');
         // Enum field
         $data->leads = $request->input('leads'); // Assuming 'leads' is an enum field
         // Custom field
@@ -162,15 +173,14 @@ class dataController extends Controller
             $data->leads_custom = $request->input('leads_custom');
         }
         $data->provinsi_id = $request->input('provinsi_id');
-        $data->provinsi_nama = $request->input('provinsi_nama');
-        $data->kota_id = $request->input('kota_id');
+
         $data->kota_nama = $request->input('kota_nama');
         $data->jenisbisnis = $request->input('jenisbisnis');
         $data->nama_bisnis = $request->input('nama_bisnis');
         $data->no_wa = $request->input('no_wa');
         $data->situasi_bisnis = $request->input('situasi_bisnis');
         $data->kendala = $request->input('kendala');
-        $data->kelas_id = $request->input('kelas_id');
+
         // Ya atau tidak
 
         $data->save();
@@ -198,65 +208,34 @@ class dataController extends Controller
         return redirect()->route('admin.database.database')->with('success', 'Data has been deleted successfully.');
     }
 
-    public function pindahKeAlumni($id)
-    {
-        // Fetch the data by ID
-        $data = data::findOrFail($id);
-
-        // Create a new Alumni instance
-        $alumni = new \App\Models\Alumni();
-        $alumni->nama = $data->nama;
-        $alumni->leads = $data->leads;
-        $alumni->leads_custom = $data->leads_custom;
-        $alumni->provinsi_id = $data->provinsi_id;
-        $alumni->provinsi_nama = $data->provinsi_nama;
-        $alumni->kota_id = $data->kota_id;
-        $alumni->kota_nama = $data->kota_nama;
-        $alumni->jenis_bisnis = $data->jenisbisnis;
-        $alumni->nama_bisnis = $data->nama_bisnis;
-        $alumni->no_wa = $data->no_wa;
-        $alumni->kendala = $data->kendala;
-        $alumni->ikut_kelas = $data->ikut_kelas;
-        $alumni->kelas_id = $data->kelas_id;
-        // Additional fields for alumni
-        $alumni->sudah_pernah_ikut_kelas_apa_saja = null; // Set as needed
-        $alumni->kelas_yang_belum_diikuti_apa_saja = null; // Set as needed
-
-        // Save the alumni record
-        $alumni->save();
-
-        // Delete the original data record
-        $data->delete();
-
-        // Redirect to the alumni index page with a success message
-        return redirect()->route('admin.alumni.alumni')->with('success', 'Data has been moved to Alumni successfully.');
-    }
-
+ 
     // app/Http/Controllers/DatabaseController.php
 
-public function peserta_baru()
-{
-    if (Auth::user()->email === 'mbchamasah@gmail.com') {
-        $data = data::where('status_peserta', 'peserta_baru')->get();
-    } else {
-        $data = data::where('status_peserta', 'peserta_baru')
-                       ->where('created_by', Auth::user()->name)
-                       ->get();
+    public function peserta_baru()
+    {
+        if (Auth::user()->email === 'mbchamasah@gmail.com') {
+            $data = data::where('status_peserta', 'peserta_baru')->get();
+        } else {
+            $data = data::where('status_peserta', 'peserta_baru')
+                ->where('created_by', Auth::user()->name)
+                ->get();
+        }
+        return view('admin.database.database', compact('data'));
     }
-    return view('admin.database.database', compact('data'));
-}
 
-public function alumni()
-{
-    if (Auth::user()->email === 'mbchamasah@gmail.com') {
-        $data = data::where('status_peserta', 'alumni')->get();
-    } else {
-        $data = data::where('status_peserta', 'alumni')
-                       ->where('created_by', Auth::user()->name)
-                       ->get();
+    public function alumni()
+    {
+        if (Auth::user()->email === 'mbchamasah@gmail.com') {
+            $data = data::where('status_peserta', 'alumni')->get();
+        } else {
+            $data = data::where('status_peserta', 'alumni')
+                ->where('created_by', Auth::user()->name)
+                ->get();
+        }
+        return view('admin.database.database', compact('data'));
     }
-    return view('admin.database.database', compact('data'));
-}
+
+
 
 
     public function pindahkesalesplan($id)

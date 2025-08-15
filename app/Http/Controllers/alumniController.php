@@ -25,21 +25,21 @@ class alumniController extends Controller
        $user = Auth::user();
 
     // Base query
-    $query = Data::query();
+    $query = alumni::query();
 
     // Filter status_peserta alumni
-    $query->where('status_peserta', 'alumni');
+
 
     // Filter role
     if ($user->email !== 'mbchamasah@gmail.com') {
         $query->where('created_by', $user->name);
     }
 
-    $data = $query->get();
+    $alumni = $query->get();
 
     $kelas = Kelas::all();
 
-    return view('admin.database.database', compact('data', 'kelas'));
+    return view('admin.alumni.alumni', compact('alumni', 'kelas'));
     }
 
     /**
