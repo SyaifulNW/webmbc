@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,7 @@
         body {
             font-family: 'Nunito', sans-serif;
             margin: 0;
-            background: linear-gradient(135deg, #1e3a8a, #38bdf8);
+            background: linear-gradient(135deg, #370331, #e10338);
             color: white;
             display: flex;
             flex-direction: column;
@@ -18,22 +19,27 @@
             min-height: 100vh;
             text-align: center;
         }
+
         .logo img {
             width: 120px;
             margin-bottom: 20px;
         }
+
         h1 {
             font-size: 2rem;
             margin-bottom: 10px;
         }
+
         p {
             max-width: 600px;
             font-size: 1rem;
             line-height: 1.5;
         }
+
         .button {
             margin-top: 20px;
         }
+
         .button a {
             background: #facc15;
             color: black;
@@ -43,21 +49,24 @@
             font-weight: bold;
             transition: 0.3s;
         }
+
         .button a:hover {
             background: #eab308;
         }
     </style>
 </head>
+
 <body>
     <div class="logo">
-        <img src="{{ asset('backend/img/MBC.svg') }}" alt="Logo MBC HAMASAH">
+        <img src="{{ asset('backend/Helas.jpg') }}" alt="Logo MBC HAMASAH">
     </div>
-    <h1>Sistem Informasi Manajemen Customer Service</h1>
-    <h2>MBC HAMASAH</h2>
-    <p>Selamat datang di sistem manajemen layanan pelanggan kami. 
-       Akses data peserta, rencana penjualan, dan aktivitas harian dengan mudah.</p>
+    <h1>HELAS COORPORATION</h1>
+    <h2>Sistem Informasi Manajemen </h2>
+    <p>Selamat datang di sistem manajemen perusahaan kami.
+        Akses data peserta, rencana penjualan, dan aktivitas harian dengan mudah.</p>
     <div class="button">
-        <a href="{{ route('home') }}">Masuk ke Dashboard</a>
+        <a href="{{ route('home') }}">Masuk </a>
     </div>
 </body>
+
 </html>

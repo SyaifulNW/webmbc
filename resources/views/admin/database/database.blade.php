@@ -43,7 +43,11 @@
                             <th>No</th>
                             <th>Nama Peserta</th>
                             <!-- <th>Status Peserta</th> -->
-                            <th>Sumber Leads</th>
+                            <th>
+                                Sumber Leads
+
+                            </th>
+
                             <th>Provinsi</th>
                             <th>Kota</th>
                             <th>Nama Bisnis</th>
@@ -54,6 +58,7 @@
                             <th>Kendala</th>
 
                             <th>Potensi Kelas Pertama</th>
+                            <th>Sale Plan</th>
 
                             @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <th>Input Oleh</th>
@@ -85,7 +90,8 @@
                                 <a href="https://wa.me/{{ $waNumber }}"
                                     target="_blank"
                                     class="btn btn-success btn-sm wa-button">
-                                    <i class="bi bi-whatsapp"></i> Chat WA
+                                    <i class="bi bi-whatsapp" style="color: #eeeeeeff; font-size: 1.5rem;"></i>
+
                                 </a>
                             </td>
 
@@ -117,6 +123,16 @@
                                     @endforeach
                                 </select>
                             </td>
+                            <td>
+                                <form action="{{ route('data.pindahKeSalesPlan', $item->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="fa fa-arrow-right"></i>
+                                    </button>
+                                </form>
+
+
+                            </td>
 
                             @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <td>{{ $item->created_by }}</td>
@@ -128,18 +144,15 @@
                                 <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm">
                                     <i class="fa-solid fa-eye" style="color: #ffffff;"></i>
                                 </a>
-
                                 @if(auth()->user()->email == 'mbchamasah@gmail.com')
-                                <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin mau hapus data ini?')">
+                                <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">
+                                    <button type="button" class="btn btn-danger btn-sm btn-delete">
                                         <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                     </button>
                                 </form>
                                 @endif
-
-
                             </td>
                         </tr>
                         @endforeach
@@ -373,13 +386,13 @@
                     </div>
 
                     {{-- Status Peserta --}}
-                    <!-- <div class="form-group">
+                    <div class="form-group">
                         <label for="status_peserta">Status Peserta</label>
                         <select name="status_peserta" id="status_peserta" class="form-control">
                             <option value="Peserta Baru">Peserta Baru</option>
                             <option value="Alumni">Alumni</option>
                         </select>
-                    </div> -->
+                    </div>
 
                     {{-- Potensi Kelas --}}
                     <div class="form-group">

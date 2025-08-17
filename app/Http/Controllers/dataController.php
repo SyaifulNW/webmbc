@@ -29,7 +29,7 @@ class dataController extends Controller
 
         $user = Auth::user();
 
-     
+
         // Ambil data sesuai role
         if ($user->email == 'mbchamasah@gmail.com') {
             $data = data::all();
@@ -64,6 +64,7 @@ class dataController extends Controller
      */
     public function updateInline(Request $request)
     {
+
         $data = data::findOrFail($request->id);
         $field = $request->field;
         $data->$field = $request->value;
@@ -208,7 +209,7 @@ class dataController extends Controller
         return redirect()->route('admin.database.database')->with('success', 'Data has been deleted successfully.');
     }
 
- 
+
     // app/Http/Controllers/DatabaseController.php
 
     public function peserta_baru()
@@ -240,27 +241,24 @@ class dataController extends Controller
 
     public function pindahkesalesplan($id)
     {
-        $data = Data::with('kelas')->findOrFail($id);
+        // Ambil data peserta dari tabel data
+        $data = Data::findOrFail($id);
+        $salesPlan = new SalesPlan();
+        $salesPlan->nama = $data->nama;          // dari tabel peserta
+        $salesPlan->situasi_bisnis      = $data->situasi_bisnis; // dari tabel peserta
+        $salesPlan->kendala      = $data->kendala;       // dari tabel peserta
+        $salesPlan->kelas_id     = $data->kelas_id;
+        $salesPlan->created_by   = auth()->id();
+        $salesPlan->status       = 'cold'; // default awal
 
-        // Cek apakah sudah punya sales plan
-        if ($data->salesplan->isNotEmpty()) {
-            return redirect()->back()->with('error', 'Data ini sudah memiliki Sales Plan.');
-        }
+        // Kolom tambahan biarkan kosong dulu, admin yang isi nant
+        $salesPlan->save();
 
-        // Cek apakah ikut kelas
-        if (!$data->ikut_kelas || !$data->kelas_id) {
-            return back()->with('error', 'Peserta belum memilih kelas.');
-        }
 
-        // Simpan ke database salesplan
-        SalesPlan::create([
-            'data_id'     => $data->id,
-            'keterangan'  => 'Dimasukkan otomatis berdasarkan kelas: ' . ($data->kelas->nama ?? 'Tidak diketahui'),
-            'status'      => 'cold', // default warna indikator
-            'created_by' => auth()->id(), // ID user yang membuat
-        ]);
+        // Kalau mau pindahkan (hapus dari tabel data) bisa tambahkan:
+        // $data->delete();
 
-        // Redirect ke halaman sales plan
-        return redirect()->route('admin.salesplan.index')->with('success', 'Data telah ditambahkan ke Sales Plan.');
+        return redirect()->route('admin.salesplan.index')
+            ->with('success', 'Peserta berhasil dipindahkan ke Sales Plan.');
     }
 }

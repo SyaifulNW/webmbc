@@ -21,6 +21,7 @@
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Custom styles for this template-->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <link href="https:///6feed79663d8.ngrok-free.app/backend/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="{{asset('backend/css/sb-admin-2.min.css')}}" rel="stylesheet">
 
@@ -119,8 +120,8 @@
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Daftar Kelas MBC:</h6>
             <!-- <a class="collapse-item {{ request('kelas') == null ? 'active' : '' }}" href="{{ route('admin.salesplan.index') }}">
-        ALL Kelas
-      </a> -->
+             ALL Kelas
+         </a> -->
             @foreach ($kelas as $item)
             <a class="collapse-item {{ request('kelas') == $item->nama_kelas ? 'active' : '' }}"
               href="{{ route('admin.salesplan.index', ['kelas' => $item->nama_kelas]) }}">

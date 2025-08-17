@@ -91,14 +91,24 @@
 </style>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Sales Plan / HRD Mastery</h1>
+    <h1 class="h3 mb-0 text-gray-800">
+        Sales Plan
+        @if($kelasFilter)
+        / {{ $kelasFilter }}
+        @endif
+    </h1>
+
     <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-            <li class="breadcrumb-item active">Sales Plan</li>
+            <li class="breadcrumb-item">Sales Plan</li>
+            @if($kelasFilter)
+            <li class="breadcrumb-item active">{{ $kelasFilter }}</li>
+            @endif
         </ol>
     </div>
 </div>
+
 @if(session('message'))
 <div class="alert alert-info">
     {{ session('message') }}
@@ -118,197 +128,193 @@
     <a href="{{ route('salesplan.export') }}" class="btn btn-success mb-3">
         Download Excel
     </a>
-    <div style="overflow-x: auto; white-space: nowrap;">
-        <table style="border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif; font-size: 14px; min-width: 1300px;">
-            <thead>
-                <tr style="background: linear-gradient(to right, #376bb9ff, #1c7f91ff); color: white;">
-                    <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">No</th>
-                    <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Nama</th>
-                    <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Situasi</th>
-                    <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Kendala</th>
-                    @if(auth()->user()->email == 'mbchamasah@gmail.com')
-                    <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Input Oleh</th>
-                    @endif
-                    @for ($i = 1; $i <= 5; $i++)
-                        <th colspan="3" style="padding: 10px; border: 1px solid #ccc;">FU{{ $i }}</th>
-                        @endfor
-                        <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Potensi</th>
-                        <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Keterangan</th>
-                        <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Status</th>
-                        <th rowspan="2" style="padding: 10px; border: 1px solid #ccc;">Action</th>
+    <div class="card shadow-lg border-0 rounded-lg mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-chart-line"></i> Daftar Sales Plan</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="text-white" style="background-color:#25799E;">
+                        <tr>
+                            <th rowspan="3">No</th>
+                            <th rowspan="3">Nama</th>
+                            <th rowspan="3">Situasi Bisnis</th>
+                            <th rowspan="3">Kendala</th>
 
+                            {{-- Header grup untuk FU --}}
+                            <th colspan="10" class="text-center">Follow Up</th>
 
-                </tr>
-                <tr style="background: linear-gradient(to right, #376bb9ff, #1c7f91ff); color: white;">
-                    @for ($i = 1; $i <= 5; $i++)
-                        <th style="padding: 8px; border: 1px solid #ccc;">Hasil</th>
-                        <th style="padding: 8px; border: 1px solid #ccc;">Tindak Lanjut</th>
-                        <th style="padding: 8px; border: 1px solid #ccc;">Aksi</th>
-                        @endfor
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($salesplans as $plan)
-                <tr class="
-                @if($plan->status == 'hot') table-success
-                @elseif($plan->status == 'warm') table-warning
-                @elseif($plan->status == 'no') table-danger
-                @endif"
-                    style="background: linear-gradient(to right, #e6e7e9ff, #fafbfcff); color: black;">
-
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $loop->iteration }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->nama ?? '-' }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->situasi_bisnis ?? '-' }}</td>
-                    <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->data->kendala ?? '-' }}</td>
-                    @if(auth()->user()->email == 'mbchamasah@gmail.com')
-                    <td style="padding: 8px; border: 1px solid #ccc;">
-                        {{ $plan->created_by_name }}
-                    </td>
-                    @endif
-
-                    {{-- FU1 - FU5 --}}
-                    @for ($i = 1; $i <= 5; $i++)
-                        {{-- Hasil --}}
-                        <td style="padding: 8px; border: 1px solid #ccc;">
-                        {{ $plan->{'fu'.$i.'_hasil'} ?? '-' }}
-                        </td>
-
-                        {{-- Tindak Lanjut --}}
-                        <td style="padding: 8px; border: 1px solid #ccc;">
-                            {{ $plan->{'fu'.$i.'_tindak_lanjut'} ?? '-' }}
-                        </td>
-
-                        {{-- Aksi --}}
-                        <td style="padding: 8px; border: 1px solid #ccc; text-align: center;">
-                            <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editFU{{ $i }}Modal{{ $plan->id }}">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </td>
+                            <th rowspan="3">Potensi</th>
+                            <th rowspan="3">Keterangan</th>
+                            <th rowspan="3">Status</th>
+                            <th rowspan="3">Aksi</th>
+                            <th rowspan="3">Input Oleh</th>
+                        </tr>
+                        <tr>
+                            {{-- Header FU 1 - 5 --}}
+                            @for ($i = 1; $i <= 5; $i++)
+                                <th colspan="2" class="text-center">FU {{ $i }}</th>
+                                @endfor
+                        </tr>
+                        <tr>
+                            {{-- Sub kolom Hasil & Tindak Lanjut --}}
+                            @for ($i = 1; $i <= 5; $i++)
+                                <th>Hasil</th>
+                                <th>Tindak Lanjut</th>
+                                @endfor
+                        </tr>
+                    </thead>
 
 
 
-                        {{-- Modal Edit FU --}}
-                        <div class="modal fade" id="editFU{{ $i }}Modal{{ $plan->id }}" tabindex="-1" role="dialog">
-                            <div class="modal-dialog" role="document">
-                                <form method="POST" action="{{ route('admin.salesplan.update-fu', [$plan->id, $i]) }}">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Edit FU{{ $i }}</h5>
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="form-group">
-                                                <label>FU{{ $i }} Hasil</label>
-                                                <input type="text" name="fu{{ $i }}_hasil" class="form-control" value="{{ $plan->{'fu'.$i.'_hasil'} }}">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>FU{{ $i }} Tindak Lanjut</label>
-                                                <input type="text" name="fu{{ $i }}_tindak_lanjut" class="form-control" value="{{ $plan->{'fu'.$i.'_tindak_lanjut'} }}">
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" class="btn btn-success">Simpan</button>
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        @endfor
+                    <tbody>
+                        @forelse ($salesplans as $plan)
+                        @php
+                        $rowColors = [
+                        'hot' => 'table-success', // hijau
+                        'warm' => 'table-warning', // kuning
+                        'No' => 'table-danger', // merah
+                        'Cold' => 'table-secondary' // abu
+                        ];
 
-                        <td style="padding: 8px; border: 1px solid #ccc;">Rp {{ number_format($plan->nominal, 0, ',', '.') }}</td>
-                        <td style="padding: 8px; border: 1px solid #ccc;">{{ $plan->keterangan }}</td>
-                        <td style="padding: 8px; border: 1px solid #ccc; color: white;">
-                            <span class="badge 
-                    @if($plan->status == 'cold') bg-secondary
-                    @elseif($plan->status == 'warm') bg-warning
-                    @elseif($plan->status == 'hot') bg-success
-                    @elseif($plan->status == 'no') bg-danger
-                    @else bg-light
-                    @endif"
-                                style="padding: 6px 12px; font-size: 13px;">
-                                {{ ucfirst($plan->status) }}
-                            </span>
-                        </td>
-                        <td style="padding: 8px; border: 1px solid #ccc;">
-                            <a href="{{ route('admin.salesplan.edit', $plan->id) }}" class="btn btn-primary">
-                                <i class="fa-solid fa-pencil" style="color: #ffffff;"></i>
-                            </a>
-                        </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="22" style="text-align: center; padding: 20px; color: #999;">
-                        Tidak ada data sales plan ditemukan.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                        $statusTexts = [
+                        'hot' => 'Sudah Transfer',
+                        'warm' => 'Mau Transfer',
+                        'No' => 'Tidak Transfer',
+                        'Cold' => 'Belum Transfer',
+                        ];
+
+                        $rowClass = $rowColors[$plan->status] ?? '';
+                        $badgeText = $statusTexts[$plan->status] ?? ucfirst($plan->status);
+                        @endphp
+
+                        <tr class="{{ $rowClass }}">
+                            <td class="text-center">{{ $loop->iteration }}</td>
+                            <td>{{ $plan->nama ?? '-' }}</td>
+                            <td>{{ $plan->situasi_bisnis ?? '-' }}</td>
+                            <td>{{ $plan->kendala ?? '-' }}</td>
+
+                            @for ($i = 1; $i <= 5; $i++)
+                                <td contenteditable="true" class="editable bg-light"
+                                data-id="{{ $plan->id }}"
+                                data-field="fu{{ $i }}_hasil">
+                                {{ $plan->{'fu'.$i.'_hasil'} ?? '-' }}
+                                </td>
+
+                                <td contenteditable="true" class="editable text-dark"
+                                    data-id="{{ $plan->id }}"
+                                    data-field="fu{{ $i }}_tindak_lanjut">
+                                    {{ $plan->{'fu'.$i.'_tindak_lanjut'} ?? '-' }}
+                                </td>
+                                @endfor
+
+                                <td contenteditable="true" class="editable fw-bold text-dark text-bold"
+                                    data-id="{{ $plan->id }}"
+                                    data-field="nominal">
+                                    {{ number_format($plan->nominal, 0, ',', '.') }}
+                                </td>
+
+                                <td contenteditable="true" class="editable"
+                                    data-id="{{ $plan->id }}"
+                                    data-field="keterangan">
+                                    {{ $plan->keterangan }}
+                                </td>
+                                @php
+                                $statusMap = [
+                                'hot' => ['class' => 'bg-success text-white', 'text' => 'Sudah Transfer'],
+                                'warm' => ['class' => 'bg-warning text-dark', 'text' => 'Mau Transfer'],
+                                'No' => ['class' => 'bg-danger text-white', 'text' => 'Tidak Transfer'],
+                                'Cold' => ['class' => 'bg-secondary text-white', 'text' => 'Cold'],
+                                ];
+
+                                $badge = $statusMap[$plan->status] ?? ['class' => 'bg-light text-dark', 'text' => ucfirst($plan->status)];
+                                @endphp
+
+                                <td class="text-center">
+                                    <span class="badge {{ $badge['class'] }}" style="font-size: medium;">
+                                        {{ $badge['text'] }}
+                                    </span>
+                                </td>
+
+                                <td class="text-center">
+                                    <a href="{{ route('admin.salesplan.edit', $plan->id) }}"
+                                        class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    @switch($plan->created_by)
+                                    @case(1)
+                                    Administrator
+                                    @break
+                                    @case(2)
+                                    Linda
+                                    @break
+                                    @case(3)
+                                    Yasmin
+                                    @break
+                                    @case(4)
+                                    Tursia
+                                    @break
+                                    @case(5)
+                                    Livia
+                                    @break
+                                    @case(6)
+                                    Shafa
+                                    @break
+                                    @default
+                                    -
+                                    @endswitch
+                                </td>
+
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="22" class="text-center text-muted">
+                                Tidak ada data sales plan ditemukan.
+                            </td>
+                        </tr>
+
+                        @endforelse
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
     </div>
 
+    <script>
+        $(document).on('blur', '.editable', function() {
+            let id = $(this).data('id');
+            let field = $(this).data('field');
+            let value = $(this).text().trim();
+
+            $.ajax({
+                url: "{{ route('admin.salesplan.inline-update') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id: id,
+                    field: field,
+                    value: value
+                },
+                success: function(res) {
+                    console.log("Update sukses:", res);
+                },
+                error: function(err) {
+                    console.error("Gagal update:", err);
+                    alert("Gagal update data!");
+                }
+            });
+        });
+    </script>
 
 
     <!-- Modal Edit Status Potensi Keterangan-->
     <!-- Modal Edit Status Potensi Keterangan -->
     <!-- Modal Edit Status Potensi Keterangan -->
-    <div class="modal fade" id="editModal{{ $plan->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $plan->id }}" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <form method="POST" action="{{ route('admin.salesplan.update', $plan->id) }}">
-                @csrf
-                @method('PUT')
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel{{ $plan->id }}">Edit Sales Plan</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
 
-                    <div class="modal-body">
-                        {{-- Potensi --}}
-                        <div class="form-group">
-                            <label for="nominal">Potensi</label>
-                            <input
-                                type="number"
-                                name="nominal"
-                                class="form-control"
-                                id="nominal"
-                                value="{{ $plan->nominal ?? '' }}"
-                                placeholder="Masukkan nominal">
-                        </div>
-
-                        {{-- Keterangan --}}
-                        <div class="form-group">
-                            <label>Keterangan</label>
-                            <textarea
-                                name="keterangan"
-                                class="form-control"
-                                rows="2">{{ $plan->keterangan }}</textarea>
-                        </div>
-
-                        {{-- Status --}}
-                        <div class="form-group">
-                            <label>Status</label>
-                            <select name="status" class="form-control">
-                                <option value="cold" {{ $plan->status == 'cold' ? 'selected' : '' }}>Cold</option>
-                                <option value="warm" {{ $plan->status == 'warm' ? 'selected' : '' }}>Mau Transfer</option>
-                                <option value="hot" {{ $plan->status == 'hot' ? 'selected' : '' }}>Sudah Transfer</option>
-                                <option value="no" {{ $plan->status == 'no' ? 'selected' : '' }}>No</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Simpan</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 
 
 </div>

@@ -75,7 +75,12 @@ Route::post('/admin/alumni/store', [App\Http\Controllers\alumniController::class
 Route::get('/admin/alumni/{id}/edit', [App\Http\Controllers\alumniController::class, 'edit'])->name('admin.alumni.edit');
 Route::put('/admin/alumni/{id}', [App\Http\Controllers\alumniController::class, 'update'])->name('admin.alumni.update');
 Route::delete('/admin/alumni/{id}', [App\Http\Controllers\alumniController::class, 'destroy'])->name('delete-alumni');
-Route::get('/admin/alumni/{id}', [App\Http\Controllers\alumniController::class, 'show'])->name('admin.alumni.show');    
+Route::get('/admin/alumni/{id}', [App\Http\Controllers\alumniController::class, 'show'])->name('admin.alumni.show');
+
+
+// Alumni
+Route::post('/admin/alumni/update-inline', [\App\Http\Controllers\alumniController::class, 'updateInline'])->name('admin.alumni.update-inline');
+Route::post('/admin/alumni/update-kelas', [\App\Http\Controllers\alumniController::class, 'updateKelas'])->name('admin.alumni.update-kelas');
 
 // Sales Plan Routes 
 Route::post('/data/{id}/pindah-ke-salesplan', [DataController::class, 'pindahKeSalesPlan'])->name('data.pindahKeSalesPlan');
@@ -107,7 +112,19 @@ Route::post('/admin/database/update-inline', [dataController::class, 'updateInli
 Route::post('/admin/database/update-potensi/{id}', [dataController::class, 'updatePotensi']);
 
 
+// InlineSalesplan
+Route::post('/admin/salesplan/inline-update', [SalesPlanController::class, 'inlineUpdate'])
+    ->name('admin.salesplan.inline-update');
 
+    // Salesplan update status
+    Route::post('/admin/salesplan/update-status/{id}', [SalesPlanController::class, 'updateStatus']);
 
+// Tambah ke salesplan
+Route::post('/admin/database/{id}/tambah-salesplan', [dataController::class, 'tambahkeSalesplan'])
+    ->name('admin.database.tambahSalesplan');
+
+    // Salesplan filter
+    // routes/web.php
+Route::get('/sales-plan/{kelas}', [SalesPlanController::class, 'filter'])->name('salesplan.filter');
 
 

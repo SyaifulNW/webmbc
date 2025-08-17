@@ -19,17 +19,18 @@ class salesplanController extends Controller
      */
     public function index(Request $request)
     {
-        $kelasFilter = $request->input('kelas'); // berisi nama kelas dari parameter URL
+        $kelasFilter = $request->input('kelas'); // nama kelas dari URL
+        $userId      = auth()->id();
 
-        $salesplans = SalesPlan::with(['data.kelas']) // eager load nested relation
+        $salesplans = SalesPlan::with('kelas')
             ->when($kelasFilter, function ($query) use ($kelasFilter) {
-                $query->whereHas('data.kelas', function ($subQuery) use ($kelasFilter) {
-                    $subQuery->where('nama_kelas', $kelasFilter); // filter by nama_kelas dari tabel kelas
+                $query->whereHas('kelas', function ($subQuery) use ($kelasFilter) {
+                    $subQuery->where('nama_kelas', $kelasFilter);
                 });
             })
-            ->when(auth()->user()->email !== 'mbchamasah@gmail.com', function ($query) {
-                // Filter berdasarkan nama user di kolom created_by
-                $query->where('created_by', auth()->user()->id);
+            ->when($userId !== 1, function ($query) use ($userId) {
+                // kalau bukan admin, hanya data yang dia input
+                $query->where('created_by', $userId);
             })
             ->get();
 
@@ -46,6 +47,61 @@ class salesplanController extends Controller
 
         return view('admin.salesplan.index', compact('salesplans', 'kelasList', 'kelasFilter'));
     }
+    // app/Http/Controllers/SalesPlanController.php
+    public function filter($kelas)
+    {
+        // Ambil semua kelas untuk ditampilkan di sidebar
+        $listKelas = Kelas::all();
+
+        // Ambil data sales plan sesuai kelas
+        $salesPlans = SalesPlan::where('kelas_nama', $kelas)->get();
+
+        return view('admin.salesplan.index', compact('salesPlans', 'listKelas', 'kelas'));
+    }
+
+
+    public function inlineUpdate(Request $request)
+    {
+        $plan = SalesPlan::findOrFail($request->id);
+
+        $field = $request->field;
+        $value = $request->value;
+
+        // keamanan: hanya boleh update kolom tertentu
+        $allowedFields = [
+            'fu1_hasil',
+            'fu1_tindak_lanjut',
+            'fu2_hasil',
+            'fu2_tindak_lanjut',
+            'fu3_hasil',
+            'fu3_tindak_lanjut',
+            'fu4_hasil',
+            'fu4_tindak_lanjut',
+            'fu5_hasil',
+            'fu5_tindak_lanjut',
+            'nominal',
+            'keterangan'
+        ];
+
+        if (!in_array($field, $allowedFields)) {
+            return response()->json(['error' => 'Field tidak diizinkan'], 400);
+        }
+
+        $plan->$field = $value;
+        $plan->save();
+
+        return response()->json(['success' => true, 'message' => 'Data berhasil diupdate']);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $plan = salesPlan::findOrFail($id);
+        $plan->status = $request->status;
+        $plan->save();
+
+        return response()->json(['success' => true, 'status' => $plan->status]);
+    }
+
 
     public function export()
     {
@@ -65,10 +121,10 @@ class salesplanController extends Controller
      */
     public function edit($id)
     {
-           $plan = SalesPlan::findOrFail($id);
+        $plan = SalesPlan::findOrFail($id);
 
-    // Kirim data ke view edit
-    return view('admin.salesplan.edit', compact('plan'));
+        // Kirim data ke view edit
+        return view('admin.salesplan.edit', compact('plan'));
     }
 
     /**

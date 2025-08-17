@@ -10,7 +10,7 @@
                 @method('PUT')
 
                 {{-- Potensi --}}
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="nominal">Potensi</label>
                     <input
                         type="number"
@@ -19,17 +19,17 @@
                         id="nominal"
                         value="{{ old('nominal', $plan->nominal) }}"
                         placeholder="Masukkan nominal">
-                </div>
+                </div> -->
 
                 {{-- Keterangan --}}
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label>Keterangan</label>
                     <textarea
                         name="keterangan"
                         class="form-control"
                         rows="2"
                         placeholder="Masukkan keterangan">{{ old('keterangan', $plan->keterangan) }}</textarea>
-                </div>
+                </div> -->
 
                 {{-- Status --}}
                 <div class="form-group">

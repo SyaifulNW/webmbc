@@ -22,24 +22,24 @@ class alumniController extends Controller
      */
     public function index()
     {
-       $user = Auth::user();
+        $user = Auth::user();
 
-    // Base query
-    $query = alumni::query();
+        // Base query
+        $query = alumni::query();
 
-    // Filter status_peserta alumni
+        // Filter status_peserta alumni
 
 
-    // Filter role
-    if ($user->email !== 'mbchamasah@gmail.com') {
-        $query->where('created_by', $user->name);
-    }
+        // Filter role
+        if ($user->email !== 'mbchamasah@gmail.com') {
+            $query->where('created_by', $user->name);
+        }
 
-    $alumni = $query->get();
+        $alumni = $query->get();
 
-    $kelas = Kelas::all();
+        $kelas = Kelas::all();
 
-    return view('admin.alumni.alumni', compact('alumni', 'kelas'));
+        return view('admin.alumni.alumni', compact('alumni', 'kelas'));
     }
 
     /**
@@ -113,6 +113,59 @@ class alumniController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    public function updateInline(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:alumni,id',
+            'field' => 'required|string',
+            'value' => 'nullable'
+        ]);
+
+        $alumni = \App\Models\Alumni::findOrFail($request->id);
+
+        // Pastikan field ini memang ada di tabel alumni
+        if (in_array($request->field, [
+            'nama',
+            'leads',
+            'provinsi_nama',
+            'kota_nama',
+            'nama_bisnis',
+            'no_wa',
+            'kendala'
+        ])) {
+            $alumni->{$request->field} = $request->value;
+            $alumni->save();
+            return response()->json(['status' => 'success']);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Field tidak diizinkan'], 422);
+    }
+
+    public function updateKelas(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:alumni,id',
+            'field' => 'required|string',
+            'value' => 'nullable|array'
+        ]);
+
+        $alumni = \App\Models\Alumni::findOrFail($request->id);
+
+        if (in_array($request->field, [
+            'sudah_pernah_ikut_kelas_apa_saja',
+            'kelas_yang_belum_diikuti_apa_saja'
+        ])) {
+            $alumni->{$request->field} = $request->value; // langsung array
+            $alumni->save();
+            return response()->json(['status' => 'success']);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Field tidak diizinkan'], 422);
+    }
+
+
+
     public function store(Request $request)
     {
 
@@ -139,7 +192,6 @@ class alumniController extends Controller
         $alumni->kendala = $request->input('kendala');
 
         // Ya atau tidak
-        $alumni->ikut_kelas = $request->input('ikut_kelas') ? 1 : 0;
         $alumni->kelas_id = $request->input('kelas_id');
         $alumni->sudah_pernah_ikut_kelas_apa_saja = json_encode($request->input('sudah_pernah_ikut_kelas_apa_saja', []));
         $alumni->kelas_yang_belum_diikuti_apa_saja = json_encode($request->input('kelas_yang_belum_diikuti_apa_saja', []));
