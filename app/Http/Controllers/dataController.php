@@ -28,8 +28,6 @@ class dataController extends Controller
     {
 
         $user = Auth::user();
-
-
         // Ambil data sesuai role
         if ($user->email == 'mbchamasah@gmail.com') {
             $data = data::all();
@@ -80,7 +78,7 @@ class dataController extends Controller
     {
         $data = new data();
         $data->nama = $request->input('nama');
-        $data->status_peserta = $request->input('status_peserta', 'peserta_baru');
+        $data->status_peserta = $request->input('status_peserta','peserta_baru');
         // Enum field
         $data->leads = $request->input('leads'); // Assuming 'leads' is an enum field
         // Custom field

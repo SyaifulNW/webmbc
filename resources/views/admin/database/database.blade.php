@@ -148,7 +148,7 @@
                                 <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="btn btn-danger btn-sm btn-delete">
+                                    <button type="submit" class="btn btn-danger btn-sm btn-delete">
                                         <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                     </button>
                                 </form>
@@ -386,13 +386,13 @@
                     </div>
 
                     {{-- Status Peserta --}}
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="status_peserta">Status Peserta</label>
                         <select name="status_peserta" id="status_peserta" class="form-control">
-                            <option value="Peserta Baru">Peserta Baru</option>
-                            <option value="Alumni">Alumni</option>
+                            <option value="peserta_baru">peserta_baru</option>
+                            <option value="alumni">alumni</option>
                         </select>
-                    </div>
+                    </div> -->
 
                     {{-- Potensi Kelas --}}
                     <div class="form-group">

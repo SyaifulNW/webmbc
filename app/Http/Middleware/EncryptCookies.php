@@ -12,6 +12,6 @@ class EncryptCookies extends Middleware
      * @var array
      */
     protected $except = [
-        //
+         'admin/database/*',  // kalau perlu exempt route tertentu
     ];
 }

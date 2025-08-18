@@ -284,31 +284,32 @@
         </div>
     </div>
 
-    <script>
-        $(document).on('blur', '.editable', function() {
-            let id = $(this).data('id');
-            let field = $(this).data('field');
-            let value = $(this).text().trim();
+<script>
+    $(document).on('blur', '.editable', function() {
+        let id = $(this).data('id');
+        let field = $(this).data('field');
+        let value = $(this).text().trim();
 
-            $.ajax({
-                url: "{{ route('admin.salesplan.inline-update') }}",
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    id: id,
-                    field: field,
-                    value: value
-                },
-                success: function(res) {
-                    console.log("Update sukses:", res);
-                },
-                error: function(err) {
-                    console.error("Gagal update:", err);
-                    alert("Gagal update data!");
-                }
-            });
+        $.ajax({
+            url: "/admin/salesplan/inline-update", // relative URL, auto ikut domain aktif
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: id,
+                field: field,
+                value: value
+            },
+            success: function(res) {
+                console.log("✅ Update sukses:", res);
+            },
+            error: function(xhr, status, error) {
+                console.error("❌ Gagal update:", xhr.responseText);
+                alert("Gagal update data!");
+            }
         });
-    </script>
+    });
+</script>
+
 
 
     <!-- Modal Edit Status Potensi Keterangan-->
