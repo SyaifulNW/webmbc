@@ -147,8 +147,8 @@
 
                             <th rowspan="3">Potensi</th>
                             <th rowspan="3">Keterangan</th>
-                            <th rowspan="3">Status</th>
-                            <th rowspan="3">Aksi</th>
+                            <th rowspan="5">Status</th>
+
                             <th rowspan="3">Input Oleh</th>
                         </tr>
                         <tr>
@@ -172,15 +172,17 @@
                         @forelse ($salesplans as $plan)
                         @php
                         $rowColors = [
+                        'ok' => 'table-info',
                         'hot' => 'table-success', // hijau
                         'warm' => 'table-warning', // kuning
                         'No' => 'table-danger', // merah
-                        'Cold' => 'table-secondary' // abu
+                        'Cold' => 'table-white' // abu
                         ];
 
                         $statusTexts = [
-                        'hot' => 'Sudah Transfer',
-                        'warm' => 'Mau Transfer',
+                        'ok'=> 'Sudah Transfer',
+                        'hot' => 'Mau Transfer',
+                        'warm' => 'Tertarik',
                         'No' => 'Tidak Transfer',
                         'Cold' => 'Belum Transfer',
                         ];
@@ -220,29 +222,57 @@
                                     data-field="keterangan">
                                     {{ $plan->keterangan }}
                                 </td>
-                                @php
-                                $statusMap = [
-                                'hot' => ['class' => 'bg-success text-white', 'text' => 'Sudah Transfer'],
-                                'warm' => ['class' => 'bg-warning text-dark', 'text' => 'Mau Transfer'],
-                                'No' => ['class' => 'bg-danger text-white', 'text' => 'Tidak Transfer'],
-                                'Cold' => ['class' => 'bg-secondary text-white', 'text' => 'Cold'],
-                                ];
-
-                                $badge = $statusMap[$plan->status] ?? ['class' => 'bg-light text-dark', 'text' => ucfirst($plan->status)];
-                                @endphp
-
                                 <td class="text-center">
-                                    <span class="badge {{ $badge['class'] }}" style="font-size: medium;">
-                                        {{ $badge['text'] }}
-                                    </span>
+                                    <select class="form-control form-control-sm status-dropdown"
+                                        data-id="{{ $plan->id }}"
+                                        style="min-width: 150px;">
+                                        <option value="sudah_transfer" {{ $plan->status == 'sudah_transfer' ? 'selected' : '' }}>Sudah Transfer</option>
+                                        <option value="mau_transfer" {{ $plan->status == 'mau_transfer' ? 'selected' : '' }}>Mau Transfer</option>
+                                        <option value="tertarik" {{ $plan->status == 'tertarik' ? 'selected' : '' }}>Tertarik</option>
+                                        <option value="cold" {{ $plan->status == 'cold' ? 'selected' : '' }}>Cold</option>
+                                        <option value="no" {{ $plan->status == 'no' ? 'selected' : '' }}>No</option>
+                                    </select>
                                 </td>
 
-                                <td class="text-center">
+                                <style>
+                                    .status-dropdown {
+                                        min-width: 160px;
+                                        padding: 4px 8px;
+                                        font-size: 14px;
+                                    }
+                                </style>
+
+                                <script>
+                                    $(document).on('change', '.status-dropdown', function() {
+                                        let id = $(this).data('id'); // ambil ID dari dropdown
+                                        let value = $(this).val(); // ambil value terpilih
+
+                                        $.ajax({
+                                            url: '/admin/salesplan/' + id, // pastikan sesuai route Laravel
+                                            method: 'PUT',
+                                            data: {
+                                                _token: '{{ csrf_token() }}',
+                                                status: value
+                                            },
+                                            success: function(res) {
+                                                console.log('Status updated:', res);
+                                            },
+                                            error: function(xhr) {
+                                                console.error(xhr.responseText);
+                                                alert('Gagal update status');
+                                            }
+                                        });
+                                    });
+                                </script>
+
+
+
+                                <!-- <td class="text-center">
                                     <a href="{{ route('admin.salesplan.edit', $plan->id) }}"
                                         class="btn btn-sm btn-outline-primary">
                                         <i class="fas fa-pencil-alt"></i>
                                     </a>
-                                </td>
+                                </td> -->
                                 <td>
                                     @switch($plan->created_by)
                                     @case(1)
@@ -284,31 +314,31 @@
         </div>
     </div>
 
-<script>
-    $(document).on('blur', '.editable', function() {
-        let id = $(this).data('id');
-        let field = $(this).data('field');
-        let value = $(this).text().trim();
+    <script>
+        $(document).on('blur', '.editable', function() {
+            let id = $(this).data('id');
+            let field = $(this).data('field');
+            let value = $(this).text().trim();
 
-        $.ajax({
-            url: "/admin/salesplan/inline-update", // relative URL, auto ikut domain aktif
-            type: "POST",
-            data: {
-                _token: "{{ csrf_token() }}",
-                id: id,
-                field: field,
-                value: value
-            },
-            success: function(res) {
-                console.log("✅ Update sukses:", res);
-            },
-            error: function(xhr, status, error) {
-                console.error("❌ Gagal update:", xhr.responseText);
-                alert("Gagal update data!");
-            }
+            $.ajax({
+                url: "/admin/salesplan/inline-update", // relative URL, auto ikut domain aktif
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id: id,
+                    field: field,
+                    value: value
+                },
+                success: function(res) {
+                    console.log("✅ Update sukses:", res);
+                },
+                error: function(xhr, status, error) {
+                    console.error("❌ Gagal update:", xhr.responseText);
+                    alert("Gagal update data!");
+                }
+            });
         });
-    });
-</script>
+    </script>
 
 
 

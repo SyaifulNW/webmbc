@@ -136,16 +136,11 @@ class salesplanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $salesplan = SalesPlan::findOrFail($id);
+    $plan = SalesPlan::findOrFail($id);
+    $plan->status = $request->status;
+    $plan->save();
 
-        $salesplan->keterangan = $request->input('keterangan');
-        $salesplan->status = $request->input('status');
-        $salesplan->nominal = $request->input('nominal');
-        $salesplan->tanggal = Carbon::now()->format('Y-m-d'); // atau gunakan $request->input('tanggal') jika pakai input manual
-
-        $salesplan->save();
-
-        return redirect()->route('admin.salesplan.index')->with('success', 'Sales plan berhasil diperbarui.');
+    return response()->json(['success' => true, 'status' => $plan->status]);
     }
 
     public function updateFU(Request $request, $id, $fu)

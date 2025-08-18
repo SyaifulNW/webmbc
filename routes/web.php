@@ -127,4 +127,5 @@ Route::post('/admin/database/{id}/tambah-salesplan', [dataController::class, 'ta
     // routes/web.php
 Route::get('/sales-plan/{kelas}', [SalesPlanController::class, 'filter'])->name('salesplan.filter');
 
+Route::put('/admin/salesplan/{id}', [SalesPlanController::class, 'update'])->name('admin.salesplan.update');
 
