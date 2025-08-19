@@ -33,6 +33,13 @@ class salesplanController extends Controller
                 $query->where('created_by', $userId);
             })
             ->get();
+        $perPage = $request->get('per_page', 10); // default 10
+        $salesplans = SalesPlan::paginate($perPage);
+
+        // Kalau request via AJAX, hanya kirim partial tabel
+        // if ($request->ajax()) {
+        //     return view('admin.salesplan.table', compact('salesplans'))->render();
+        // }
 
         $kelasList = Kelas::all(); // untuk daftar di sidebar
 
@@ -136,11 +143,11 @@ class salesplanController extends Controller
      */
     public function update(Request $request, $id)
     {
-    $plan = SalesPlan::findOrFail($id);
-    $plan->status = $request->status;
-    $plan->save();
+        $plan = SalesPlan::findOrFail($id);
+        $plan->status = $request->status;
+        $plan->save();
 
-    return response()->json(['success' => true, 'status' => $plan->status]);
+        return response()->json(['success' => true, 'status' => $plan->status]);
     }
 
     public function updateFU(Request $request, $id, $fu)

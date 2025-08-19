@@ -136,7 +136,7 @@
             <div class="table-responsive">
                 <table class="table table-bordered table-hover align-middle">
                     <thead class="text-white" style="background-color:#25799E;">
-             
+
 
                         <tr>
                             <th rowspan="3">No</th>
@@ -193,11 +193,18 @@
                         $badgeText = $statusTexts[$plan->status] ?? ucfirst($plan->status);
                         @endphp
 
-                        <tr class="{{ $rowClass }}">
+                        <tr class="{{ $rowClass }}
+                            @if($plan->status == 'sudah_transfer') table-info
+    @elseif($plan->status == 'mau_transfer') table-success
+    @elseif($plan->status == 'tertarik') table-warning
+    @elseif($plan->status == 'no') table-danger
+    @elseif($plan->status == 'cold') table-secondary
+    @endif">
                             <td class="text-center">{{ $loop->iteration }}</td>
                             <td>{{ $plan->nama ?? '-' }}</td>
                             <td>{{ $plan->situasi_bisnis ?? '-' }}</td>
                             <td>{{ $plan->kendala ?? '-' }}</td>
+
 
                             @for ($i = 1; $i <= 5; $i++)
                                 <td contenteditable="true" class="editable bg-light"
@@ -226,7 +233,7 @@
                                 </td>
                                 <td class="text-center">
                                     <select class="form-control form-control-sm status-dropdown 
-                  status-{{ $plan->status }}"
+                                      status-{{ $plan->status }}"
                                         data-id="{{ $plan->id }}"
                                         style="min-width: 160px;">
                                         <option value="sudah_transfer" {{ $plan->status == 'sudah_transfer' ? 'selected' : '' }}>Sudah Transfer</option>
@@ -364,7 +371,7 @@
                                     -
                                     @endswitch
                                 </td>
-
+                                </td>
                         </tr>
                         @empty
                         <tr>
@@ -375,9 +382,14 @@
 
                         @endforelse
                     </tbody>
-
                 </table>
+                 
             </div>
+        <div class="d-flex justify-content-center mt-3">
+    {{ $salesplans->links('pagination::bootstrap-4') }}
+</div>
+
+
         </div>
     </div>
 
@@ -476,6 +488,16 @@
     });
 </script>
 
+<script>
+    $(document).ready(function() {
+        $('#example').DataTable({
+            "lengthMenu": [
+                [15, 25, 50, 100, 500],
+                [15, 25, 50, 100, 500]
+            ]
+        });
+    });
+</script>
 
 @endsection
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
