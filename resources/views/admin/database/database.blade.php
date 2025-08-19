@@ -23,22 +23,25 @@
 
 
             <script>
-                document.getElementById('tableSearch').addEventListener('keyup', function() {
-                    let filter = this.value.toLowerCase(); // kata kunci pencarian
-                    let rows = document.querySelectorAll('#myTable tbody tr'); // semua baris tabel
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.getElementById('tableSearch').addEventListener('keyup', function() {
+                        let filter = this.value.toLowerCase();
+                        let rows = document.querySelectorAll('#myTable tbody tr');
 
-                    rows.forEach(function(row) {
-                        let text = row.textContent.toLowerCase(); // gabungan semua teks dalam baris
-                        row.style.display = text.includes(filter) ? '' : 'none'; // tampilkan / sembunyikan
+                        rows.forEach(function(row) {
+                            let text = row.textContent.toLowerCase();
+                            row.style.display = text.includes(filter) ? '' : 'none';
+                        });
                     });
                 });
             </script>
+
         </div>
 
         <div class="card-body">
             <div style="overflow-x: auto; overflow-y: auto; width: 100%; max-height: 500px;">
-              
-                <table class="table table-bordered table-striped nowrap" style="width: max-content;">
+
+                <table id="myTable" class="table table-bordered table-striped nowrap" style="width: max-content;">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -54,8 +57,11 @@
                             <th>Kendala</th>
                             <th>Potensi Kelas Pertama</th>
                             <th>Sale Plan</th>
+                            @if(Auth::user()->email == "mbchamasah@gmail.com")
                             <th>Input Oleh</th>
+
                             <th>Role</th>
+                            @endif
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -95,8 +101,10 @@
                                     <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-arrow-right"></i></button>
                                 </form>
                             </td>
+                            @if(Auth::user()->email == "mbchamasah@gmail.com")
                             <td>{{ $item->created_by }}</td>
                             <td>{{ $item->created_by_role }}</td>
+                            @endif
                             <td>
                                 <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm">
                                     <i class="fa-solid fa-eye" style="color:#fff;"></i>

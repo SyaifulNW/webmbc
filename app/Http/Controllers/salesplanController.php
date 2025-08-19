@@ -19,8 +19,9 @@ class salesplanController extends Controller
      */
     public function index(Request $request)
     {
-        $kelasFilter = $request->input('kelas'); // nama kelas dari URL
+        $kelasFilter = $request->input('kelas');
         $userId      = auth()->id();
+        $perPage     = $request->get('per_page', 10); // default 10
 
         $salesplans = SalesPlan::with('kelas')
             ->when($kelasFilter, function ($query) use ($kelasFilter) {
@@ -29,21 +30,14 @@ class salesplanController extends Controller
                 });
             })
             ->when($userId !== 1, function ($query) use ($userId) {
-                // kalau bukan admin, hanya data yang dia input
+                // kalau bukan admin, hanya tampilkan data yang dia input
                 $query->where('created_by', $userId);
             })
-            ->get();
-        $perPage = $request->get('per_page', 10); // default 10
-        $salesplans = SalesPlan::paginate($perPage);
+            ->paginate($perPage); // langsung paginate disini
 
-        // Kalau request via AJAX, hanya kirim partial tabel
-        // if ($request->ajax()) {
-        //     return view('admin.salesplan.table', compact('salesplans'))->render();
-        // }
+        $kelasList = Kelas::all();
 
-        $kelasList = Kelas::all(); // untuk daftar di sidebar
-
-        if ($salesplans->count() === 0) {
+        if ($salesplans->isEmpty()) {
             return view('admin.salesplan.index', [
                 'salesplans'  => $salesplans,
                 'kelasList'   => $kelasList,

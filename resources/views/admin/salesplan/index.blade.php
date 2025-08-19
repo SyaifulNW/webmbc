@@ -150,8 +150,9 @@
                             <th rowspan="3">Potensi</th>
                             <th rowspan="3">Keterangan</th>
                             <th rowspan="5">Status</th>
-
+                                 @if(Auth::user()->email == "mbchamasah@gmail.com") 
                             <th rowspan="3">Input Oleh</th>
+                            @endif
                         </tr>
                         <tr>
                             {{-- Header FU 1 - 5 --}}
@@ -347,6 +348,7 @@
                                         <i class="fas fa-pencil-alt"></i>
                                     </a>
                                 </td> -->
+                              @if(Auth::user()->email == "mbchamasah@gmail.com") 
                                 <td>
                                     @switch($plan->created_by)
                                     @case(1)
@@ -371,6 +373,7 @@
                                     -
                                     @endswitch
                                 </td>
+                                @endif
                                 </td>
                         </tr>
                         @empty
