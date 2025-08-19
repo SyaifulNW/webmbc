@@ -136,6 +136,8 @@
             <div class="table-responsive">
                 <table class="table table-bordered table-hover align-middle">
                     <thead class="text-white" style="background-color:#25799E;">
+             
+
                         <tr>
                             <th rowspan="3">No</th>
                             <th rowspan="3">Nama</th>
@@ -223,9 +225,10 @@
                                     {{ $plan->keterangan }}
                                 </td>
                                 <td class="text-center">
-                                    <select class="form-control form-control-sm status-dropdown"
+                                    <select class="form-control form-control-sm status-dropdown 
+                  status-{{ $plan->status }}"
                                         data-id="{{ $plan->id }}"
-                                        style="min-width: 150px;">
+                                        style="min-width: 160px;">
                                         <option value="sudah_transfer" {{ $plan->status == 'sudah_transfer' ? 'selected' : '' }}>Sudah Transfer</option>
                                         <option value="mau_transfer" {{ $plan->status == 'mau_transfer' ? 'selected' : '' }}>Mau Transfer</option>
                                         <option value="tertarik" {{ $plan->status == 'tertarik' ? 'selected' : '' }}>Tertarik</option>
@@ -234,21 +237,57 @@
                                     </select>
                                 </td>
 
+
                                 <style>
+                                    /* Style default */
                                     .status-dropdown {
                                         min-width: 160px;
                                         padding: 4px 8px;
                                         font-size: 14px;
+                                        font-weight: bold;
+                                        color: #fff;
+                                        /* teks default putih */
                                     }
-                                </style>
 
+                                    /* Warna sesuai status */
+                                    .status-sudah_transfer {
+                                        background-color: #48e7ecff;
+                                        color: #030303ff;
+                                    }
+
+                                    /* Hijau */
+                                    .status-mau_transfer {
+                                        background-color: #1cff07ff;
+                                        color: #000;
+                                    }
+
+                                    /* Kuning */
+                                    .status-tertarik {
+                                        background-color: #ffd900ff;
+                                        color: #000;
+                                    }
+
+                                    /* Biru */
+                                    .status-cold {
+                                        background-color: #6c757d;
+                                    }
+
+                                    /* Abu gelap */
+                                    .status-no {
+                                        background-color: #d12020ff;
+                                        color: #faf3f3ff;
+                                    }
+
+                                    /* Abu terang */
+                                </style>
                                 <script>
                                     $(document).on('change', '.status-dropdown', function() {
-                                        let id = $(this).data('id'); // ambil ID dari dropdown
-                                        let value = $(this).val(); // ambil value terpilih
+                                        let id = $(this).data('id');
+                                        let value = $(this).val();
+                                        let dropdown = $(this);
 
                                         $.ajax({
-                                            url: '/admin/salesplan/' + id, // pastikan sesuai route Laravel
+                                            url: '/admin/salesplan/' + id,
                                             method: 'PUT',
                                             data: {
                                                 _token: '{{ csrf_token() }}',
@@ -256,14 +295,42 @@
                                             },
                                             success: function(res) {
                                                 console.log('Status updated:', res);
+
+                                                // Hapus semua class lama
+                                                dropdown.removeClass("status-sudah_transfer status-mau_transfer status-tertarik status-cold status-no");
+
+                                                // Tambahkan class baru sesuai value
+                                                dropdown.addClass("status-" + value);
                                             },
                                             error: function(xhr) {
                                                 console.error(xhr.responseText);
                                                 alert('Gagal update status');
+                                            },
+                                            success: function(res) {
+                                                console.log('Status updated:', res);
+
+                                                // Hapus semua class lama di dropdown
+                                                dropdown.removeClass("status-sudah_transfer status-mau_transfer status-tertarik status-cold status-no");
+
+                                                // Tambahkan class baru sesuai value
+                                                dropdown.addClass("status-" + value);
+
+                                                // Update warna <tr>
+                                                let row = dropdown.closest('tr');
+                                                row.removeClass("table-info table-success table-warning table-danger table-secondary");
+                                                if (value === "sudah_transfer") row.addClass("table-info");
+                                                if (value === "mau_transfer") row.addClass("table-success");
+                                                if (value === "tertarik") row.addClass("table-warning");
+                                                if (value === "no") row.addClass("table-danger");
+                                                if (value === "cold") row.addClass("table-secondary");
                                             }
+
+
                                         });
                                     });
                                 </script>
+
+
 
 
 

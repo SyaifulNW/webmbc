@@ -37,17 +37,13 @@
 
         <div class="card-body">
             <div style="overflow-x: auto; overflow-y: auto; width: 100%; max-height: 500px;">
-                <table id="myTable" class="table table-bordered table-striped nowrap" style="width: max-content;">
+              
+                <table class="table table-bordered table-striped nowrap" style="width: max-content;">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Nama Peserta</th>
-                            <!-- <th>Status Peserta</th> -->
-                            <th>
-                                Sumber Leads
-
-                            </th>
-
+                            <th>Sumber Leads</th>
                             <th>Provinsi</th>
                             <th>Kota</th>
                             <th>Nama Bisnis</th>
@@ -56,63 +52,33 @@
                             <th>CTA</th>
                             <th>Situasi Bisnis</th>
                             <th>Kendala</th>
-
                             <th>Potensi Kelas Pertama</th>
                             <th>Sale Plan</th>
-
-                            @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <th>Input Oleh</th>
                             <th>Role</th>
-                            @endif
-
                             <th>Action</th>
-
                         </tr>
                     </thead>
                     <tbody>
+
                         @foreach($data as $item)
                         <tr data-id="{{ $item->id }}">
                             <td>{{ $loop->iteration }}</td>
-
                             <td contenteditable="true" class="editable" data-field="nama">{{ $item->nama }}</td>
-                            <!-- <td contenteditable="true" class="editable" data-field="status_peserta">{{ $item->status_peserta }}</td> -->
                             <td contenteditable="true" class="editable" data-field="leads">{{ $item->leads }}</td>
                             <td contenteditable="true" class="editable" data-field="provinsi_nama">{{ $item->provinsi_nama }}</td>
                             <td contenteditable="true" class="editable" data-field="kota_nama">{{ $item->kota_nama }}</td>
                             <td contenteditable="true" class="editable" data-field="nama_bisnis">{{ $item->nama_bisnis }}</td>
                             <td contenteditable="true" class="editable" data-field="jenisbisnis">{{ $item->jenisbisnis }}</td>
                             <td contenteditable="true" class="editable" data-field="no_wa">{{ $item->no_wa }}</td>
-
                             <td>
-                                @php
-                                $waNumber = preg_replace('/^0/', '62', $item->no_wa); // Ganti 0 jadi 62
-                                @endphp
-                                <a href="https://wa.me/{{ $waNumber }}"
-                                    target="_blank"
-                                    class="btn btn-success btn-sm wa-button">
-                                    <i class="bi bi-whatsapp" style="color: #eeeeeeff; font-size: 1.5rem;"></i>
-
+                                @php $waNumber = preg_replace('/^0/', '62', $item->no_wa); @endphp
+                                <a href="https://wa.me/{{ $waNumber }}" target="_blank" class="btn btn-success btn-sm wa-button">
+                                    <i class="bi bi-whatsapp" style="color:#fff;font-size:1.5rem;"></i>
                                 </a>
                             </td>
-
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    document.querySelectorAll('.editable[data-field="no_wa"]').forEach(function(cell) {
-                                        cell.addEventListener('input', function() {
-                                            let newNumber = cell.textContent.trim();
-                                            let waNumber = newNumber.replace(/^0/, '62'); // ganti 0 awal jadi 62
-                                            let waButton = cell.parentElement.querySelector('.wa-button');
-                                            if (waButton) {
-                                                waButton.href = "https://wa.me/" + waNumber;
-                                            }
-                                        });
-                                    });
-                                });
-                            </script>
                             <td contenteditable="true" class="editable" data-field="situasi_bisnis">{{ $item->situasi_bisnis }}</td>
                             <td contenteditable="true" class="editable" data-field="kendala">{{ $item->kendala }}</td>
-
-                            <!-- Potensi Kelas Pertama sebagai dropdown -->
                             <td>
                                 <select class="form-control form-control-sm select-potensi" data-id="{{ $item->id }}">
                                     <option value="">- Pilih Kelas -</option>
@@ -126,39 +92,56 @@
                             <td>
                                 <form action="{{ route('data.pindahKeSalesPlan', $item->id) }}" method="POST" style="display:inline;">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-primary">
-                                        <i class="fa fa-arrow-right"></i>
-                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-arrow-right"></i></button>
                                 </form>
-
-
                             </td>
-
-                            @if(auth()->user()->email == 'mbchamasah@gmail.com')
                             <td>{{ $item->created_by }}</td>
                             <td>{{ $item->created_by_role }}</td>
-                            @endif
-
                             <td>
-                                <!-- Action tetap sama -->
                                 <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm">
-                                    <i class="fa-solid fa-eye" style="color: #ffffff;"></i>
+                                    <i class="fa-solid fa-eye" style="color:#fff;"></i>
                                 </a>
-                                @if(auth()->user()->email == 'mbchamasah@gmail.com')
                                 <form action="{{ route('delete-database', $item->id) }}" method="POST" style="display:inline;" class="delete-form">
-                                    @csrf
-                                    @method('DELETE')
+                                    @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm btn-delete">
-                                        <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                                        <i class="fa-solid fa-trash" style="color:#fff;"></i>
                                     </button>
                                 </form>
-                                @endif
                             </td>
                         </tr>
                         @endforeach
-                    </tbody>
 
+                    </tbody>
                 </table>
+                <!-- Script FIlter -->
+                <script>
+                    $(document).ready(function() {
+                        $('#filterLeads, #filterProvinsi, #filterKota, #filterJenisBisnis, #filterInputOleh').on('change', function() {
+                            let filters = {
+                                leads: $('#filterLeads').val(),
+                                provinsi: $('#filterProvinsi').val(),
+                                kota: $('#filterKota').val(),
+                                jenisbisnis: $('#filterJenisBisnis').val(),
+                                created_by: $('#filterInputOleh').val(),
+                            };
+
+                            $.ajax({
+                                url: "{{ route('admin.database.filter') }}",
+                                type: "GET",
+                                data: filters,
+                                success: function(response) {
+                                    $('#tableData').html(response);
+                                },
+                                error: function() {
+                                    alert('Gagal memuat data filter');
+                                }
+                            });
+                        });
+                    });
+                </script>
+
+
+                <!-- Script JQuery -->
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script>
                     $(document).ready(function() {

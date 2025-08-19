@@ -129,3 +129,7 @@ Route::get('/sales-plan/{kelas}', [SalesPlanController::class, 'filter'])->name(
 
 Route::put('/admin/salesplan/{id}', [SalesPlanController::class, 'update'])->name('admin.salesplan.update');
 
+// Data filter
+Route::get('/admin/database/filter', [dataController::class, 'filter'])->name('admin.database.filter');
+
+

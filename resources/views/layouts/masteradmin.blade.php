@@ -22,7 +22,7 @@
 
   <!-- Custom styles for this template-->
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-<link href="https:///b4bbb64afec7.ngrok-free.app/backend/css/sb-admin-2.min.css" rel="stylesheet">
+<link href="https:///c7b9bc4afeee.ngrok-free.app/backend/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="{{asset('backend/css/sb-admin-2.min.css')}}" rel="stylesheet">
 
 
