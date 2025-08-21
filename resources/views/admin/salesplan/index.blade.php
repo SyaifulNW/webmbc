@@ -150,7 +150,7 @@
                             <th rowspan="3">Potensi</th>
                             <th rowspan="3">Keterangan</th>
                             <th rowspan="5">Status</th>
-                                 @if(Auth::user()->email == "mbchamasah@gmail.com") 
+                            @if(Auth::user()->email == "mbchamasah@gmail.com")
                             <th rowspan="3">Input Oleh</th>
                             @endif
                         </tr>
@@ -304,6 +304,41 @@
                                             success: function(res) {
                                                 console.log('Status updated:', res);
 
+                                                dropdown.removeClass("status-sudah_transfer status-mau_transfer status-tertarik status-cold status-no");
+                                                dropdown.addClass("status-" + value);
+
+                                                let row = dropdown.closest('tr');
+                                                row.removeClass("table-info table-success table-warning table-danger table-secondary");
+                                                if (value === "sudah_transfer") row.addClass("table-info");
+                                                if (value === "mau_transfer") row.addClass("table-success");
+                                                if (value === "tertarik") row.addClass("table-warning");
+                                                if (value === "no") row.addClass("table-danger");
+                                                if (value === "cold") row.addClass("table-secondary");
+
+                                                // 👉 Tambahkan ke tabel peserta jika status sudah_transfer
+                                                if (value === "sudah_transfer") {
+                                                    let nama = row.find("td:nth-child(2)").text().trim();
+                                                    let nominal = row.find("td[data-field='nominal']").text().trim();
+
+                                                    let tbody = $("#tabelPeserta tbody");
+                                                    $("#emptyRow").remove();
+
+                                                    let no = tbody.find("tr").length + 1;
+
+                                                    let newRow = `
+                                    <tr>
+                                  <td style="padding: 8px; border: 1px solid #ccc;">${no}</td>
+                                  <td style="padding: 8px; border: 1px solid #ccc;">${nama}</td>
+                                  <td style="padding: 8px; border: 1px solid #ccc;">${nominal}</td>
+                                 </tr>`;
+                                                    tbody.append(newRow);
+                                                }
+                                            },
+
+
+                                            success: function(res) {
+                                                console.log('Status updated:', res);
+
                                                 // Hapus semua class lama
                                                 dropdown.removeClass("status-sudah_transfer status-mau_transfer status-tertarik status-cold status-no");
 
@@ -348,7 +383,7 @@
                                         <i class="fas fa-pencil-alt"></i>
                                     </a>
                                 </td> -->
-                              @if(Auth::user()->email == "mbchamasah@gmail.com") 
+                                @if(Auth::user()->email == "mbchamasah@gmail.com")
                                 <td>
                                     @switch($plan->created_by)
                                     @case(1)
@@ -386,11 +421,11 @@
                         @endforelse
                     </tbody>
                 </table>
-                 
+
             </div>
-        <div class="d-flex justify-content-center mt-3">
-    {{ $salesplans->links('pagination::bootstrap-4') }}
-</div>
+            <div class="d-flex justify-content-center mt-3">
+                {{ $salesplans->links('pagination::bootstrap-4') }}
+            </div>
 
 
         </div>
@@ -435,9 +470,16 @@
 {{-- Tabel Sales Plan yang sudah ada --}}
 
 {{-- Tabel Daftar Peserta --}}
-<h4 style="margin-top: 30px; font-weight: bold;">Daftar Peserta / HRD Mastery</h4>
+<h4 style="margin-top: 30px; font-weight: bold;">Daftar Peserta / {{ $kelasFilter }}</h4>
+
+<!-- Dropdown contoh -->
+
+<hr>
+
+<!-- Tabel daftar peserta -->
+<h4 style="margin-top: 30px; font-weight: bold;">Daftar Peserta</h4>
 <div style="overflow-x: auto; white-space: nowrap;">
-    <table style="border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif; font-size: 14px; min-width: 500px;">
+    <table id="tabelPeserta" style="border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif; font-size: 14px; min-width: 500px;">
         <thead>
             <tr style="background: linear-gradient(to right, #376bb9ff, #1c7f91ff); color: white;">
                 <th style="padding: 10px; border: 1px solid #ccc;">No</th>
@@ -446,22 +488,53 @@
             </tr>
         </thead>
         <tbody>
-
-            <tr style="background: #fdfdfd; color: black;">
-                <td style="padding: 8px; border: 1px solid #ccc;"></td>
-                <td style="padding: 8px; border: 1px solid #ccc;"></td>
-                <td style="padding: 8px; border: 1px solid #ccc;"></td>
+            @forelse($pesertaTransfer as $i => $p)
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $i+1 }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">{{ $p->nama }}</td>
+                <td style="padding: 8px; border: 1px solid #ccc;">
+                    Rp {{ number_format($p->nominal, 0, ',', '.') }}
+                </td>
             </tr>
-
+            @empty
             <tr>
                 <td colspan="3" style="text-align: center; padding: 15px; color: #999;">
                     Belum ada peserta yang transfer.
                 </td>
             </tr>
-
+            @endforelse
         </tbody>
+
     </table>
 </div>
+
+
+
+<script>
+    document.querySelectorAll('.status-select').forEach(select => {
+        select.addEventListener('change', function() {
+            if (this.value === 'done') {
+                let nama = this.dataset.nama;
+                let nominal = this.dataset.nominal;
+
+                let tbody = document.querySelector('#tabelPeserta tbody');
+                let emptyRow = document.getElementById('emptyRow');
+                if (emptyRow) emptyRow.remove();
+
+                let rowCount = tbody.rows.length + 1;
+                let newRow = `
+        <tr style="background: #fdfdfd; color: black;">
+          <td style="padding: 8px; border: 1px solid #ccc;">${rowCount}</td>
+          <td style="padding: 8px; border: 1px solid #ccc;">${nama}</td>
+          <td style="padding: 8px; border: 1px solid #ccc;">Rp ${parseInt(nominal).toLocaleString('id-ID')}</td>
+        </tr>
+      `;
+                tbody.insertAdjacentHTML('beforeend', newRow);
+            }
+        });
+    });
+</script>
+
 
 
 </div>

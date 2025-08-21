@@ -45,8 +45,9 @@ class salesplanController extends Controller
                 'message'     => 'Data tidak ditemukan untuk kelas yang dipilih.'
             ]);
         }
+        $pesertaTransfer = SalesPlan::where('status', 'sudah_transfer')->get();
 
-        return view('admin.salesplan.index', compact('salesplans', 'kelasList', 'kelasFilter'));
+        return view('admin.salesplan.index', compact('salesplans', 'kelasList', 'kelasFilter','pesertaTransfer'));
     }
     // app/Http/Controllers/SalesPlanController.php
     public function filter($kelas)

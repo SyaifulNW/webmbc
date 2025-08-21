@@ -105,6 +105,7 @@
                             <td>{{ $item->created_by }}</td>
                             <td>{{ $item->created_by_role }}</td>
                             @endif
+                            
                             <td>
                                 <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm">
                                     <i class="fa-solid fa-eye" style="color:#fff;"></i>
