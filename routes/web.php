@@ -7,6 +7,9 @@ use App\Http\Controllers\OngkirController;
 use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\alumniController;
 use App\Http\Controllers\SalesPlanController;
+use App\Http\Controllers\KontenController;
+use App\Http\Controllers\DailyController;
+
 
 
 
@@ -89,6 +92,10 @@ Route::get('/admin/salesplan/{id}/edit', [SalesPlanController::class, 'edit'])->
 Route::put('/admin/salesplan/{id}', [SalesPlanController::class, 'update'])->name('admin.salesplan.update');
 
 
+
+
+
+
 // Export
 Route::get('/salesplan/export', [SalesPlanController::class, 'export'])->name('salesplan.export');
 
@@ -123,8 +130,7 @@ Route::post('/admin/salesplan/inline-update', [SalesPlanController::class, 'inli
 Route::post('/admin/database/{id}/tambah-salesplan', [dataController::class, 'tambahkeSalesplan'])
     ->name('admin.database.tambahSalesplan');
 
-    // Salesplan filter
-    // routes/web.php
+
 Route::get('/sales-plan/{kelas}', [SalesPlanController::class, 'filter'])->name('salesplan.filter');
 
 Route::put('/admin/salesplan/{id}', [SalesPlanController::class, 'update'])->name('admin.salesplan.update');
@@ -132,4 +138,25 @@ Route::put('/admin/salesplan/{id}', [SalesPlanController::class, 'update'])->nam
 // Data filter
 Route::get('/admin/database/filter', [dataController::class, 'filter'])->name('admin.database.filter');
 
+Route::resource('salesplan', SalesplanController::class);
 
+
+
+// Salesplan destroy
+
+Route::delete('/admin/salesplan/{kelas}/{id}', [App\Http\Controllers\SalesplanController::class, 'destroy'])
+    ->name('admin.salesplan.destroy');
+
+    // Konten
+Route::resource('konten', kontenController::class);
+Route::get('/admin/konten', [kontenController::class, 'index'])->name('admin.konten.index');
+
+// Filter Potensi Kelas
+// routes/web.php
+
+Route::get('/admin/database/filter', [dataController::class, 'filter'])->name('admin.database.filter');
+
+
+// By Date
+// routes/web.php
+Route::get('/admin/daily-activity/{tanggal}', [DailyController::class, 'getByDate'])->name('admin.dailyactivity.bydate');

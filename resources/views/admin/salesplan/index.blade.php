@@ -6,6 +6,21 @@
         border-collapse: collapse;
     }
 
+    .table-scroll {
+        max-height: calc(100vh - 50px);
+        overflow-y: auto;
+    }
+
+
+    thead {
+        background-color: #25799E;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+
     th,
     td {
         font-size: 14px;
@@ -133,7 +148,53 @@
             <h5 class="mb-0"><i class="fas fa-chart-line"></i> Daftar Sales Plan</h5>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
+         @php
+    $countTertarik = $salesplans->where('status', 'tertarik')->count();
+    $countMauTransfer = $salesplans->where('status', 'mau_transfer')->count();
+    $countNo = $salesplans->where('status', 'no')->count();
+    $countSudahTransfer = $salesplans->where('status', 'sudah_transfer')->count();
+    $countCold = $salesplans->where('status', 'cold')->count();
+
+    $totalSalesplan = $countTertarik + $countMauTransfer + $countNo + $countSudahTransfer + $countCold;
+
+    $targetSalesplan = 30;
+    $selisihTarget = $targetSalesplan - $totalSalesplan;
+@endphp
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <span class="badge bg-warning text-white p-2 me-">
+            Tertarik: {{ $countTertarik }}
+        </span>
+        <span class="badge bg-success text-white p-2 me-2">
+            Mau Transfer: {{ $countMauTransfer }}
+        </span>
+        <span class="badge bg-danger text-white p-2 me-2">
+            No: {{ $countNo }}
+        </span>
+        <span class="badge bg-info text-white p-2 me-2">
+            Sudah Transfer: {{ $countSudahTransfer }}
+        </span>
+        <span class="badge bg-secondary text-white p-2">
+            Cold: {{ $countCold }}
+        </span>
+    </div>
+
+    <div>
+        @if($totalSalesplan >= $targetSalesplan)
+            <span class="badge bg-success p-2 text-white">
+                🎉 Target Salesplan 30 tercapai ({{ $totalSalesplan }})
+            </span>
+        @else
+            <span class="badge bg-danger p-2 text-white">
+                ⚠️ Target 30 belum tercapai, kurang {{ $selisihTarget }}
+            </span>
+        @endif
+    </div>
+</div>
+
+
+            <div class="table-responsive table-scroll">
                 <table class="table table-bordered table-hover align-middle">
                     <thead class="text-white" style="background-color:#25799E;">
 
@@ -150,9 +211,11 @@
                             <th rowspan="3">Potensi</th>
                             <th rowspan="3">Keterangan</th>
                             <th rowspan="5">Status</th>
+
                             @if(Auth::user()->email == "mbchamasah@gmail.com")
                             <th rowspan="3">Input Oleh</th>
                             @endif
+                            <th rowspan="3">Aksi</th>
                         </tr>
                         <tr>
                             {{-- Header FU 1 - 5 --}}
@@ -345,10 +408,10 @@
                                                 // Tambahkan class baru sesuai value
                                                 dropdown.addClass("status-" + value);
                                             },
-                                            error: function(xhr) {
-                                                console.error(xhr.responseText);
-                                                alert('Gagal update status');
-                                            },
+                                            // error: function(xhr) {
+                                            //     console.error(xhr.responseText);
+                                            //     alert('Gagal update status');
+                                            // },
                                             success: function(res) {
                                                 console.log('Status updated:', res);
 
@@ -373,16 +436,37 @@
                                     });
                                 </script>
 
+                                <!--Form Hapus-->
 
 
+                                <!-- Script Hapus -->
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const deleteButtons = document.querySelectorAll('.btn-delete');
 
+                                        deleteButtons.forEach(button => {
+                                            button.addEventListener('click', function() {
+                                                let id = this.getAttribute('data-id');
 
-                                <!-- <td class="text-center">
-                                    <a href="{{ route('admin.salesplan.edit', $plan->id) }}"
-                                        class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-pencil-alt"></i>
-                                    </a>
-                                </td> -->
+                                                Swal.fire({
+                                                    title: 'Yakin ingin menghapus?',
+                                                    text: "Data yang sudah dihapus tidak bisa dikembalikan!",
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: '#d33',
+                                                    cancelButtonColor: '#3085d6',
+                                                    confirmButtonText: 'Ya, Hapus!',
+                                                    cancelButtonText: 'Batal'
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        document.getElementById('delete-form-' + id).submit();
+                                                    }
+                                                });
+                                            });
+                                        });
+                                    });
+                                </script>
+
                                 @if(Auth::user()->email == "mbchamasah@gmail.com")
                                 <td>
                                     @switch($plan->created_by)
@@ -488,6 +572,7 @@
             </tr>
         </thead>
         <tbody>
+            @php $totalNominal = 0; @endphp
             @forelse($pesertaTransfer as $i => $p)
             <tr>
                 <td style="padding: 8px; border: 1px solid #ccc;">{{ $i+1 }}</td>
@@ -496,6 +581,7 @@
                     Rp {{ number_format($p->nominal, 0, ',', '.') }}
                 </td>
             </tr>
+            @php $totalNominal += $p->nominal; @endphp
             @empty
             <tr>
                 <td colspan="3" style="text-align: center; padding: 15px; color: #999;">
@@ -504,10 +590,56 @@
             </tr>
             @endforelse
         </tbody>
+        <tfoot>
+            <tr style="background: #f2f2f2; font-weight: bold; color: #040e0fff;">
+                <td colspan="2" style="padding: 10px; border: 1px solid #ccc; text-align: right;">Total Omset</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">
+                    Rp {{ number_format($totalNominal, 0, ',', '.') }}
+                </td>
+            </tr>
 
+            <!-- Target Omset -->
+            <tr style="background: #d1e7dd; font-weight: bold; color: #0f5132;">
+                <td colspan="2" style="padding: 10px; border: 1px solid #ccc; text-align: right;">Target Omset</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">
+                    Rp 25.000.000
+                </td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 
+@php
+    $targetOmset = 25000000; // Rp 25.000.000
+
+    $groupedByCS = $salesplans->groupBy('created_by');
+@endphp
+
+@foreach($groupedByCS as $cs => $listPeserta)
+    @php
+        $totalNominalCS = $listPeserta->sum('nominal');
+        $selisih = $targetOmset - $totalNominalCS;
+    @endphp
+
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            CS: {{ $cs == 1 ? 'Administrator' : ($cs == 2 ? 'Linda' : ($cs == 3 ? 'Yasmin' : ($cs == 4 ? 'Tursia' : ($cs == 5 ? 'Livia' : ($cs == 6 ? 'Shafa' : 'Unknown'))))) }}
+        </div>
+        <div class="card-body">
+            
+            @if($totalNominalCS >= $targetOmset)
+                <span class="badge bg-success" style="font-size: 16px; padding:10px;">
+                    🎉 Target Tercapai!
+                </span>
+            @else
+                <span class="badge bg-danger text-white" style="font-size: 16px; padding:10px;">
+                    ⚠️ Target Belum Tercapai! Masih kurang 
+                    Rp {{ number_format($selisih, 0, ',', '.') }}
+                </span>
+            @endif
+        </div>
+    </div>
+@endforeach
 
 
 <script>
@@ -579,3 +711,4 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

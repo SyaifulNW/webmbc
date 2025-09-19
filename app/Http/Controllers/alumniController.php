@@ -7,7 +7,7 @@ use App\Models\Alumni; // Ensure you import the Alumni model
 use App\Models\data; // Ensure you import the data model
 use Illuminate\Support\Facades\DB;
 use App\Models\Kelas; // Ensure you import the Kelas model
-use App\Models\salesplan; // Ensure you import the Salesplan model
+use App\Models\SalesPlan; // Ensure you import the Salesplan model
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Log;

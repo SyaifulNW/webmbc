@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\salesplan; // Ensure you import the Salesplan model
-use App\Models\data; // Ensure you import the Data model
+use App\Models\SalesPlan; // Ensure you import the Salesplan model
+use App\Models\Data; // Ensure you import the Data model
 use Illuminate\Support\Facades\DB;
 use App\Models\Kelas; // Ensure you import the Kelas model
 use Rap2hpoutre\FastExcel\FastExcel;
 use Carbon\Carbon;
 
-class salesplanController extends Controller
+class SalesPlanController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,7 +21,7 @@ class salesplanController extends Controller
     {
         $kelasFilter = $request->input('kelas');
         $userId      = auth()->id();
-        $perPage     = $request->get('per_page', 10); // default 10
+        $perPage     = $request->get('per_page', 100); // default 10
 
         $salesplans = SalesPlan::with('kelas')
             ->when($kelasFilter, function ($query) use ($kelasFilter) {
@@ -35,7 +35,7 @@ class salesplanController extends Controller
             })
             ->paginate($perPage); // langsung paginate disini
 
-        $kelasList = Kelas::all();
+        $kelasList = Kelas::where('nama_kelas', $kelasFilter)->get();
 
         if ($salesplans->isEmpty()) {
             return view('admin.salesplan.index', [
@@ -45,9 +45,18 @@ class salesplanController extends Controller
                 'message'     => 'Data tidak ditemukan untuk kelas yang dipilih.'
             ]);
         }
-        $pesertaTransfer = SalesPlan::where('status', 'sudah_transfer')->get();
 
-        return view('admin.salesplan.index', compact('salesplans', 'kelasList', 'kelasFilter','pesertaTransfer'));
+        // Filter pesertaTransfer, kecuali administrator bisa lihat semuanya
+        $pesertaTransfer = SalesPlan::where('status', 'sudah_transfer')
+            ->when($userId !== 1, function ($query) use ($userId) {
+                $query->where('created_by', $userId);
+            })
+            ->whereHas('kelas', function ($query) use ($kelasFilter) {
+                $query->where('nama_kelas', $kelasFilter);
+            })
+            ->get();
+
+        return view('admin.salesplan.index', compact('salesplans', 'kelasList', 'kelasFilter', 'pesertaTransfer'));
     }
     // app/Http/Controllers/SalesPlanController.php
     public function filter($kelas)
@@ -168,8 +177,25 @@ class salesplanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
-    }
+public function destroy($kelas, $id)
+{
+    $plan = Salesplan::findOrFail($id);
+    
+    $plan->delete();
+
+    return redirect()->route('admin.salesplan.index', ['kelas' => $kelas])
+                     ->with('success', 'Data berhasil dihapus');
+}
+
+
+    public function search(Request $request)
+{
+     $q = $request->input('q');
+    $plans = SalesPlan::where('nama', 'like', "%$q%")
+                ->orWhere('kelas', 'like', "%$q%")
+                ->get();
+
+    return view('admin.salesplan.index', compact('plans'));
+}
+
 }

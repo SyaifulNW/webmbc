@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddKelasIdToSalesplansTable extends Migration
+class CreateCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddKelasIdToSalesplansTable extends Migration
      */
     public function up()
     {
-        Schema::table('salesplans', function (Blueprint $table) {
-              $table->unsignedBigInteger('kelas_id')->after('id')->nullable(); // Tambahkan nullable jika belum ada datanya
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+             $table->string('nama');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +27,6 @@ class AddKelasIdToSalesplansTable extends Migration
      */
     public function down()
     {
-        Schema::table('salesplans', function (Blueprint $table) {
-               $table->dropColumn('kelas_id');
-        });
+        Schema::dropIfExists('categories');
     }
 }

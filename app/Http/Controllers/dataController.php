@@ -10,6 +10,8 @@ use App\Models\salesplan; // Ensure you import the Salesplan model
 use App\Models\jenisbisnis; // Ensure you import the Jenis model
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\dataImport;
 
@@ -37,17 +39,47 @@ class dataController extends Controller
             // Jika di database kamu menyimpan email, ganti jadi:
             // $data = data::where('created_by', $user->email)->get();
         }
+  // Hitung total
+  $totalDatabase = Data::count();
 
-        $kelas = Kelas::all();
+$bulanIni = Carbon::now()->month;
+$tahunIni = Carbon::now()->year;
+dd($databaseBaru = data::whereYear('created_at', $tahunIni)
+                    ->whereMonth('created_at', $bulanIni)
+                    ->count());
 
-        return view('admin.database.database', compact('data', 'kelas'));
+
+$kelas = Kelas::all();
+
+return view('admin.database.database', compact(
+    'data',
+    'kelas',
+    'totalDatabase',
+    'databaseBaru'
+));
     }
-
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
+
+    
+    public function filterkelas(Request $request)
+    {
+        $query = data::with('kelas');
+
+        if ($request->filled('kelas_id')) {
+            $query->where('kelas_id', $request->kelas_id);
+        }
+
+        $data = $query->latest()->get();
+
+        return response()->json($data);
+    }
+
+
+
     public function create()
     {
         // Return a view to create a new resource
@@ -72,7 +104,33 @@ class dataController extends Controller
     }
 
 
+public function filter(Request $request)
+{
+    $query = data::query();
 
+    if ($request->filled('leads')) {
+        $query->where('leads', $request->leads);
+    }
+    if ($request->filled('provinsi')) {
+        $query->where('provinsi_nama', $request->provinsi);
+    }
+    if ($request->filled('kota')) {
+        $query->where('kota_nama', $request->kota);
+    }
+    if ($request->filled('jenisbisnis')) {
+        $query->where('jenisbisnis', $request->jenisbisnis);
+    }
+    if ($request->filled('created_by')) {
+        $query->where('created_by', $request->created_by);
+    }
+    if ($request->filled('bulan')) {
+        $query->whereMonth('created_at', $request->bulan);
+    }
+
+    $data = $query->latest()->get();
+
+    return view('admin.database._table', compact('data'));
+}
 
     public function store(Request $request)
     {
@@ -256,7 +314,7 @@ class dataController extends Controller
         // Kalau mau pindahkan (hapus dari tabel data) bisa tambahkan:
         // $data->delete();
 
-        return redirect()->route('admin.salesplan.index')
+        return redirect()->back()
             ->with('success', 'Peserta berhasil dipindahkan ke Sales Plan.');
     }
 }

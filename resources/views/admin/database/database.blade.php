@@ -1,6 +1,16 @@
 @extends('layouts.masteradmin')
 @section('content')
 
+<style>
+    thead {
+        background-color: #25799E;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+</style>
+
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Database Calon Peserta</h1>
     <div class="col-sm-6">
@@ -14,11 +24,40 @@
 <div class="content">
     <div class="card card-info card-outline">
         <div class="card-header">
+
+
+
             <div class="card-tools d-flex justify-content-between w-100">
                 <a href="#" class="btn btn-success" onclick="create()">Tambah &nbsp;<i class="fa-solid fa-plus"></i></a>
+
                 <div>
                     <input type="text" id="tableSearch" class="form-control" placeholder="Cari...">
                 </div>
+            </div>
+            <br>
+            @php
+            use App\Models\Data;
+            use Carbon\Carbon;
+
+            // Label bulan sekarang
+            $bulanLabel = Carbon::now()->isoFormat('MMMM YYYY');
+
+            // Hitung database baru bulan ini
+            $databaseBaru = Data::whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->count();
+
+            // Total semua database
+            $totalDatabase = Data::count();
+            @endphp
+
+            <div class="d-flex align-items-center gap-2 text-white">
+                <span class="badge bg-success px-3 py-2 me-2">
+                    📅 Baru ({{ $bulanLabel }}): {{ $databaseBaru }}
+                </span>
+                <span class="badge bg-primary px-3 py-2 me-3">
+                    📊 Total: {{ $totalDatabase }}
+                </span>
             </div>
 
 
@@ -55,7 +94,17 @@
                             <th>CTA</th>
                             <th>Situasi Bisnis</th>
                             <th>Kendala</th>
-                            <th>Potensi Kelas Pertama</th>
+                            <th>Potensi Kelas Pertama
+                                <br>
+                                <div style="min-width: 200px;">
+                                    <select id="filterKelas" class="form-control-sm">
+                                        <option value="">-- Semua Potensi Kelas --</option>
+                                        @foreach($kelas as $k)
+                                        <option value="{{ $k->nama_kelas }}">{{ $k->nama_kelas }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </th>
                             <th>Sale Plan</th>
                             @if(Auth::user()->email == "mbchamasah@gmail.com")
                             <th>Input Oleh</th>
@@ -105,7 +154,7 @@
                             <td>{{ $item->created_by }}</td>
                             <td>{{ $item->created_by_role }}</td>
                             @endif
-                            
+
                             <td>
                                 <a href="{{ route('admin.database.show', $item->id) }}" class="btn btn-info btn-sm">
                                     <i class="fa-solid fa-eye" style="color:#fff;"></i>
@@ -173,9 +222,9 @@
                                 success: function(res) {
                                     console.log('Updated:', field);
                                 },
-                                error: function() {
-                                    alert('Gagal update data');
-                                }
+                                // error: function() {
+                                //     alert('Gagal update data');
+                                // }
                             });
                         });
 
@@ -523,3 +572,34 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Event listener untuk dropdown filter kelas
+        $('#filterKelas').on('change', function() {
+            // Ambil nama kelas yang dipilih dari dropdown filter
+            let selectedKelas = $(this).val();
+
+            // Loop melalui setiap baris (tr) di dalam tbody tabel
+            $('#myTable tbody tr').each(function() {
+                let row = $(this);
+
+                // Jika tidak ada kelas yang dipilih (opsi "-- Semua --"), tampilkan semua baris
+                if (selectedKelas === "") {
+                    row.show();
+                } else {
+                    // Ambil teks dari opsi yang terpilih di dropdown 'Potensi Kelas' dalam baris ini
+                    let kelasDiBaris = row.find('.select-potensi option:selected').text().trim();
+
+                    // Bandingkan dan tampilkan/sembunyikan baris
+                    if (kelasDiBaris === selectedKelas) {
+                        row.show(); // Tampilkan baris jika kelasnya cocok
+                    } else {
+                        row.hide(); // Sembunyikan baris jika tidak cocok
+                    }
+                }
+            });
+        });
+    });
+</script>

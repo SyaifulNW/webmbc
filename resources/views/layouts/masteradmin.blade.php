@@ -79,6 +79,7 @@
             src="{{ asset('backend/img/MBC.svg') }}"
             alt="MBC Logo"
             style="height: 65px; width: auto;" />
+            
         </div>
       </a>
 
@@ -140,6 +141,11 @@
           <span>DAILY ACTIVITY</span></a>
       </li>
 
+      <li class="nav-item active">
+        <a class="nav-link" href="{{ route('admin.konten.index') }}">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>KELOLA KONTEN</span></a>
+      </li>
 
       <!-- Divider -->
 

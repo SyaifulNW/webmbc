@@ -2,36 +2,60 @@
 @section('content')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-
 <div class="container-fluid px-4">
     <h3 class="mb-4 font-weight-bold text-dark">📊 DASHBOARD CS MBC</h3>
 @php
 use Carbon\Carbon;
 
-// Ambil bulan (default bulan sekarang)
+// Ambil bulan yang dipilih (default sekarang)
 $bulanDipilih = request('bulan', now()->format('Y-m'));
-
-// Gunakan bahasa Inggris agar cocok dengan key array
-$namaBulan = Carbon::parse($bulanDipilih)->format('F');
+$namaBulan    = Carbon::parse($bulanDipilih)->format('F');
+$tahun        = Carbon::parse($bulanDipilih)->year;
 
 // Mapping bulan ke kelas
 $kelasPerBulan = [
-    'August' => ['Sistemasi Bisnis Expert', 'HRD'],
-    'September' => ['Repeat Order Revolusi', 'Great Manager'],
-    'October' => ['Keuangan', 'CS & Sales Jago Closing'],
-    'November' => ['Scale Up', 'Leadership'],
-    'December' => ['HRD MASTERY'],
+    'September' => ['Repeat Order', 'Great Manager'],
+    'October'   => ['Keuangan', 'CS dan Sales Jago Closing'],
+    'November'  => ['Scale-Up 10X', 'Leadership'],
+    'December'  => ['HRD Mastery'],
 ];
 
-// Ambil kelas sesuai bulan atau semua kelas dari DB
-$kelasTersedia = $kelasPerBulan[$namaBulan] ?? $kelas->pluck('nama_kelas')->toArray();
+// Mapping jadwal kelas
+$jadwalKelas = [
+    'Repeat Order'              => '10-12 September',
+    'Great Manager'             => '24-26 September',
+    'Keuangan'                  => '15-17 Oktober',
+    'CS dan Sales Jago Closing' => '29-31 Oktober',
+     'Scale-Up 10X'              => '12-14 November',
+    'Leadership'                => '26-28 November',
+    'HRD Mastery'               => '10-12 Desember',
+    
+];
 
-// Filter omset sesuai bulan
+// Ambil kelas sesuai bulan
+$kelasTersedia = $kelasPerBulan[$namaBulan] ?? [];
 $kelasOmsetFiltered = collect($kelasOmset)
     ->whereIn('nama_kelas', $kelasTersedia)
+    ->sortBy(function ($item) use ($jadwalKelas, $namaBulan, $tahun) {
+        // Ambil jadwal dari mapping
+        $jadwal = $jadwalKelas[$item['nama_kelas']] ?? null;
+
+        if ($jadwal) {
+            // Pecah jadwal "10-12 September" → ambil tanggal awal
+            preg_match('/(\d{1,2})/', $jadwal, $matches);
+            $tanggalAwal = $matches[1] ?? 1;
+
+            // Buat objek tanggal lengkap sesuai bulan & tahun
+            return Carbon::parse("$tahun-$namaBulan-$tanggalAwal");
+        }
+
+        return Carbon::parse("$tahun-$namaBulan-01"); // fallback kalau tidak ada jadwal
+    })
     ->values();
 @endphp
 
+
+{{-- Filter Bulan & Kelas --}}
 <form method="GET" action="{{ route('home') }}" class="row mb-4 align-items-end">
     <div class="col-md-6">
         <label for="bulan" class="form-label">📅 Bulan:</label>
@@ -43,27 +67,10 @@ $kelasOmsetFiltered = collect($kelasOmset)
             value="{{ $bulanDipilih }}">
     </div>
 
-    <div class="col-md-6">
-        <label for="kelas_id" class="form-label">Kelas</label>
-        <select class="form-select" id="kelas_id" name="kelas_id">
-            <option value="">Pilih Kelas</option>
-            @foreach($kelasTersedia as $namaKelas)
-                <option value="{{ $namaKelas }}" {{ request('kelas_id') == $namaKelas ? 'selected' : '' }}>
-                    {{ $namaKelas }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <div class="col-md-12 mt-3">
+    <div class="col-md-6 text-end mt-3">
         <button type="submit" class="btn btn-primary">🔍 Tampilkan</button>
     </div>
 </form>
-
-<p class="text-muted">
-    Menampilkan data untuk bulan: 
-    <strong>{{ Carbon::parse($bulanDipilih)->translatedFormat('F Y') }}</strong>
-</p>
 
 {{-- Omset Per Kelas --}}
 <div class="card mb-4 border-success shadow-sm">
@@ -75,6 +82,7 @@ $kelasOmsetFiltered = collect($kelasOmset)
             <thead class="thead-light">
                 <tr>
                     <th>Nama Kelas</th>
+                    <th>Tanggal</th>
                     <th>Omset</th>
                     <th>Target</th>
                     <th>% Tercapai</th>
@@ -84,6 +92,7 @@ $kelasOmsetFiltered = collect($kelasOmset)
                 @forelse ($kelasOmsetFiltered as $k)
                     <tr>
                         <td>{{ $k['nama_kelas'] }}</td>
+                        <td>{{ $jadwalKelas[$k['nama_kelas']] ?? '-' }}</td>
                         <td>Rp {{ number_format($k['omset'], 0, ',', '.') }}</td>
                         <td>Rp {{ number_format($k['target'], 0, ',', '.') }}</td>
                         <td class="{{ $k['persen'] >= 100 ? 'text-success' : ($k['persen'] >= 75 ? 'text-warning' : 'text-danger') }}">
@@ -92,537 +101,232 @@ $kelasOmsetFiltered = collect($kelasOmset)
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-muted">Tidak ada data untuk bulan ini</td>
+                        <td colspan="5" class="text-muted">Tidak ada data untuk bulan ini</td>
                     </tr>
                 @endforelse
             </tbody>
-        </table>
 
-        <hr>
-        <h5 class="mt-3">
-            Total Omset: 
-            <span class="badge bg-success text-white">
-                Rp {{ number_format($kelasOmsetFiltered->sum('omset'), 0, ',', '.') }}
-            </span>
-        </h5>
+            {{-- Tambahkan foot total --}}
+            <tfoot>
+                <tr style="background: #f2f2f2; font-weight: bold; color: #040e0f;">
+                    <td colspan="3" style="text-align: right;">Total Omset</td>
+                    <td colspan="2" style="text-align: left;">
+                        Rp {{ number_format($kelasOmsetFiltered->sum('omset'), 0, ',', '.') }}
+                    </td>
+                </tr>
+                <tr style="background: #d1e7dd; font-weight: bold; color: #0f5132;">
+                    <td colspan="3" style="text-align: right;">Target Omset</td>
+                    <td colspan="2" style="text-align: left;">
+                        Rp {{ number_format($kelasOmsetFiltered->sum('target'), 0, ',', '.') }}
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+{{-- Informasi Utama --}}
+<div class="row">
+
+    {{-- Lead Aktif --}}
+   <div class="col-md-3">
+    <div class="card border-info shadow-sm mb-3">
+        <div class="card-header bg-white text-info fw-bold">
+            <i class="fas fa-thumbtack me-1"></i> JUMLAH LEAD 
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush mb-3">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{{ route('admin.salesplan.index', ['status' => 'cold', 'bulan' => $bulanDipilih]) }}" class="text-decoration-none text-dark">
+                        Cold
+                    </a>
+                    <span class="badge bg-secondary text-white">{{ $cold }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{{ route('admin.salesplan.index', ['status' => 'tertarik', 'bulan' => $bulanDipilih]) }}" class="text-decoration-none text-dark">
+                        Tertarik
+                    </a>
+                    <span class="badge bg-warning text-white">{{ $tertarik }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{{ route('admin.salesplan.index', ['status' => 'mau_transfer', 'bulan' => $bulanDipilih]) }}" class="text-decoration-none text-dark">
+                        Mau Transfer
+                    </a>
+                    <span class="badge bg-success text-white">{{ $mau_transfer }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{{ route('admin.salesplan.index', ['status' => 'sudah_transfer', 'bulan' => $bulanDipilih]) }}" class="text-decoration-none text-dark">
+                        Sudah Transfer
+                    </a>
+                    <span class="badge bg-info text-white">{{ $sudah_transfer }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{{ route('admin.salesplan.index', ['status' => 'no', 'bulan' => $bulanDipilih]) }}" class="text-decoration-none text-dark">
+                        No
+                    </a>
+                    <span class="badge bg-danger text-white">{{ $no }}</span>
+                </li>
+            </ul>
+            <p class="mb-0 text-end">
+                <strong>Total Lead ({{ \Carbon\Carbon::parse($bulanDipilih.'-01')->translatedFormat('F Y') }}):</strong>
+                <span class="badge bg-primary text-white">{{ $totalLeadAktif }}</span>
+            </p>
+        </div>
     </div>
 </div>
 
 
-
-    {{-- Informasi Utama --}}
-    <div class="row">
-
-        <div class="col-md-3">
-            <div class="card border-primary shadow-sm mb-3">
-                <div class="card-header bg-white text-primary fw-bold">
-                    <i class="fas fa-thumbtack me-1"></i> JUMLAH LEAD AKTIF
-                </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a href="{{ route('admin.salesplan.index', ['status' => 'cold']) }}" class="text-decoration-none text-dark">
-                                Cold
-                            </a>
-                            <span class="badge bg-secondary text-white">{{ $cold }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a href="{{ route('admin.salesplan.index', ['status' => 'warm']) }}" class="text-decoration-none text-dark">
-                                Warm
-                            </a>
-                            <span class="badge bg-warning text-white">{{ $warm }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a href="{{ route('admin.salesplan.index', ['status' => 'hot']) }}" class="text-decoration-none text-dark">
-                                Hot
-                            </a>
-                            <span class="badge bg-success text-white">{{ $hot }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a href="{{ route('admin.salesplan.index', ['status' => 'no']) }}" class="text-decoration-none text-dark">
-                                No
-                            </a>
-                            <span class="badge bg-danger text-white">{{ $no }}</span>
-                        </li>
-                    </ul>
-                    <p class="mb-0 text-end">
-                        <strong>Total Lead Aktif:</strong> {{ $totalLeadAktif }}
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        {{-- TOTAL LEAD --}}
-        <div class="col-md-3">
-            <div class="card border-info shadow-sm mb-3">
-                <div class="card-header bg-white text-info fw-bold">
-                    <i class="fas fa-download me-1"></i> TOTAL LEAD
-                </div>
-                <div class="card-body">
-                    <p>Total Semua Lead:
-                        <span class="badge bg-info text-white">12</span>
-                    </p>
-                    <p>Jumlah Lead Kelas:
-                        <span class="badge bg-info text-white">13</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-
-        {{-- JUMLAH ALUMNI --}}
-        <div class="col-md-3">
-            <div class="card border-success shadow-sm mb-3">
-                <div class="card-header bg-white text-success fw-bold">
-                    <i class="fas fa-graduation-cap me-1"></i> JUMLAH ALUMNI
-                </div>
-                <div class="card-body">
-                    <h4 class="mb-0">34 Peserta</h4>
-                </div>
-            </div>
-        </div>
-
-        {{-- KOMISI SEMENTARA --}}
-        <div class="col-md-3">
-            <div class="card border-secondary shadow-sm mb-3">
-                <div class="card-header bg-light text-dark fw-bold">
-                    <i class="fas fa-file-invoice-dollar me-1"></i> KOMISI SEMENTARA
-                </div>
-                <div class="card-body">
-                    <p class="mb-0">Rp. 300.000</p>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-
-
-
-    <style>
-        .daily-activity-table th,
-        .daily-activity-table td {
-            font-size: 14px;
-            /* ukuran font lebih besar */
-            padding: 10px 6px;
-            /* jarak dalam sel lebih lega */
-            min-width: 45px;
-            /* kolom tanggal seragam */
-            vertical-align: middle;
-            /* teks rata tengah secara vertikal */
-        }
-
-        .daily-activity-table th[rowspan] {
-            min-width: 80px;
-            /* kolom No/Aktivitas/Target lebih lebar */
-        }
-
-        .daily-activity-table th,
-        .daily-activity-table td {
-            border: 1px solid #999;
-            /* border lebih tegas */
-        }
-
-        .daily-activity-table thead th {
-            background-color: #f8f9fa;
-            /* latar header */
-            font-weight: bold;
-        }
-    </style>
-
-    <div class="container my-4">
-
-
-        @php
-        $dates = range(1, 31);
-        @endphp
-
-        <!-- Aktivitas 1 -->
-        <style>
-            .daily-activity-table th,
-            .daily-activity-table td {
-                font-size: 14px;
-                padding: 10px 6px;
-                min-width: 45px;
-                vertical-align: middle;
-            }
-
-            .daily-activity-table th[rowspan] {
-                min-width: 80px;
-            }
-
-            .daily-activity-table th,
-            .daily-activity-table td {
-                border: 1px solid #999;
-            }
-
-            .daily-activity-table thead th {
-                background-color: #f8f9fa;
-                font-weight: bold;
-            }
-        </style>
-
-        <div class="container my-4">
-            <h4 class="mb-3 text-center text-primary">📅 DAILY ACTIVITY</h4>
-
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">1. Aktivitas Pribadi</div>
-                <div class="card-body p-0 table-responsive">
-                    <table class="table table-bordered table-sm text-center align-middle mb-0 daily-activity-table">
-                        <thead class="table-info">
-                            <tr>
-                                <th>No</th>
-                                <th>Aktivitas</th>
-                                <th>Deskripsi</th>
-                                <th>Target Daily</th>
-                                <th>Target</th>
-                                <th>Bobot</th>
-                                <th>Real</th>
-                                <th>Nilai</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Niat & Doa Pagi</td>
-                                <td>Niatan untuk memberi manfaat kepada sesama Muslim melalui coaching</td>
-                                <td>1</td>
-                                <td>26</td>
-                                <td>30</td>
-                                <td>21</td>
-                                <td>24</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Review Target Harian</td>
-                                <td>Melihat kembali target prospek dan closing</td>
-                                <td>1</td>
-                                <td>26</td>
-                                <td>20</td>
-                                <td>21</td>
-                                <td>16</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Belajar dan Catat</td>
-                                <td>Apa tambahan ilmu dan perbaikan saya hari ini</td>
-                                <td>1</td>
-                                <td>26</td>
-                                <td>50</td>
-                                <td>21</td>
-                                <td>40</td>
-                            </tr>
-                            <!-- Total Row -->
-                            <tr class="fw-bold text-white" style="background-color: limegreen;">
-                                <td colspan="5" class="text-center">Total</td>
-                                <td>100</td>
-                                <td>63</td>
-                                <td>81</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <!-- 1. Aktivitas Mencari Leads -->
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">2. Aktivitas Mencari Leads</div>
-                <div class="card-body p-0 table-responsive">
-                    <table class="table table-bordered table-sm text-center align-middle mb-0">
-                        <thead class="table-info">
-                            <tr>
-                                <th>No</th>
-                                <th>Aktivitas</th>
-                                <th>Target Daily</th>
-                                <th>Target</th>
-                                <th>Bobot</th>
-                                <th>Real</th>
-                                <th>Nilai</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Konten Harian (Story, Feed, TikTok, dll.)</td>
-                                <td>4</td>
-                                <td>104</td>
-                                <td>20</td>
-                                <td>90</td>
-                                <td>17.30769231</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>List Building / sales plan</td>
-                                <td>5</td>
-                                <td>130</td>
-                                <td>40</td>
-                                <td>41</td>
-                                <td>12.61538462</td>
-                            </tr>
-                            <tr>
-                                <td rowspan="3">3</td>
-                                <td>Interaksi Manual - Komentar</td>
-                                <td>10</td>
-                                <td>260</td>
-                                <td>10</td>
-                                <td>57</td>
-                                <td>2.192307692</td>
-                            </tr>
-                            <tr>
-                                <td>Interaksi Manual - Follow akun market</td>
-                                <td>100</td>
-                                <td>2600</td>
-                                <td>10</td>
-                                <td>0</td>
-                                <td>0</td>
-                            </tr>
-                            <tr>
-                                <td>Interaksi Manual - Like</td>
-                                <td>100</td>
-                                <td>2600</td>
-                                <td>10</td>
-                                <td>2525</td>
-                                <td>9.711538462</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Join Komunitas</td>
-                                <td>1</td>
-                                <td>26</td>
-                                <td>10</td>
-                                <td>21</td>
-                                <td>8.076923077</td>
-                            </tr>
-                            <tr class="fw-bold text-white" style="background-color: limegreen;">
-                                <td colspan="4" class="text-center">Total</td>
-                                <td>100</td>
-                                <td>2734</td>
-                                <td>41.82692308</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 2. Aktivitas Memprospek -->
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">3. Aktivitas Memprospek</div>
-                <div class="card-body p-0 table-responsive">
-                    <table class="table table-bordered table-sm text-center align-middle mb-0">
-                        <thead class="table-info">
-                            <tr>
-                                <th>No</th>
-                                <th>Aktivitas</th>
-                                <th>Target Daily</th>
-                                <th>Target</th>
-                                <th>Bobot</th>
-                                <th>Real</th>
-                                <th>Nilai</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Follow-Up Soft</td>
-                                <td>200</td>
-                                <td>560</td>
-                                <td>60</td>
-                                <td>6782</td>
-                                <td>726.6428571</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Membangun Hubungan</td>
-                                <td>20</td>
-                                <td>520</td>
-                                <td>20</td>
-                                <td>48</td>
-                                <td>1.846153846</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Kirim Penawaran</td>
-                                <td>20</td>
-                                <td>520</td>
-                                <td>20</td>
-                                <td>66</td>
-                                <td>2.538461538</td>
-                            </tr>
-                            <tr class="fw-bold text-white" style="background-color: limegreen;">
-                                <td colspan="4" class="text-center">Total</td>
-                                <td>100</td>
-                                <td>6896</td>
-                                <td>731.0274725</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 3. Aktivitas Closing -->
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">4. Aktivitas Closing</div>
-                <div class="card-body p-0 table-responsive">
-                    <table class="table table-bordered table-sm text-center align-middle mb-0">
-                        <thead class="table-info">
-                            <tr>
-                                <th>No</th>
-                                <th>Aktivitas</th>
-                                <th>Target Daily</th>
-                                <th>Target</th>
-                                <th>Bobot</th>
-                                <th>Real</th>
-                                <th>Nilai</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Tanya Keberatan</td>
-                                <td>20</td>
-                                <td>520</td>
-                                <td>20</td>
-                                <td>25</td>
-                                <td>0.9615384615</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Atasi Keberatan</td>
-                                <td>20</td>
-                                <td>520</td>
-                                <td>20</td>
-                                <td>65</td>
-                                <td>2.5</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Penawaran Khusus</td>
-                                <td>10</td>
-                                <td>260</td>
-                                <td>20</td>
-                                <td>33</td>
-                                <td>2.538461538</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Pendaftaran</td>
-                                <td>2,500,000</td>
-                                <td>50,000,000.00</td>
-                                <td>20</td>
-                                <td>11</td>
-                                <td>0.0000044</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Finalisasi Pembayaran</td>
-                                <td>2,500,000</td>
-                                <td>50,000,000.00</td>
-                                <td>20</td>
-                                <td>7</td>
-                                <td>0.0000028</td>
-                            </tr>
-                            <tr class="fw-bold text-white" style="background-color: limegreen;">
-                                <td colspan="4" class="text-center">Total</td>
-                                <td>100</td>
-                                <td>141</td>
-                                <td>6.0000072</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 4. Aktivitas Merawat Customer -->
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">5. Aktivitas Merawat Customer</div>
-                <div class="card-body p-0 table-responsive">
-                    <table class="table table-bordered table-sm text-center align-middle mb-0">
-                        <thead class="table-info">
-                            <tr>
-                                <th>No</th>
-                                <th>Aktivitas</th>
-                                <th>Target Daily</th>
-                                <th>Target</th>
-                                <th>Bobot</th>
-                                <th>Real</th>
-                                <th>Nilai</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Follow-up Peserta</td>
-                                <td>50</td>
-                                <td>1300</td>
-                                <td>20</td>
-                                <td>64</td>
-                                <td>0.9846153846</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Minta Testimoni</td>
-                                <td>3</td>
-                                <td>6</td>
-                                <td>20</td>
-                                <td>6</td>
-                                <td>20</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Program Referral</td>
-                                <td>10</td>
-                                <td>260</td>
-                                <td>40</td>
-                                <td>11</td>
-                                <td>1.692307692</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Edukasi Lanjutan</td>
-                                <td>20</td>
-                                <td>520</td>
-                                <td>10</td>
-                                <td>39</td>
-                                <td>0.75</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Komentar Positive</td>
-                                <td>10</td>
-                                <td>260</td>
-                                <td>10</td>
-                                <td>56</td>
-                                <td>2.153846154</td>
-                            </tr>
-                            <tr class="fw-bold text-white" style="background-color: limegreen;">
-                                <td colspan="4" class="text-center">Total</td>
-                                <td>100</td>
-                                <td>176</td>
-                                <td>25.58076923</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-
-
-
-
-        {{-- CATATAN KOMISI --}}
-        <!-- <div class="card mt-4 border-dark shadow-sm">
-        <div class="card-header bg-white font-weight-bold text-dark">
-            📝 CATATAN KOMISI
+    {{-- Total Lead --}}
+<div class="col-md-3">
+    <div class="card border-info shadow-sm mb-3">
+        <div class="card-header bg-white text-info fw-bold">
+            <i class="fas fa-download me-1"></i> JUMLAH LEAD BARU 
         </div>
         <div class="card-body">
-            <ul>
-                <li>Komisi Leader: 1% dari omset</li>
-                <li>Komisi CS: 0.5% dari omset</li>
-                <li>Bonus Rp 300.000 jika omset ≥ 25 juta per kelas</li>
-                <li>Bonus Rp 600.000 jika total omset ≥ 50 juta (meski target kelas belum tercapai)</li>
-            </ul>
+        
+            <p>Jumlah Lead Baru ({{ \Carbon\Carbon::parse($bulan.'-01')->translatedFormat('F Y') }}):
+                <span class="badge bg-success text-white">{{ $totalLeadBaru }}</span>
+            </p>
         </div>
-    </div> -->
+    </div>
+</div>
+    {{-- Jumlah Alumni --}}
+    <!--<div class="col-md-3">-->
+    <!--    <div class="card border-success shadow-sm mb-3">-->
+    <!--        <div class="card-header bg-white text-success fw-bold">-->
+    <!--            <i class="fas fa-graduation-cap me-1"></i> JUMLAH ALUMNI-->
+    <!--        </div>-->
+    <!--        <div class="card-body">-->
+    <!--            <h4 class="mb-0"> Peserta</h4>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <!--</div>-->
+
+    {{-- Komisi --}}
+    <div class="col-md-3">
+        <div class="card border-secondary shadow-sm mb-3">
+            <div class="card-header bg-light text-dark fw-bold">
+                <i class="fas fa-file-invoice-dollar me-1"></i> KOMISI SEMENTARA
+            </div>
+            <div class="card-body">
+                <p class="mb-0">Rp 0</p>
+            </div>
+        </div>
     </div>
 
-    @endsection
+</div>
+  @php
+$activities = [
+    'pribadi' => [
+        ['aktivitas' => 'Niat & Doa Pagi', 'Target' => 1, 'bobot'=>30],
+        ['aktivitas' => 'Review Target Harian', 'Target' => 1, 'bobot'=>20],
+        ['aktivitas' => 'Belajar dan Catat (Sharing Day)', 'Target' => 1, 'bobot'=>50],
+    ],
+    'mencari_leads' => [
+        ['aktivitas' => 'Share Group WA', 'Target' => 1, 'bobot'=>10],
+        ['aktivitas' => 'List Building / Database', 'Target' => 5, 'bobot'=>50],
+        ['aktivitas' => 'Interaksi Manual - Komentar Positif', 'Target' => 10, 'bobot'=>10],
+        ['aktivitas' => 'Interaksi Manual - Follow akun prospek', 'Target' => 100, 'bobot'=>10],
+        ['aktivitas' => 'Interaksi Manual - Like (100)', 'Target' => 100, 'bobot'=>10],
+        ['aktivitas' => 'Posting Story (WA/IG)', 'Target' => 1, 'bobot'=>10],
+    ],
+    'memprospek' => [
+        ['aktivitas' => 'ZOOM OHC', 'Target' => 4, 'bobot'=>20],
+        ['aktivitas' => 'Edukasi & Membangun Hubungan', 'Target' => 5, 'bobot'=>60],
+        ['aktivitas' => 'Kirim Penawaran', 'Target' => 2, 'bobot'=>20],
+    ],
+    'closing' => [
+        ['aktivitas' => 'Negosiasi', 'Target' => 5, 'bobot'=>30],
+        ['aktivitas' => 'Daftar Isi Form', 'Target' => 2, 'bobot'=>30],
+        ['aktivitas' => 'Transfer Masuk', 'Target' => 2500000, 'bobot'=>40],
+    ],
+    'merawat_customer' => [
+        ['aktivitas' => 'Membangun Hubungan Alumni', 'Target' => 1, 'bobot'=>20],
+        ['aktivitas' => 'Minta Testimoni', 'Target' => 2, 'bobot'=>20],
+        ['aktivitas' => 'Program Referral', 'Target' => 1, 'bobot'=>20],
+        ['aktivitas' => 'Mengajak Bisnis Visit', 'Target' => 5, 'bobot'=>20],
+        ['aktivitas' => 'Mengajak Upref', 'Target' => 5, 'bobot'=>20],
+    ],
+];
+
+$sections = [
+    'pribadi' => '1. Aktivitas Pribadi',
+    'mencari_leads' => '2. Aktivitas Mencari Leads',
+    'memprospek' => '3. Aktivitas Memprospek',
+    'closing' => '4. Aktivitas Closing',
+    'merawat_customer' => '5. Aktivitas Merawat Customer',
+];
+
+// multiplier pengecualian
+$specialTargets = [
+    'zoom ohc' => 15,
+    'transfer masuk' => 2,
+    'membangun hubungan alumni' => 1,
+    'minta testimoni' => 2,
+    'program referral' => 2,
+    'mengajak bisnis visit' => 1,
+    'mengajak upref' => 1,
+];
+@endphp
+
+<div class="container my-4">
+    <h4 class="mb-3 text-center text-primary">📅 DAILY ACTIVITY</h4>
+
+    @foreach ($sections as $key => $title)
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">{{ $title }}</div>
+            <div class="card-body p-0 table-responsive">
+                <table class="table table-bordered table-sm text-center align-middle mb-0">
+                    <thead class="table-info">
+                        <tr>
+                            <th>No</th>
+                            <th>Aktivitas</th>
+                            @if ($key === 'pribadi')
+                                <th>Deskripsi</th>
+                            @endif
+                            <th>Target Daily</th>
+                            <th>Target</th>
+                            <th>Bobot</th>
+                            <th>Real</th>
+                            <th>Nilai</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($activities[$key] as $i => $act)
+                            @php
+                                $actName = strtolower(trim($act['aktivitas']));
+                                $multiplier = $specialTargets[$actName] ?? 26;
+                                $target = $act['Target'] * $multiplier;
+                            @endphp
+                            <tr>
+                                <td>{{ $i + 1 }}</td>
+                                <td style="color:secondary; font-weight:bold;">{{ $act['aktivitas'] }}</td>
+                                @if ($key === 'pribadi')
+                                    <td>-</td>
+                                @endif
+                                <td>{{ $act['Target'] }}</td>
+                                <td>{{ $target }}</td>
+                                <td>{{ $act['bobot'] }}</td>
+                                <td>0</td>
+                                <td>0</td>
+                            </tr>
+                        @endforeach
+                        <tr class="fw-bold text-white" style="background-color: limegreen;">
+                            <td colspan="{{ $key === 'pribadi' ? 5 : 4 }}" class="text-center">Total</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endforeach
+</div>
+
+
+
+@endsection
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
