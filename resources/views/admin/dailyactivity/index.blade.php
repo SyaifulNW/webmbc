@@ -22,7 +22,7 @@
 
     @if(($list->first()->kategori->nama ?? '') === 'Aktivitas Merawat Customer')
         <small class="fst-italic">
-            🌟 Aktivitas ini fleksibel, tidak harus diinput setiap hari
+            🌟 Aktivitas ini fleksibel, tidak harus diinput setiap hari, yang penting target bulanan tercapai
         </small>
     @endif
 </div>
