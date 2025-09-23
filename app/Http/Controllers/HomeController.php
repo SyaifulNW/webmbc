@@ -90,6 +90,74 @@ $totalLeadAktif = $cold + $tertarik + $mau_transfer + $sudah_transfer + $no;
 // 🔹 Lead baru bulan ini = sama dengan totalLeadAktif
 $totalLeadBaru = $totalLeadAktif;
 
+    // ============ BAGIAN KPI BULANAN =============
+    $tanggalHariIni = now()->toDateString();
+    $carbon = Carbon::parse($tanggalHariIni);
+
+    // hitung hari kerja (Sabtu masuk, Minggu libur)
+    $daysInMonth = $carbon->daysInMonth;
+    $hariKerja = 0;
+    for ($d = 1; $d <= $daysInMonth; $d++) {
+        $day = Carbon::create($tahun, $bulanNum, $d);
+        if ($day->dayOfWeek != Carbon::SUNDAY) {
+            $hariKerja++;
+        }
+    }
+
+    $activities = \App\Models\Activity::orderBy('categories_id')->get()->groupBy('categories_id');
+
+    $categoryKpiWeights = [
+        'Aktivitas Pribadi' => 10,
+        'Aktivitas Mencari Leads' => 20,
+        'Aktivitas Memprospek' => 20,
+        'Aktivitas Closing' => 40,
+        'Aktivitas Merawat Customer' => 10,
+    ];
+
+    $kpiData = [];
+    $totalKpi = 0;
+    $totalBobot = 0;
+
+    foreach ($activities as $kategoriId => $list) {
+        $categoryName = $list->first()->kategori->nama ?? ("Kategori " . $kategoriId);
+
+        $activityPercents = [];
+        foreach ($list as $act) {
+            $targetDaily = (float) ($act->target_daily ?? 0);
+            $targetBulanan = $targetDaily * $hariKerja;
+
+            $totalRealisasi = (float) \App\Models\DailyActiviti::where('user_id', $csId)
+                ->where('activity_id', $act->id)
+                ->whereMonth('tanggal', $bulanNum)
+                ->whereYear('tanggal', $tahun)
+                ->sum('realisasi');
+
+            $percent = 0;
+            if ($targetBulanan > 0) {
+                $percent = ($totalRealisasi / $targetBulanan) * 100;
+                if ($percent > 100) $percent = 100;
+            }
+            $activityPercents[] = $percent;
+        }
+
+        $skorKategori = count($activityPercents) ? (array_sum($activityPercents) / count($activityPercents)) : 0;
+        $bobotKategori = $categoryKpiWeights[$categoryName] ?? 0;
+        $nilaiKategori = ($skorKategori / 100) * $bobotKategori;
+
+        $kpiData[] = [
+            'categories_id' => $kategoriId,
+            'nama'        => $categoryName,
+            'target'      => '100%',
+            'bobot'       => $bobotKategori,
+            'persentase'  => round($skorKategori, 2),
+            'nilai'       => round($nilaiKategori, 2),
+        ];
+
+        $totalKpi += $nilaiKategori;
+        $totalBobot += $bobotKategori;
+    }
+
+    $totalNilai = $totalKpi;
 
     return view('home', compact(
         'kelasOmset',
@@ -102,7 +170,10 @@ $totalLeadBaru = $totalLeadAktif;
         'totalLeadAktif',
         'totalLeadBaru', // ← kirim ke blade
         'csName',
-        'bulan'
+           'bulan',
+        'kpiData',
+        'totalBobot',
+        'totalNilai'
     ));
 }
 }

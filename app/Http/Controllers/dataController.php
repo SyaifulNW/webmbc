@@ -182,6 +182,15 @@ public function filter(Request $request)
         return response()->json(['success' => true]);
     }
 
+    public function updateSumberLeads(Request $request, $id)
+{
+    $data = data::findOrFail($id);
+    $data->leads = $request->leads;
+    $data->save();
+
+    return response()->json(['success' => true]);
+}
+
 
     public function show($id)
     {
@@ -222,7 +231,7 @@ public function filter(Request $request)
         $data->nama = $request->input('nama');
         $data->status_peserta = $request->input('status_peserta', 'Peserta Baru');
         // Enum field
-        $data->leads = $request->input('leads'); // Assuming 'leads' is an enum field
+        // $data->leads = $request->input('leads'); // Assuming 'leads' is an enum field
         // Custom field
         if ($request->input('leads_custom') === null) {
             $data->leads_custom = ''; // Set to empty string if null
@@ -291,9 +300,6 @@ public function filter(Request $request)
         }
         return view('admin.database.database', compact('data'));
     }
-
-
-
 
     public function pindahkesalesplan($id)
     {

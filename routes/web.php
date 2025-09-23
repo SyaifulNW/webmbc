@@ -160,3 +160,7 @@ Route::get('/admin/database/filter', [dataController::class, 'filter'])->name('a
 // By Date
 // routes/web.php
 Route::get('/admin/daily-activity/{tanggal}', [DailyController::class, 'getByDate'])->name('admin.dailyactivity.bydate');
+
+
+// Update Sumber Leads
+Route::post('/update-sumber-leads/{id}', [dataController::class, 'updateSumberLeads'])->name('update.sumber.leads');

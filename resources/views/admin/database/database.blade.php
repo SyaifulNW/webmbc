@@ -85,7 +85,49 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Peserta</th>
-                            <th>Sumber Leads</th>
+                            <!-- Dropdown Filter di Header -->
+                            <th>
+                                Sumber Leads <br>
+                                <select id="filterSumber" class="form-control form-control-sm">
+                                    <option value="">-- Semua Sumber --</option>
+                                    <option value="Instagram">Instagram</option>
+                                    <option value="Facebook">Facebook</option>
+                                    <option value="Alumni-MBC">Alumni-MBC</option>
+                                    <option value="Iklan">Iklan</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Lain-Lain">Lain-Lain</option>
+                                </select>
+                            </th>
+
+                            <script>
+                                $(document).ready(function() {
+                                    // Pencarian global tetap jalan
+                                    $('#tableSearch').on('keyup', function() {
+                                        let filter = $(this).val().toLowerCase();
+                                        $('#myTable tbody tr').each(function() {
+                                            let text = $(this).text().toLowerCase();
+                                            $(this).toggle(text.includes(filter));
+                                        });
+                                    });
+
+                                    // Filter Sumber Leads
+                                    $('#filterSumber').on('change', function() {
+                                        let selected = $(this).val().toLowerCase();
+                                        $('#myTable tbody tr').each(function() {
+                                            let sumber = $(this).find('td:eq(2) select option:selected').text().toLowerCase();
+                                            // kolom ke-2 (No=0, Nama=1, Leads=2)
+
+                                            if (selected === "" || sumber === selected) {
+                                                $(this).show();
+                                            } else {
+                                                $(this).hide();
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
+
+
                             <th>Provinsi</th>
                             <th>Kota</th>
                             <th>Nama Bisnis</th>
@@ -120,7 +162,41 @@
                         <tr data-id="{{ $item->id }}">
                             <td>{{ $loop->iteration }}</td>
                             <td contenteditable="true" class="editable" data-field="nama">{{ $item->nama }}</td>
-                            <td contenteditable="true" class="editable" data-field="leads">{{ $item->leads }}</td>
+                            <td>
+                                <select class="form-control form-control-sm select-sumber" data-id="{{ $item->id }}">
+                                    <option value="">- Pilih Sumber Leads -</option>
+                                    <option value="Instagram" {{ $item->leads == 'Instagram' ? 'selected' : '' }}>Instagram</option>
+                                    <option value="Facebook" {{ $item->leads == 'Facebook' ? 'selected' : '' }}>Facebook</option>
+                                    <option value="Iklan" {{ $item->leads == 'Iklan' ? 'selected' : '' }}>Iklan</option>
+                                    <option value="Marketing" {{ $item->leads == 'Marketing' ? 'selected' : '' }}>Marketing</option>
+                                    <option value="Lain-Lain" {{ $item->leads == 'Lain-Lain' ? 'selected' : '' }}>Lain-Lain</option>
+                                </select>
+                            </td>
+                            <script>
+                                $(document).ready(function() {
+                                    // ketika dropdown sumber leads diganti
+                                    $('.select-sumber').change(function() {
+                                        let id = $(this).data('id');
+                                        let value = $(this).val();
+
+                                        $.ajax({
+                                            url: '/update-sumber-leads/' + id,
+                                            method: 'POST',
+                                            data: {
+                                                _token: '{{ csrf_token() }}',
+                                                leads: value
+                                            },
+                                            success: function(response) {
+                                                console.log('Sumber leads updated');
+                                            },
+                                            error: function() {
+                                                alert('Gagal update sumber leads');
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
+
                             <td contenteditable="true" class="editable" data-field="provinsi_nama">{{ $item->provinsi_nama }}</td>
                             <td contenteditable="true" class="editable" data-field="kota_nama">{{ $item->kota_nama }}</td>
                             <td contenteditable="true" class="editable" data-field="nama_bisnis">{{ $item->nama_bisnis }}</td>

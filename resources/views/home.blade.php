@@ -215,114 +215,47 @@ $kelasOmsetFiltered = collect($kelasOmset)
     </div>
 
 </div>
-  @php
-$activities = [
-    'pribadi' => [
-        ['aktivitas' => 'Niat & Doa Pagi', 'Target' => 1, 'bobot'=>30],
-        ['aktivitas' => 'Review Target Harian', 'Target' => 1, 'bobot'=>20],
-        ['aktivitas' => 'Belajar dan Catat (Sharing Day)', 'Target' => 1, 'bobot'=>50],
-    ],
-    'mencari_leads' => [
-        ['aktivitas' => 'Share Group WA', 'Target' => 1, 'bobot'=>10],
-        ['aktivitas' => 'List Building / Database', 'Target' => 5, 'bobot'=>50],
-        ['aktivitas' => 'Interaksi Manual - Komentar Positif', 'Target' => 10, 'bobot'=>10],
-        ['aktivitas' => 'Interaksi Manual - Follow akun prospek', 'Target' => 100, 'bobot'=>10],
-        ['aktivitas' => 'Interaksi Manual - Like (100)', 'Target' => 100, 'bobot'=>10],
-        ['aktivitas' => 'Posting Story (WA/IG)', 'Target' => 1, 'bobot'=>10],
-    ],
-    'memprospek' => [
-        ['aktivitas' => 'ZOOM OHC', 'Target' => 4, 'bobot'=>20],
-        ['aktivitas' => 'Edukasi & Membangun Hubungan', 'Target' => 5, 'bobot'=>60],
-        ['aktivitas' => 'Kirim Penawaran', 'Target' => 2, 'bobot'=>20],
-    ],
-    'closing' => [
-        ['aktivitas' => 'Negosiasi', 'Target' => 5, 'bobot'=>30],
-        ['aktivitas' => 'Daftar Isi Form', 'Target' => 2, 'bobot'=>30],
-        ['aktivitas' => 'Transfer Masuk', 'Target' => 2500000, 'bobot'=>40],
-    ],
-    'merawat_customer' => [
-        ['aktivitas' => 'Membangun Hubungan Alumni', 'Target' => 1, 'bobot'=>20],
-        ['aktivitas' => 'Minta Testimoni', 'Target' => 2, 'bobot'=>20],
-        ['aktivitas' => 'Program Referral', 'Target' => 1, 'bobot'=>20],
-        ['aktivitas' => 'Mengajak Bisnis Visit', 'Target' => 5, 'bobot'=>20],
-        ['aktivitas' => 'Mengajak Upref', 'Target' => 5, 'bobot'=>20],
-    ],
-];
-
-$sections = [
-    'pribadi' => '1. Aktivitas Pribadi',
-    'mencari_leads' => '2. Aktivitas Mencari Leads',
-    'memprospek' => '3. Aktivitas Memprospek',
-    'closing' => '4. Aktivitas Closing',
-    'merawat_customer' => '5. Aktivitas Merawat Customer',
-];
-
-// multiplier pengecualian
-$specialTargets = [
-    'zoom ohc' => 15,
-    'transfer masuk' => 2,
-    'membangun hubungan alumni' => 1,
-    'minta testimoni' => 2,
-    'program referral' => 2,
-    'mengajak bisnis visit' => 1,
-    'mengajak upref' => 1,
-];
-@endphp
-
-<div class="container my-4">
-    <h4 class="mb-3 text-center text-primary">📅 DAILY ACTIVITY</h4>
-
-    @foreach ($sections as $key => $title)
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">{{ $title }}</div>
-            <div class="card-body p-0 table-responsive">
-                <table class="table table-bordered table-sm text-center align-middle mb-0">
-                    <thead class="table-info">
-                        <tr>
-                            <th>No</th>
-                            <th>Aktivitas</th>
-                            @if ($key === 'pribadi')
-                                <th>Deskripsi</th>
-                            @endif
-                            <th>Target Daily</th>
-                            <th>Target</th>
-                            <th>Bobot</th>
-                            <th>Real</th>
-                            <th>Nilai</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($activities[$key] as $i => $act)
-                            @php
-                                $actName = strtolower(trim($act['aktivitas']));
-                                $multiplier = $specialTargets[$actName] ?? 26;
-                                $target = $act['Target'] * $multiplier;
-                            @endphp
-                            <tr>
-                                <td>{{ $i + 1 }}</td>
-                                <td style="color:secondary; font-weight:bold;">{{ $act['aktivitas'] }}</td>
-                                @if ($key === 'pribadi')
-                                    <td>-</td>
-                                @endif
-                                <td>{{ $act['Target'] }}</td>
-                                <td>{{ $target }}</td>
-                                <td>{{ $act['bobot'] }}</td>
-                                <td>0</td>
-                                <td>0</td>
-                            </tr>
-                        @endforeach
-                        <tr class="fw-bold text-white" style="background-color: limegreen;">
-                            <td colspan="{{ $key === 'pribadi' ? 5 : 4 }}" class="text-center">Total</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    @endforeach
+ 
+{{-- ================= KPI BULANAN ================= --}}
+<div class="card shadow-lg border-0 mt-5">
+    <div class="card-header bg-primary text-white text-center fw-bold fs-5">
+        KEY PERFORMANCE INDEX (KPI) CS MBC
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-bordered table-striped table-hover mb-0 text-center align-middle">
+            <thead class="table-info">
+                <tr>
+                    <th class="fw-bold text-dark">No</th>
+                    <th class="fw-bold text-dark">Aktivitas</th>
+                    <th class="fw-bold text-dark">Target</th>
+                    <th class="fw-bold text-dark">Bobot</th>
+                    <th class="fw-bold text-dark">Presentase</th>
+                    <th class="fw-bold text-dark">Nilai</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($kpiData as $i => $row)
+                    <tr>
+                        <td class="fw-bold text-dark">{{ $i+1 }}</td>
+                        <td class="fw-bold text-start text-dark">{{ $row['nama'] }}</td>
+                        <td class="fw-bold text-dark">{{ $row['target'] }}%</td>
+                        <td class="fw-bold text-dark">{{ $row['bobot'] }}</td>
+                        <td class="fw-bold text-dark">{{ $row['persentase'] }}%</td>
+                        <td class="fw-bold text-dark">{{ number_format($row['nilai'],2) }}</td>
+                    </tr>
+                @endforeach
+                <tr class="table-success fw-bold fs-6">
+                    <td colspan="3" class="text-center text-dark">TOTAL</td>
+                    <td class="text-dark">{{ $totalBobot }}</td>
+                    <td>—</td>
+                    <td class="text-dark">{{ number_format($totalNilai,2) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
+{{-- ==================================================== --}}
+
 
 
 
